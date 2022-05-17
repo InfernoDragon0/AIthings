@@ -1,49 +1,38 @@
 import cv2
 import imagezmq
 import simplejpeg
+import imutils
+from pyTCPCam.client.clientStream import ClientStream
 
-#bind to all interfaces to publish in the pub/sub
-SUB = "0.0.0.0"
+#set to the HOST:PORT to connect to
 HOST = "192.168.1.53"
 PORT = 8100
+
+#set the name of this camera / multicam
 NAME = "two"
-#clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sender = ""
+
+#ImageZMQ sender init
+sender = imagezmq.ImageSender(connect_to=f"tcp://{HOST}:{PORT}")
 
 #connects to a TCP server to send image data over the network
 #for optimization:
 #in addition, encode the openCV data to jpeg
 #in addition, reduce the jpeg image quality
 #TODO in addition, reduce the size of the jpeg before sending
-#TODO in addition, reduce the amount of frames sent to the server
+#in addition, only sends the latest frame that could be processed to the server
 #TODO in addition, move to publisher to remove blocking latency
 #TODO in addition, server shall process each stream in a separate thread to reduce latency
 #TODO in addition, client shall process each stream in a separate thread to reduce latency
 #in addition, FPS counter
 
+#starts the camera and sends data received from clientStream
+#clientStream is started on a separate thread for each camera
 def main():
-    #socketConnect() #connect to socket
-    #startAsPublisher()
-    startAsClient()
-    startCam() #start the camera
-
-#connects to the socket provided HOST and PORT
-#def socketConnect():
-    #print("Socket connect")
-    #clientSocket.connect((HOST, PORT))
-def startAsPublisher():
-    global sender
-    sender = imagezmq.ImageSender(connect_to=f"tcp://{SUB}:{PORT}", REQ_REP=False)
-
-def startAsClient():
-    global sender
-    sender = imagezmq.ImageSender(connect_to=f"tcp://{HOST}:{PORT}")
-
-#starts the camera and sends data from VideoCapture(0) (webcam)
-def startCam():
-    vid = cv2.VideoCapture(0)
+    cam0 = ClientStream(0).start()
+ 
+    #TODO move this into another thread
     while(True):
-        ret, frame = vid.read()
+        frame = cam0.getFrame()
         jpg_buffer = simplejpeg.encode_jpeg(frame, quality=40, colorspace='BGR') #40 has minimal difference to the eyes
 
         #call send through server
@@ -54,20 +43,16 @@ def startCam():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    vid.release()
     #DEBUG PREVIEW can be removed if client doesnt need to preview
     cv2.destroyAllWindows()
-
+    cam0.complete()
+    
 #try sending the frame over the network
-#if not connected, try connecting and retry sending
 def sendData(frame):
     try:
         sender.send_jpg(NAME, frame)
-        # clientSocket.sendall(frame)
     except Exception as e:
         print(e)
-        #socketConnect()
-        #sendData(frame) #recursive, or just drop the frame
 
 #run as main things
 if __name__ == '__main__':
