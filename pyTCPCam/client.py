@@ -3,7 +3,7 @@ import imagezmq
 
 #bind to all interfaces to publish in the pub/sub
 SUB = "0.0.0.0"
-HOST = "192.168.1.213"
+HOST = "192.168.1.53"
 PORT = 8100
 NAME = "one"
 #clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

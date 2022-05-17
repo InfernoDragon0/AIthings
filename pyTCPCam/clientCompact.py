@@ -4,7 +4,7 @@ import simplejpeg
 
 #bind to all interfaces to publish in the pub/sub
 SUB = "0.0.0.0"
-HOST = "127.0.0.1"
+HOST = "192.168.1.53"
 PORT = 8100
 NAME = "two"
 #clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
