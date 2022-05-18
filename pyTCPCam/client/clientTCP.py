@@ -67,7 +67,6 @@ def main():
     #TODO test first, then move this into another thread
     while(True):
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        if (cam0.getFrame() == None): continue
         cv2.imshow('clientFrame', cam0.getFrame()) 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

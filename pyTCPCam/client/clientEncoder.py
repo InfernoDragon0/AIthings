@@ -6,7 +6,8 @@ class ClientEncoder:
     def __init__(self, stream):
         self.stream = stream
         self.completed = False
-        self.encodedFrame = None
+        self.quality = 40
+        self.encodedFrame = simplejpeg.encode_jpeg(self.stream.getFrame(), self.quality, colorspace='BGR') #encode the first frame
     
     def start(self):
         Thread(target=self.encode, args=()).start()
@@ -19,7 +20,7 @@ class ClientEncoder:
 
             frame = self.stream.getFrame()
             if (frame == None): continue #skip the frame if it is still being prepared
-            self.encodedFrame = simplejpeg.encode_jpeg(frame, quality=40, colorspace='BGR') #40 has minimal difference to the eyes
+            self.encodedFrame = simplejpeg.encode_jpeg(frame, self.quality, colorspace='BGR')
     
     def getEncodedFrame(self):
         return self.encodedFrame
