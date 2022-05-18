@@ -21,6 +21,10 @@ class ClientEncoder:
             if self.completed:
                 return
             
+            if (not self.stream.ready):
+                continue
+            
+            self.stream.ready = False
             self.encodedFrame = simplejpeg.encode_jpeg(self.stream.getFrame(), self.quality, colorspace='BGR')
             self.ready = True
     

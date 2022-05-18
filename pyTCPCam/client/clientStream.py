@@ -8,6 +8,7 @@ class ClientStream:
         self.stream = cv2.VideoCapture(camera)
         (self.available, self.frame) = self.stream.read()
         self.completed = False
+        self.ready = True
     
     #run a thread to read all the frames continuously
     def start(self):
@@ -21,6 +22,7 @@ class ClientStream:
                 return
             
             (self.available, self.frame) = self.stream.read()
+            self.ready = True
     
     #get the latest frame
     def getFrame(self):
