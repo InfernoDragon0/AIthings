@@ -2,9 +2,9 @@ import imagezmq
 from threading import Thread
 
 #connects to a TCP server to send image data over the network
-#TODO!!! as there is no wait time, tcp client may try to keep sending the exact same frame resulting in 300fps being sent
-#this may affect the network performance if there is alot of clients sending at max speed
-#solution: apply wait time (check the performance before applying wait time)
+#TODO as there is no wait time, tcp client may try to keep sending the exact same frame resulting in 300fps being sent
+#if it does not affect performance, does not matter.
+
 
 class ClientTCP:
     def __init__(self, name, encoder, host, port, pubSub):
@@ -25,8 +25,9 @@ class ClientTCP:
         while True:
             if self.completed:
                 return
-            if (self.current_frame == self.encoder.getEncodedFrame()):
-                continue
+            #this check slows it down, probably because the TCP server is sending at 10x the encoding speed
+            # if (self.current_frame == self.encoder.getEncodedFrame()):
+            #     continue
             
             self.current_frame = self.encoder.getEncodedFrame()
             try:
