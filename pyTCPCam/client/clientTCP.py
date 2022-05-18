@@ -2,8 +2,8 @@ import cv2
 import imagezmq
 import simplejpeg
 import imutils
-from pyTCPCam.client.clientEncoder import ClientEncoder
-from pyTCPCam.client.clientStream import ClientStream
+from clientEncoder import ClientEncoder
+from clientStream import ClientStream
 from threading import Thread
 
 #set to the HOST:PORT to connect to
@@ -32,6 +32,33 @@ NAME = "two"
 #clientEncoder will encode and do optimizations to the image before sending
 #tcp client will always try to send the latest frame encoded
 #TODO due to race conditions, tcp client may try to 
+class ClientTCP:
+    def __init__(self, name, encoder, host, port):
+        self.encoder = encoder
+        self.sender = imagezmq.ImageSender(connect_to=f"tcp://{host}:{port}")
+        self.name = name
+        self.completed = False
+    
+    def start(self):
+        Thread(target=self.sendData, args=()).start()
+        return self
+    
+    def sendData(self):
+        while True:
+            if self.completed:
+                return
+
+            frame = self.encoder.getEncodedFrame()
+            if (frame == None): continue #skip the frame if it is still being prepared
+            
+            try:
+                self.sender.send_jpg(self.name, frame)
+            except Exception as e:
+                print(e)
+    
+    def complete(self):
+        self.completed = True
+
 def main():
     cam0 = ClientStream(0).start()
     cam0Encoder = ClientEncoder(cam0).start()
@@ -54,29 +81,3 @@ def main():
 #run as main things
 if __name__ == '__main__':
     main()
-
-class ClientTCP:
-    def __init__(self, name, encoder, host, port):
-        self.encoder = encoder
-        self.sender = imagezmq.ImageSender(connect_to=f"tcp://{host}:{port}")
-        self.name = name
-    
-    def start(self):
-        Thread(target=self.sendData, args=()).start()
-        return self
-    
-    def sendData(self):
-        while True:
-            if self.completed:
-                return
-
-            frame = self.encoder.getEncodedFrame()
-            if (frame == None): continue #skip the frame if it is still being prepared
-            
-            try:
-                self.sender.send_jpg(self.name, frame)
-            except Exception as e:
-                print(e)
-    
-    def complete(self):
-        self.completed = True

@@ -5,6 +5,8 @@ from threading import Thread
 class ClientEncoder:
     def __init__(self, stream):
         self.stream = stream
+        self.completed = False
+        self.encodedFrame = None
     
     def start(self):
         Thread(target=self.encode, args=()).start()
