@@ -47,10 +47,7 @@ class ClientTCP:
         while True:
             if self.completed:
                 return
-
             frame = self.encoder.getEncodedFrame()
-            if (frame == None): continue #skip the frame if it is still being prepared
-            
             try:
                 self.sender.send_jpg(self.name, frame)
             except Exception as e:

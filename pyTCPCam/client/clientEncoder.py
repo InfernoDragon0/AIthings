@@ -18,9 +18,7 @@ class ClientEncoder:
             if self.completed:
                 return
 
-            frame = self.stream.getFrame()
-            if (frame == None): continue #skip the frame if it is still being prepared
-            self.encodedFrame = simplejpeg.encode_jpeg(frame, self.quality, colorspace='BGR')
+            self.encodedFrame = simplejpeg.encode_jpeg(self.stream.getFrame(), self.quality, colorspace='BGR')
     
     def getEncodedFrame(self):
         return self.encodedFrame
