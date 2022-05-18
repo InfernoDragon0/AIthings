@@ -28,7 +28,10 @@ class ClientTCP:
             #this check slows it down, probably because the TCP server is sending at 10x the encoding speed
             # if (self.current_frame == self.encoder.getEncodedFrame()):
             #     continue
+            if (not self.encoder.ready):
+                continue
             
+            self.encoder.ready = False
             self.current_frame = self.encoder.getEncodedFrame()
             try:
                 self.sender.send_jpg(self.name, self.current_frame)

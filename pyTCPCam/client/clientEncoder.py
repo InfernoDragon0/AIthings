@@ -9,6 +9,7 @@ class ClientEncoder:
         self.completed = False
         self.quality = 40
         self.encodedFrame = simplejpeg.encode_jpeg(self.stream.getFrame(), self.quality, colorspace='BGR') #encode the first frame
+        self.ready = True
     
     def start(self):
         Thread(target=self.encode, args=()).start()
@@ -21,6 +22,7 @@ class ClientEncoder:
                 return
             
             self.encodedFrame = simplejpeg.encode_jpeg(self.stream.getFrame(), self.quality, colorspace='BGR')
+            self.ready = True
     
     #get the latest encoded frame
     def getEncodedFrame(self):
