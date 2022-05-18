@@ -12,6 +12,7 @@ class ClientTCP:
         self.sender = imagezmq.ImageSender(connect_to=f"tcp://{host}:{port}") #As Client
         self.name = name
         self.completed = False
+        self.current_frame = self.encoder.getEncodedFrame() #get initial frame
 
         if (pubSub):
             self.sender = imagezmq.ImageSender(connect_to=f"tcp://0.0.0.0:{port}", REQ_REP=False) #As Publisher
@@ -24,9 +25,12 @@ class ClientTCP:
         while True:
             if self.completed:
                 return
-            frame = self.encoder.getEncodedFrame()
+            if (self.current_frame == self.encoder.getEncodedFrame()):
+                continue
+            
+            self.current_frame = self.encoder.getEncodedFrame()
             try:
-                self.sender.send_jpg(self.name, frame)
+                self.sender.send_jpg(self.name, self.current_frame)
             except Exception as e:
                 print(e)
     

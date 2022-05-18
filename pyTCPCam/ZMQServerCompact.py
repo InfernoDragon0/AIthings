@@ -25,6 +25,7 @@ def startAsServer():
     image_hub = imagezmq.ImageHub(open_port=f'tcp://{HOST}:{PORT}')
 
 def main():
+    global startAsSubscriber
     #for one user
     start_time = time.time()
     counter = 0
@@ -32,7 +33,9 @@ def main():
 
     while True:
         clientName, imagex = image_hub.recv_jpg() #use this image to do things related to the AI
-        image_hub.send_reply(b'OK') #send reply before anything else
+        if (not startAsSubscriber):
+            image_hub.send_reply(b'OK') #send reply before anything else
+            
         image = simplejpeg.decode_jpeg( imagex, colorspace='BGR') #quality reduction 
         
         # time when we finish processing for this frame
