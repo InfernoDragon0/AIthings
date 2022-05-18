@@ -2,6 +2,7 @@ import simplejpeg
 from threading import Thread
 
 #TODO in addition, reduce the size of the jpeg before sending
+#TODO ClientEncoder to tell ClientTCP to send when ready
 class ClientEncoder:
     def __init__(self, stream):
         self.stream = stream
@@ -18,7 +19,7 @@ class ClientEncoder:
         while True:
             if self.completed:
                 return
-
+            
             self.encodedFrame = simplejpeg.encode_jpeg(self.stream.getFrame(), self.quality, colorspace='BGR')
     
     #get the latest encoded frame
