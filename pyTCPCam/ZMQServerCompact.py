@@ -26,6 +26,7 @@ def startAsServer():
     #for one user
     start_time = time.time()
     counter = 0
+    fpsText = "0"
 
     while True:
         clientName, imagex = image_hub.recv_jpg() #use this image to do things related to the AI
@@ -35,10 +36,11 @@ def startAsServer():
         # time when we finish processing for this frame
         counter += 1
         if (time.time() - start_time) > 1:
-            cv2.putText(image, str(counter / (time.time() - start_time)), (7,70), cv2.FONT_HERSHEY_SIMPLEX, 3, (100, 255, 0), 3, cv2.LINE_AA)
+            fpsText = str(counter / (time.time() - start_time))
             start_time = time.time()
             counter = 0
 
+        cv2.putText(image, fpsText, (7,70), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
         cv2.imshow(clientName, image) # 1 window for each
         cv2.waitKey(1)
         

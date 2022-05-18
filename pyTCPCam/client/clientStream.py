@@ -14,6 +14,7 @@ class ClientStream:
         Thread(target=self.readFrames, args=()).start()
         return self
     
+    #Read loop for getting OpenCV images
     def readFrames(self):
         while True:
             if self.completed:
@@ -21,8 +22,10 @@ class ClientStream:
             
             (self.available, self.frame) = self.stream.read()
     
+    #get the latest frame
     def getFrame(self):
         return self.frame
     
+    #end the thread
     def complete(self):
         self.completed = True

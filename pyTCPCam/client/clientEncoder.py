@@ -13,6 +13,7 @@ class ClientEncoder:
         Thread(target=self.encode, args=()).start()
         return self
 
+    #encode loop to encode the latest frame received
     def encode(self):
         while True:
             if self.completed:
@@ -20,8 +21,10 @@ class ClientEncoder:
 
             self.encodedFrame = simplejpeg.encode_jpeg(self.stream.getFrame(), self.quality, colorspace='BGR')
     
+    #get the latest encoded frame
     def getEncodedFrame(self):
         return self.encodedFrame
     
+    #end the thread
     def complete(self):
         self.completed = True
