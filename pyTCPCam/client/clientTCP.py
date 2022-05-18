@@ -7,11 +7,14 @@ from threading import Thread
 #solution: apply wait time (check the performance before applying wait time)
 
 class ClientTCP:
-    def __init__(self, name, encoder, host, port):
+    def __init__(self, name, encoder, host, port, pubSub):
         self.encoder = encoder
-        self.sender = imagezmq.ImageSender(connect_to=f"tcp://{host}:{port}")
+        self.sender = imagezmq.ImageSender(connect_to=f"tcp://{host}:{port}") #As Client
         self.name = name
         self.completed = False
+
+        if (pubSub):
+            self.sender = imagezmq.ImageSender(connect_to=f"tcp://0.0.0.0:{port}", REQ_REP=False) #As Publisher
     
     def start(self):
         Thread(target=self.sendData, args=()).start()

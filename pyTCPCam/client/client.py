@@ -7,6 +7,7 @@ import sys
 #NETWORK CONFIG
 HOST = "192.168.1.53"
 PORT = 8100
+startAsPublisher = False #set to True for PUBSUB. Server must run in PUBSUB mode as well
 
 ########################################################################
 # Optimizations done:
@@ -16,7 +17,6 @@ PORT = 8100
 # 4. OpenCV image stream is processed in a separate thread
 # 5. JPEG Encoding is processed in another separate thread
 # 6. Processed frames are sent to the server in another separate thread
-#in addition, FPS counter
 ########################################################################
 
 ########################################################################
@@ -32,10 +32,12 @@ PORT = 8100
 #clientStream is started on a separate thread for each camera
 #clientEncoder will encode and do optimizations to the image before sending
 #tcp client will always try to send the latest frame encoded
+#FPS counter on the server
+
 def main():
     cam0 = ClientStream(0).start()
     cam0Encoder = ClientEncoder(cam0).start()
-    tcpClient0 = ClientTCP("Cam 0", cam0Encoder, HOST, PORT).start()
+    tcpClient0 = ClientTCP("Cam 0", cam0Encoder, HOST, PORT, startAsPublisher).start()
  
     while(True):
         #DEBUG PREVIEW can remove this if client doesnt need to preview
@@ -43,12 +45,11 @@ def main():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    #DEBUG PREVIEW can be removed if client doesnt need to preview
-    cv2.destroyAllWindows()
-
     cam0.complete()
     cam0Encoder.complete()
     tcpClient0.complete()
+    #DEBUG PREVIEW can be removed if client doesnt need to preview
+    cv2.destroyAllWindows()
     sys.exit(0)
 
 #run main

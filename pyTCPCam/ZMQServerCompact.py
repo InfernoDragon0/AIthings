@@ -10,19 +10,21 @@ HOST = "0.0.0.0"
 PORT = 8100
 
 #open the image hub MQ using PUB SUB
+image_hub = imagezmq.ImageHub(open_port=f'tcp://{PUB}:{PORT}', REQ_REP=False)
+startAsSubscriber = False
 
 #sub to one publisher
-def startAsSubscriber():
+def startAsSub():
+    global image_hub
     image_hub = imagezmq.ImageHub(open_port=f'tcp://{PUB}:{PORT}', REQ_REP=False)
-    while True:
-        clientName, image = image_hub.recv_image() #use this image to do things related to the AI
-        cv2.imshow(clientName, image) # 1 window only
-        cv2.waitKey(1)
+
 
 #get from many clients
 def startAsServer():
+    global image_hub
     image_hub = imagezmq.ImageHub(open_port=f'tcp://{HOST}:{PORT}')
 
+def main():
     #for one user
     start_time = time.time()
     counter = 0
@@ -46,5 +48,8 @@ def startAsServer():
         
 
 if __name__ == '__main__':
-    #startAsSubscriber()
-    startAsServer()
+    if (startAsSubscriber):
+        startAsSub()
+    else:
+        startAsServer()
+    main()
