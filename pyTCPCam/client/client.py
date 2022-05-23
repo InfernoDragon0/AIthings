@@ -35,16 +35,16 @@ startAsPublisher = False #set to True for PUBSUB. Server must run in PUBSUB mode
 #clientEncoder will encode and do optimizations to the image before sending
 #tcp client will always try to send the latest frame encoded
 #FPS counter on the server
-def main(): #testing object to json
+def maine(): #testing object to json
     infTest = ImageInference(1)
     infTest.addData({"hello": "world"})
     pickled = infTest.asJson() #send this string to the server
     print(pickled)
 
-def maine():
+def main():
     cam0 = ClientStream(0).start()
     cam0Encoder = ClientEncoder(cam0).start()
-    tcpClient0 = ClientTCP("Cam 0", cam0Encoder, HOST, PORT, startAsPublisher).start()
+    #tcpClient0 = ClientTCP("Cam 0", cam0Encoder, HOST, PORT, startAsPublisher).start()
  
     while(True):
         #DEBUG PREVIEW can remove this if client doesnt need to preview
@@ -54,7 +54,7 @@ def maine():
 
     cam0.complete()
     cam0Encoder.complete()
-    tcpClient0.complete()
+    #tcpClient0.complete()
     #DEBUG PREVIEW can be removed if client doesnt need to preview
     cv2.destroyAllWindows()
     sys.exit(0)
