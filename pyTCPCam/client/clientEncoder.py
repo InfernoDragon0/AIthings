@@ -1,5 +1,5 @@
 import time
-import jsonpickle
+# import jsonpickle
 import simplejpeg
 from threading import Thread
 
@@ -31,7 +31,7 @@ class ClientEncoder:
             self.imageInference.setImageData(self.encodedFrame)
             self.imageInference.addData({"temporray": "encoder"})
             self.ready = True
-            print(jsonpickle.encode(self.imageInference))
+            # print(jsonpickle.encode(self.imageInference))
     
     #get the latest encoded frame
     def getEncodedFrame(self):
