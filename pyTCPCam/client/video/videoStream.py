@@ -1,13 +1,14 @@
 import cv2
 from threading import Thread
 
-class ClientStream:
+class VideoStream:
 
     #init and read one frame
     def __init__(self, camera):
         self.stream = cv2.VideoCapture(camera)
         (self.available, self.frame) = self.stream.read()
         self.completed = False
+        self.ready = self.available
     
     #run a thread to read all the frames continuously
     def start(self):
@@ -25,6 +26,7 @@ class ClientStream:
     #get the latest frame
     def getFrame(self):
         return self.frame
+        #return cv2.resize(self.frame, (1280, 720))
     
     #end the thread
     def complete(self):

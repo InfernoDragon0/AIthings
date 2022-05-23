@@ -2,10 +2,9 @@ from data.baseInference import BaseInference
 
 
 class ImageInference(BaseInference):
-    def __init__(self, timestamp):
+    def __init__(self):
         super().__init__()
         self.packetType = "Image"
-        self.timestamp = timestamp
         self.streamImage = False #set to true if want to send the image as well
         self.imageData = None
 

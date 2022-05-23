@@ -1,14 +1,12 @@
 from threading import Thread
 
-#TODO AI stuff in another thread, before the ClientEncoder. AI to tell ClientEncoder to encode (probably with a variable) when ready
-
-class ClientProcessor():
-    def __init__(self, encoder):
+#unified to be able to change the sequence of these without any issues
+class VideoProcessor():
+    def __init__(self, stream):
         self.completed = False
-        self.encoder = encoder
-        self.processedFrame = self.encoder.encodedFrame #TODO apply the AI here one time if possible
+        self.stream = stream
+        self.processedFrame = self.stream.getFrame() #TODO apply the AI here one time if possible
         self.ready = False
-        pass
     
     def start(self):
         Thread(target=self.process, args=()).start()
@@ -20,14 +18,14 @@ class ClientProcessor():
             if self.completed:
                 return
 
-            self.processedFrame = None #TODO do some AI stuff here
+            self.processedFrame = self.stream.getFrame() #TODO do some AI stuff here
             self.ready = True
 
     def asInferenceObject(self): #can remove if not needed
         return {"x": 123, "y": 234, "confidence": 1, "inferred": "Person"}
 
-    #get the latest inferenced frame
-    def getProcessedFrame(self):
+    #unified to reduce changes
+    def getFrame(self):
         return self.processedFrame
 
     #end the thread

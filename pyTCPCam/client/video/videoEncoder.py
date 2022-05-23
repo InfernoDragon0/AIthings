@@ -1,20 +1,17 @@
-import time
 import jsonpickle
 import simplejpeg
 from threading import Thread
-
 from data.imageInference import ImageInference
 
-#TODO in addition, reduce the size of the jpeg before sending
-#TODO ClientEncoder to tell ClientTCP to send when ready
-class ClientEncoder:
+#unified to be able to change the sequence of these without any issues
+class VideoEncoder:
     def __init__(self, stream):
         self.stream = stream
         self.completed = False
         self.quality = 40
         self.encodedFrame = simplejpeg.encode_jpeg(self.stream.getFrame(), self.quality, colorspace='BGR') #encode the first frame
         self.ready = True
-        self.imageInference = ImageInference(time.time())
+        self.imageInference = ImageInference()
     
     def start(self):
         Thread(target=self.encode, args=()).start()
@@ -26,15 +23,20 @@ class ClientEncoder:
             if self.completed:
                 return
 
+            if (not self.stream.ready):
+                continue
+
             self.encodedFrame = simplejpeg.encode_jpeg(self.stream.getFrame(), self.quality, colorspace='BGR')
-            self.imageInference = ImageInference(time.time())
+            #move to tcp side
+            self.imageInference = ImageInference()
             self.imageInference.setImageData(self.encodedFrame)
             self.imageInference.addData({"temporray": "encoder"})
+            self.stream.ready = False
             self.ready = True
             #print(jsonpickle.encode(self.imageInference))
     
-    #get the latest encoded frame
-    def getEncodedFrame(self):
+    #unified to reduce changes
+    def getFrame(self):
         return self.encodedFrame
     
     #end the thread
