@@ -1,3 +1,5 @@
+from data.baseInference import BaseInference
+from data.imageInference import ImageInference
 from clientEncoder import ClientEncoder
 from clientStream import ClientStream
 from clientTCP import ClientTCP
@@ -33,8 +35,13 @@ startAsPublisher = False #set to True for PUBSUB. Server must run in PUBSUB mode
 #clientEncoder will encode and do optimizations to the image before sending
 #tcp client will always try to send the latest frame encoded
 #FPS counter on the server
+def main(): #testing object to json
+    infTest = ImageInference(1)
+    infTest.addData({"hello": "world"})
+    pickled = infTest.asJson() #send this string to the server
+    print(pickled)
 
-def main():
+def maine():
     cam0 = ClientStream(0).start()
     cam0Encoder = ClientEncoder(cam0).start()
     tcpClient0 = ClientTCP("Cam 0", cam0Encoder, HOST, PORT, startAsPublisher).start()
