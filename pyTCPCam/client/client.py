@@ -3,8 +3,10 @@ from data.imageInference import ImageInference
 from clientEncoder import ClientEncoder
 from clientStream import ClientStream
 from clientTCP import ClientTCP
+from clientProcessor import ClientProcessor
 import cv2
 import sys
+import simplejpeg
 
 #NETWORK CONFIG
 HOST = "192.168.1.53"
@@ -45,15 +47,18 @@ def main():
     cam0 = ClientStream(0).start()
     cam0Encoder = ClientEncoder(cam0).start()
     #tcpClient0 = ClientTCP("Cam 0", cam0Encoder, HOST, PORT, startAsPublisher).start()
+    camProc = ClientProcessor(cam0Encoder).start()
  
     while(True):
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        cv2.imshow('clientFrame', cam0.getFrame()) 
+        #get the processed image with bounding boxes
+        cv2.imshow('clientFrame', camProc.getProcessedFrame()) #cam0.getFrame()
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
     cam0.complete()
     cam0Encoder.complete()
+    camProc.complete()
     #tcpClient0.complete()
     #DEBUG PREVIEW can be removed if client doesnt need to preview
     cv2.destroyAllWindows()
