@@ -11,7 +11,7 @@ import time
 def load_model():
     params = yamnet_params.Params()
     yamnet = yamnet_model.yamnet_frames_model(params)
-    yamnet.load_weights('C:\\Users\\muhai\\Downloads\\amarisAIthings\\amarisAIthings\\pyTCPCam\\audio\\yamnet.h5')
+    yamnet.load_weights('yamnet.h5')
     yamnet_classes = np.array([x['name'] for x in metadata.CAT_META])
     return yamnet,yamnet_classes
 
