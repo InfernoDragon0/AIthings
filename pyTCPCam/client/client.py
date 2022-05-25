@@ -36,29 +36,30 @@ class Client():
     def __init__(self, cameraId):
         #init video stream. The sequence of these can be swapped at any time but the stream must start first
         self.videoStream = VideoStream(cameraId).start()
+        #self.videoEncoder = VideoEncoder(self.videoStream).start()
         self.videoProcessor = VideoProcessor(self.videoStream).start()
-        self.videoEncoder = VideoEncoder(self.videoProcessor).start()
+
         #DEBUG PREVIEW can remove this if client doesnt need to preview
         self.videoDebug = self.videoProcessor.startDebug()
 
         #init audio stream
-        self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
-        self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
+        #self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
+        #self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
 
         #init sensor stream #or maybe no need?
 
         #init TCP connection
-        self.sendVideoStream = False
+        #self.sendVideoStream = False
         #self.videoTCP = ClientTCP(f"Cam {cameraId}", self.videoEncoder, HOST, PORT,startAsPublisher).start() #TODO change to overall TCP connection
 
     
     def stop(self):
         self.videoStream.complete()
         self.videoProcessor.complete()
-        self.videoEncoder.complete()
+        #self.videoEncoder.complete()
 
-        self.audioStream.complete()
-        self.audioProcessor.complete()
+        #self.audioStream.complete()
+        #self.audioProcessor.complete()
 
 
 #run main code
@@ -66,12 +67,12 @@ def main():
     #run as many clients as you want as long as it is one camera per Client object
     cam0 = Client(0) #can swap in with a .mp4 file to test without camera
 
-    while(True): #show for client 0
-        if keyboard.is_pressed('q'):
-            break
+    # while(True): #show for client 0
+    #     if keyboard.is_pressed('q'):
+    #         break
 
-    cam0.stop()
-    sys.exit(0)
+    #cam0.stop()
+    #sys.exit(0)
 
 #run main
 if __name__ == '__main__':

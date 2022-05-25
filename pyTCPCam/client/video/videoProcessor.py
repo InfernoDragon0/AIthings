@@ -2,11 +2,12 @@ from threading import Thread
 from yolov5 import custom
 from yolo_wrapper import Process
 import cv2
+import simplejpeg
 
+model = Process(device=0, weights="./atasv3.pt")
 #unified to be able to change the sequence of these without any issues
 class VideoProcessor():
     def __init__(self, stream):
-        self.model = Process(device=0, weights="./atasv3.pt")
         self.completed = False
         self.stream = stream
         self.processedFrame = self.stream.getFrame()
@@ -24,11 +25,13 @@ class VideoProcessor():
             
             #self.processedFrame is used to get the current frame
             #infer the image with the model to get the result
-            result = self.model.inference_json_result(self.stream.getFrame())
+            image = self.stream.getFrame()
+            result = model.inference_json_result(image)
 
             #drawing the bounding boxes based on the result on the image
-            image = self.model.draw_box_xyxy(self.stream.getFrame(), result)
+            image = model.draw_box_xyxy(image, result)
             self.setProcessedFrame(image)
+            print("Processed")
             self.ready = True
 
     def asInferenceObject(self): #can remove if not needed
