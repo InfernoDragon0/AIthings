@@ -31,7 +31,6 @@ class VideoProcessor():
             #drawing the bounding boxes based on the result on the image
             image = self.model.draw_box_xyxy(image, result)
             self.setProcessedFrame(image)
-            print("Processed")
             self.ready = True
 
     def asInferenceObject(self): #can remove if not needed
