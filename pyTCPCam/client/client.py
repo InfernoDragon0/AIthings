@@ -1,11 +1,14 @@
-from data.baseInference import BaseInference
+from audio.audioStream import AudioStream
+from audio.audioProcessor import AudioProcessor
 from data.imageInference import ImageInference
-from clientEncoder import ClientEncoder
-from clientStream import ClientStream
+from video.videoStream import VideoStream
+from video.videoEncoder import VideoEncoder
+from video.videoProcessor import VideoProcessor
 from clientTCP import ClientTCP
 from clientProcessor import ClientProcessor
 import cv2
 import sys
+import keyboard
 import simplejpeg
 
 #NETWORK CONFIG
@@ -19,49 +22,56 @@ startAsPublisher = False #set to True for PUBSUB. Server must run in PUBSUB mode
 # 2. Reduce the jpeg image quality to 40
 # 3. Only sends the latest frame that could be processed to the server
 # 4. OpenCV image stream is processed in a separate thread
-# 5. JPEG Encoding is processed in another separate thread
-# 6. Processed frames are sent to the server in another separate thread
+# 5. Inferencing is done in another separate thread
+# 6. JPEG Encoding is processed in another separate thread
+# 7. Processed frames are sent to the server in another separate thread
 ########################################################################
 
 ########################################################################
-#TODO !!! TCP CLIENT IS SENDING AT MAX SPEED, INCLUDING DUPLICATES, FIX SOON
-#TODO in addition, server shall process each stream in a separate thread to reduce latency (maybe)
-#TODO in addition, move to publisher to remove blocking latency (maybe)
 #TODO in addition, reduce the size of the jpeg before sending
-#TODO convert main() to use a for loop to start multi cam
 #TODO the threads doesnt exit(?)
 ########################################################################
 
-#starts the camera and sends data received from clientStream
-#clientStream is started on a separate thread for each camera
-#clientEncoder will encode and do optimizations to the image before sending
-#tcp client will always try to send the latest frame encoded
-#FPS counter on the server
-def maine(): #testing object to json
-    infTest = ImageInference(1)
-    infTest.addData({"hello": "world"})
-    pickled = infTest.asJson() #send this string to the server
-    print(pickled)
-
-def main():
-    cam0 = ClientStream(0).start()
-    cam0Encoder = ClientEncoder(cam0).start()
-    #tcpClient0 = ClientTCP("Cam 0", cam0Encoder, HOST, PORT, startAsPublisher).start()
-    camProc = ClientProcessor(cam0Encoder).start()
- 
-    while(True):
+#Client class to start multiple cameras
+class Client():
+    def __init__(self, cameraId):
+        #init video stream. The sequence of these can be swapped at any time but the stream must start first
+        self.videoStream = VideoStream(cameraId).start()
+        self.videoProcessor = VideoProcessor(self.videoStream).start()
+        self.videoEncoder = VideoEncoder(self.videoProcessor).start()
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        #get the processed image with bounding boxes
-        cv2.imshow('clientFrame', camProc.getProcessedFrame()) #cam0.getFrame()
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        self.videoDebug = self.videoStream.startDebug()
+
+        #init audio stream
+        self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
+        self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
+
+        #init sensor stream #or maybe no need?
+
+        #init TCP connection
+        self.sendVideoStream = False
+        #self.videoTCP = ClientTCP(f"Cam {cameraId}", self.videoEncoder, HOST, PORT,startAsPublisher).start() #TODO change to overall TCP connection
+
+    
+    def stop(self):
+        self.videoStream.complete()
+        self.videoProcessor.complete()
+        self.videoEncoder.complete()
+
+        self.audioStream.complete()
+        self.audioProcessor.complete()
+
+
+#run main code
+def main():
+    #run as many clients as you want as long as it is one camera per Client object
+    cam0 = Client("vlc.mp4") #can swap in with a .mp4 file to test without camera
+
+    while(True): #show for client 0
+        if keyboard.is_pressed('q'):
             break
 
-    cam0.complete()
-    cam0Encoder.complete()
-    camProc.complete()
-    #tcpClient0.complete()
-    #DEBUG PREVIEW can be removed if client doesnt need to preview
-    cv2.destroyAllWindows()
+    cam0.stop()
     sys.exit(0)
 
 #run main
