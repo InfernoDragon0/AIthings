@@ -5,9 +5,11 @@ from video.videoStream import VideoStream
 from video.videoEncoder import VideoEncoder
 from video.videoProcessor import VideoProcessor
 from clientTCP import ClientTCP
+from clientProcessor import ClientProcessor
 import cv2
 import sys
 import keyboard
+import simplejpeg
 
 #NETWORK CONFIG
 HOST = "192.168.1.53"
