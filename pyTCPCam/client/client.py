@@ -5,10 +5,6 @@ from video.videoStream import VideoStream
 from video.videoEncoder import VideoEncoder
 from video.videoProcessor import VideoProcessor
 from clientTCP import ClientTCP
-import cv2
-import sys
-import keyboard
-import simplejpeg
 
 #NETWORK CONFIG
 HOST = "192.168.1.53"
@@ -36,15 +32,15 @@ class Client():
     def __init__(self, cameraId):
         #init video stream. The sequence of these can be swapped at any time but the stream must start first
         self.videoStream = VideoStream(cameraId).start()
-        #self.videoEncoder = VideoEncoder(self.videoStream).start()
         self.videoProcessor = VideoProcessor(self.videoStream).start()
+        self.videoEncoder = VideoEncoder(self.videoProcessor).start()
 
         #DEBUG PREVIEW can remove this if client doesnt need to preview
         self.videoDebug = self.videoProcessor.startDebug()
 
         #init audio stream
-        #self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
-        #self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
+        self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
+        self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
 
         #init sensor stream #or maybe no need?
 
@@ -56,10 +52,10 @@ class Client():
     def stop(self):
         self.videoStream.complete()
         self.videoProcessor.complete()
-        #self.videoEncoder.complete()
+        self.videoEncoder.complete()
 
-        #self.audioStream.complete()
-        #self.audioProcessor.complete()
+        self.audioStream.complete()
+        self.audioProcessor.complete()
 
 
 #run main code
