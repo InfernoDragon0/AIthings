@@ -1,11 +1,13 @@
+from audio.audioStream import AudioStream
+from audio.audioProcessor import AudioProcessor
 from data.imageInference import ImageInference
 from video.videoStream import VideoStream
 from video.videoEncoder import VideoEncoder
 from video.videoProcessor import VideoProcessor
 from clientTCP import ClientTCP
-
 import cv2
 import sys
+import keyboard
 
 #NETWORK CONFIG
 HOST = "192.168.1.53"
@@ -35,8 +37,12 @@ class Client():
         self.videoStream = VideoStream(cameraId).start()
         self.videoProcessor = VideoProcessor(self.videoStream).start()
         self.videoEncoder = VideoEncoder(self.videoProcessor).start()
+        #DEBUG PREVIEW can remove this if client doesnt need to preview
+        self.videoDebug = self.videoStream.startDebug()
 
         #init audio stream
+        self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
+        self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
 
         #init sensor stream #or maybe no need?
 
@@ -50,20 +56,20 @@ class Client():
         self.videoProcessor.complete()
         self.videoEncoder.complete()
 
+        self.audioStream.complete()
+        self.audioProcessor.complete()
+
+
 #run main code
 def main():
     #run as many clients as you want as long as it is one camera per Client object
-    cam0 = Client(0) #can swap in with a .mp4 file to test without camera
+    cam0 = Client("vlc.mp4") #can swap in with a .mp4 file to test without camera
 
     while(True): #show for client 0
-        #DEBUG PREVIEW can remove this if client doesnt need to preview
-        cv2.imshow('clientFrame', cam0.videoProcessor.getFrame()) 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if keyboard.is_pressed('q'):
             break
 
     cam0.stop()
-    #DEBUG PREVIEW can be removed if client doesnt need to preview
-    cv2.destroyAllWindows()
     sys.exit(0)
 
 #run main

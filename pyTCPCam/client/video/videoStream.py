@@ -14,6 +14,19 @@ class VideoStream:
     def start(self):
         Thread(target=self.readFrames, args=()).start()
         return self
+
+    #run a thread to show frames continuously
+    def startDebug(self):
+        Thread(target=self.showFrames, args=()).start()
+        return self
+
+    def showFrames(self):
+        while True:
+            if self.completed:
+                return
+
+            cv2.imshow('clientFrame', self.getFrame())
+            cv2.waitKey(1)
     
     #Read loop for getting OpenCV images
     def readFrames(self):
@@ -31,3 +44,4 @@ class VideoStream:
     #end the thread
     def complete(self):
         self.completed = True
+        cv2.destroyAllWindows()
