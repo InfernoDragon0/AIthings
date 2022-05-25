@@ -37,6 +37,7 @@ class Client():
         self.videoStream = VideoStream(cameraId).start()
         self.videoProcessor = VideoProcessor(self.videoStream).start()
         self.videoEncoder = VideoEncoder(self.videoProcessor).start()
+        #DEBUG PREVIEW can remove this if client doesnt need to preview
         self.videoDebug = self.videoStream.startDebug()
 
         #init audio stream
@@ -65,13 +66,10 @@ def main():
     cam0 = Client("vlc.mp4") #can swap in with a .mp4 file to test without camera
 
     while(True): #show for client 0
-        #DEBUG PREVIEW can remove this if client doesnt need to preview
         if keyboard.is_pressed('q'):
             break
 
     cam0.stop()
-    #DEBUG PREVIEW can be removed if client doesnt need to preview
-
     sys.exit(0)
 
 #run main
