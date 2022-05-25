@@ -24,7 +24,6 @@ startAsPublisher = False #set to True for PUBSUB. Server must run in PUBSUB mode
 ########################################################################
 
 ########################################################################
-#TODO in addition, server shall process each stream in a separate thread to reduce latency (maybe)
 #TODO in addition, reduce the size of the jpeg before sending
 #TODO the threads doesnt exit(?)
 ########################################################################
