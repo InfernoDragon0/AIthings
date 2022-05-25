@@ -39,7 +39,7 @@ class Client():
         self.videoProcessor = VideoProcessor(self.videoStream).start()
         self.videoEncoder = VideoEncoder(self.videoProcessor).start()
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        self.videoDebug = self.videoProcessor.startDebug()
+        #self.videoDebug = self.videoProcessor.startDebug()
 
         #init audio stream
         self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
@@ -67,6 +67,8 @@ def main():
     cam0 = Client(0) #can swap in with a .mp4 file to test without camera
 
     while(True): #show for client 0
+        cv2.imshow("clientframe", cam0.videoProcessor.getFrame())
+        cv2.waitKey(1)
         if keyboard.is_pressed('q'):
             break
 
