@@ -1,4 +1,4 @@
-import jsonpickle
+# import jsonpickle
 import time
 #Base class to be inherited for other inferences
 class BaseInference():
@@ -12,6 +12,6 @@ class BaseInference():
         self.inferredData.append(data)
 
     #convert the data to json for sending to server
-    def asJson(self):
-        return jsonpickle.encode(self)
+    #def asJson(self):
+        # return jsonpickle.encode(self)
         #SAMPLE: {packetType:"Base", inferredData:[{data:x, data2:y}, {data:x, data2:y}]}

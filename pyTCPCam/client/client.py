@@ -5,9 +5,6 @@ from video.videoStream import VideoStream
 from video.videoEncoder import VideoEncoder
 from video.videoProcessor import VideoProcessor
 from clientTCP import ClientTCP
-import cv2
-import sys
-import keyboard
 
 #NETWORK CONFIG
 HOST = "192.168.1.53"
@@ -37,8 +34,9 @@ class Client():
         self.videoStream = VideoStream(cameraId).start()
         self.videoProcessor = VideoProcessor(self.videoStream).start()
         self.videoEncoder = VideoEncoder(self.videoProcessor).start()
+
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        self.videoDebug = self.videoStream.startDebug()
+        self.videoDebug = self.videoProcessor.startDebug()
 
         #init audio stream
         self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
@@ -47,7 +45,7 @@ class Client():
         #init sensor stream #or maybe no need?
 
         #init TCP connection
-        self.sendVideoStream = False
+        #self.sendVideoStream = False
         #self.videoTCP = ClientTCP(f"Cam {cameraId}", self.videoEncoder, HOST, PORT,startAsPublisher).start() #TODO change to overall TCP connection
 
     
@@ -63,14 +61,14 @@ class Client():
 #run main code
 def main():
     #run as many clients as you want as long as it is one camera per Client object
-    cam0 = Client("vlc.mp4") #can swap in with a .mp4 file to test without camera
+    cam0 = Client(0) #can swap in with a .mp4 file to test without camera
 
-    while(True): #show for client 0
-        if keyboard.is_pressed('q'):
-            break
+    # while(True): #show for client 0
+    #     if keyboard.is_pressed('q'):
+    #         break
 
-    cam0.stop()
-    sys.exit(0)
+    #cam0.stop()
+    #sys.exit(0)
 
 #run main
 if __name__ == '__main__':

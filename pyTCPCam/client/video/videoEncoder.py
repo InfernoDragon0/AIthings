@@ -23,15 +23,11 @@ class VideoEncoder:
             if self.completed:
                 return
 
-            if (not self.stream.ready):
-                continue
-
             self.encodedFrame = simplejpeg.encode_jpeg(self.stream.getFrame(), self.quality, colorspace='BGR')
             #move to tcp side
             self.imageInference = ImageInference()
             self.imageInference.setImageData(self.encodedFrame)
             self.imageInference.addData({"temporray": "encoder"})
-            self.stream.ready = False
             self.ready = True
             #print(jsonpickle.encode(self.imageInference))
     
