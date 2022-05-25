@@ -5,7 +5,6 @@ from video.videoStream import VideoStream
 from video.videoEncoder import VideoEncoder
 from video.videoProcessor import VideoProcessor
 from clientTCP import ClientTCP
-from clientProcessor import ClientProcessor
 import cv2
 import sys
 import keyboard
@@ -40,7 +39,7 @@ class Client():
         self.videoProcessor = VideoProcessor(self.videoStream).start()
         self.videoEncoder = VideoEncoder(self.videoProcessor).start()
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        self.videoDebug = self.videoStream.startDebug()
+        self.videoDebug = self.videoProcessor.startDebug()
 
         #init audio stream
         self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
@@ -65,7 +64,7 @@ class Client():
 #run main code
 def main():
     #run as many clients as you want as long as it is one camera per Client object
-    cam0 = Client("vlc.mp4") #can swap in with a .mp4 file to test without camera
+    cam0 = Client(0) #can swap in with a .mp4 file to test without camera
 
     while(True): #show for client 0
         if keyboard.is_pressed('q'):
