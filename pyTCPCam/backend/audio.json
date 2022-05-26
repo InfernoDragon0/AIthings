@@ -1,0 +1,1 @@
+{"py/object": "data.audioInference.AudioInference", "packetType": "Audio", "inferredData": [{"name": "speech", "value": "0.5"}, {"name": "sound", "value": "0.2"}, {"name": "table", "value": "0.1"}, {"name": "footstep", "value": "0.1"}, {"name": "unknown", "value": "0.1"}], "timestamp": 1653474018.4336076, "audioData": null}
