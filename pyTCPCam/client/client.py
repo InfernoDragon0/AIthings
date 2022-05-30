@@ -1,15 +1,16 @@
-from data.baseInference import BaseInference
+from time import sleep
+from audio.audioStream import AudioStream
+from audio.audioProcessor import AudioProcessor
 from data.imageInference import ImageInference
-from clientEncoder import ClientEncoder
-from clientStream import ClientStream
+from video.videoStream import VideoStream
+from video.videoEncoder import VideoEncoder
+from video.videoProcessor import VideoProcessor
 from clientTCP import ClientTCP
-import cv2
-import sys
+import multiprocessing
 
 #NETWORK CONFIG
 HOST = "192.168.1.53"
 PORT = 8100
-startAsPublisher = False #set to True for PUBSUB. Server must run in PUBSUB mode as well
 
 ########################################################################
 # Optimizations done:
@@ -17,47 +18,86 @@ startAsPublisher = False #set to True for PUBSUB. Server must run in PUBSUB mode
 # 2. Reduce the jpeg image quality to 40
 # 3. Only sends the latest frame that could be processed to the server
 # 4. OpenCV image stream is processed in a separate thread
-# 5. JPEG Encoding is processed in another separate thread
-# 6. Processed frames are sent to the server in another separate thread
+# 5. Inferencing is done in another separate thread
+# 6. JPEG Encoding is processed in another separate thread
+# 7. The client is separated into two processes, one for camera, one for audio
 ########################################################################
 
 ########################################################################
-#TODO !!! TCP CLIENT IS SENDING AT MAX SPEED, INCLUDING DUPLICATES, FIX SOON
-#TODO in addition, server shall process each stream in a separate thread to reduce latency (maybe)
-#TODO in addition, move to publisher to remove blocking latency (maybe)
-#TODO in addition, reduce the size of the jpeg before sending
-#TODO convert main() to use a for loop to start multi cam
-#TODO the threads doesnt exit(?)
+#TODO the flag is used to tell the process to stop. Not implemented yet.
 ########################################################################
 
-#starts the camera and sends data received from clientStream
-#clientStream is started on a separate thread for each camera
-#clientEncoder will encode and do optimizations to the image before sending
-#tcp client will always try to send the latest frame encoded
-#FPS counter on the server
-def main(): #testing object to json
-    infTest = ImageInference(1)
-    infTest.addData({"hello": "world"})
-    pickled = infTest.asJson() #send this string to the server
-    print(pickled)
+#Client class to start multiple cameras
+class Client():
+    def __init__(self, cameraId):
+        self.flag = multiprocessing.Value("I", True)
+        self.camProcess = multiprocessing.Process(target=self.runCam, args=(cameraId,self.flag))
+        self.camProcess.start()
+        #self.camProcess.join()
 
-def maine():
-    cam0 = ClientStream(0).start()
-    cam0Encoder = ClientEncoder(cam0).start()
-    tcpClient0 = ClientTCP("Cam 0", cam0Encoder, HOST, PORT, startAsPublisher).start()
- 
-    while(True):
+        #init TCP connection
+        #self.sendVideoStream = False
+        #self.videoTCP = ClientTCP(f"Cam {cameraId}", self.videoEncoder, HOST, PORT,startAsPublisher).start() #TODO change to overall TCP connection
+
+    def runCam(self, cameraId, flag):
+        #init video stream
+        self.tcp = ClientTCP(f"Cam {cameraId}", HOST, PORT)
+        self.videoStream = VideoStream(cameraId).start()
+        self.videoProcessor = VideoProcessor(self.videoStream).start()
+        self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
+
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        cv2.imshow('clientFrame', cam0.getFrame()) 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        self.videoDebug = self.videoProcessor.startDebug()
 
-    cam0.complete()
-    cam0Encoder.complete()
-    tcpClient0.complete()
-    #DEBUG PREVIEW can be removed if client doesnt need to preview
-    cv2.destroyAllWindows()
-    sys.exit(0)
+        # while (flag.value):
+        #     pass
+
+        # print("Video stream terminating")
+        # self.videoStream.complete()
+        # self.videoProcessor.complete()
+        # self.videoEncoder.complete()
+
+    def stop(self):
+        self.camProcess.terminate()
+        
+
+class AudioClient():
+    def __init__(self, cameraId):
+        self.flag = multiprocessing.Value("I", True)
+        self.audioProcess = multiprocessing.Process(target=self.runAudio, args=(cameraId, self.flag))
+        self.audioProcess.start()
+
+    def runAudio(self, cameraId, flag):
+        #init audio stream
+        self.tcp = ClientTCP(f"Audio {cameraId}", HOST, PORT)
+        self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
+        self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream, self.tcp).start()
+
+        # while (flag.value):
+        #     pass
+    
+        # print("Audio stream terminating")
+        # self.audioStream.complete()
+        # self.audioProcessor.complete()
+
+    def stop(self):
+        self.audioProcess.terminate()
+
+#run main code
+def main():
+    #run as many clients as you want as long as it is one camera per Client object
+    cam0 = Client(0) #can swap in with a .mp4 file to test without camera
+    audio0 = AudioClient(0)
+    
+
+    # while(True): #show for client 0
+    #     if keyboard.is_pressed('q'):
+    #         break
+
+    sleep(20)
+    cam0.stop()
+    audio0.stop()
+    #sys.exit(0)
 
 #run main
 if __name__ == '__main__':

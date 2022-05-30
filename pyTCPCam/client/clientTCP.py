@@ -1,43 +1,42 @@
-import imagezmq
 from threading import Thread
+import socket
+import jsonpickle
 
 #connects to a TCP server to send image data over the network
-#TODO as there is no wait time, tcp client may try to keep sending the exact same frame resulting in 300fps being sent
-#if it does not affect performance, does not matter.
-
+#TODO test if a thread is better or worse?
 
 class ClientTCP:
-    def __init__(self, name, encoder, host, port, pubSub):
-        self.encoder = encoder
-        self.sender = imagezmq.ImageSender(connect_to=f"tcp://{host}:{port}") #As Client
+    def __init__(self, name, host, port):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.host = host
+        self.port = port
         self.name = name
         self.completed = False
-        self.current_frame = self.encoder.getEncodedFrame() #get initial frame
+        self.data = None
+        self.connect()
 
-        if (pubSub):
-            self.sender = imagezmq.ImageSender(connect_to=f"tcp://0.0.0.0:{port}", REQ_REP=False) #As Publisher
+    def connect(self):
+        try:
+            self.socket.connect((self.host, self.port))
+            self.socket.sendall(str.encode(f"HELLO:{self.name}"))
+        except socket.error as e:
+            print(e)
     
     def start(self):
         Thread(target=self.sendData, args=()).start()
         return self
     
     def sendData(self):
-        while True:
-            if self.completed:
-                return
-            #this check slows it down, probably because the TCP server is sending at 10x the encoding speed
-            # if (self.current_frame == self.encoder.getEncodedFrame()):
-            #     continue
-            if (not self.encoder.ready):
-                continue
-            
-            self.encoder.ready = False
-            self.current_frame = self.encoder.getEncodedFrame()
-            try:
-                self.sender.send_jpg(self.name, self.current_frame)
-            except Exception as e:
-                print(e)
+        try:
+            self.socket.sendall(str.encode(jsonpickle.encode(self.data)))
+        except Exception as e:
+            self.connect()
+            print(f"reconnecting to server {e}")
+            self.sendData(self)
     
+    def addData(self, data):
+        self.data = data
+
     def complete(self):
         self.completed = True
 
