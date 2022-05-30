@@ -21,11 +21,11 @@ startAsPublisher = False #set to True for PUBSUB. Server must run in PUBSUB mode
 # 4. OpenCV image stream is processed in a separate thread
 # 5. Inferencing is done in another separate thread
 # 6. JPEG Encoding is processed in another separate thread
+# 7. The client is separated into two processes, one for camera, one for audio
 ########################################################################
 
 ########################################################################
-#TODO in addition, reduce the size of the jpeg before sending
-#TODO convert to 2 processes per Client
+#TODO the flag is used to tell the process to stop. Not implemented yet.
 ########################################################################
 
 #Client class to start multiple cameras
