@@ -34,7 +34,7 @@ class Client():
         self.flag = multiprocessing.Value("I", True)
         self.camProcess = multiprocessing.Process(target=self.runCam, args=(cameraId,self.flag))
         self.camProcess.start()
-        self.camProcess.join()
+        #self.camProcess.join()
 
         #init TCP connection
         #self.sendVideoStream = False
@@ -64,9 +64,9 @@ class Client():
 class AudioClient():
     def __init__(self, cameraId):
         self.flag = multiprocessing.Value("I", True)
-        self.audioProcess = multiprocessing.Process(target=self.runAudio, args=(self.flag))
+        self.audioProcess = multiprocessing.Process(target=self.runAudio, args=(self.flag,))
         self.audioProcess.start()
-        self.audioProcess.join()
+        #self.audioProcess.join()
 
     def runAudio(self, flag):
         #init audio stream
