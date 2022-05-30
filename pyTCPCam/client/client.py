@@ -1,3 +1,4 @@
+from time import sleep
 from audio.audioStream import AudioStream
 from audio.audioProcessor import AudioProcessor
 from data.imageInference import ImageInference
@@ -5,6 +6,7 @@ from video.videoStream import VideoStream
 from video.videoEncoder import VideoEncoder
 from video.videoProcessor import VideoProcessor
 from clientTCP import ClientTCP
+import multiprocessing
 
 #NETWORK CONFIG
 HOST = "192.168.1.53"
@@ -24,12 +26,27 @@ startAsPublisher = False #set to True for PUBSUB. Server must run in PUBSUB mode
 
 ########################################################################
 #TODO in addition, reduce the size of the jpeg before sending
-#TODO the threads doesnt exit(?)
+#TODO convert to 2 processes per Client
 ########################################################################
 
 #Client class to start multiple cameras
 class Client():
     def __init__(self, cameraId):
+        self.flag = multiprocessing.Value("I", True)
+        self.camProcess = multiprocessing.Process(target=self.runCam, args=(cameraId,self.flag))
+        self.audioProcess = multiprocessing.Process(target=self.runAudio, args=(self.flag))
+
+        self.camProcess.start()
+        self.audioProcess.start()
+
+        self.camProcess.join()
+        self.audioProcess.join()
+
+        #init TCP connection
+        #self.sendVideoStream = False
+        #self.videoTCP = ClientTCP(f"Cam {cameraId}", self.videoEncoder, HOST, PORT,startAsPublisher).start() #TODO change to overall TCP connection
+
+    def runCam(self, cameraId, flag):
         #init video stream. The sequence of these can be swapped at any time but the stream must start first
         self.videoStream = VideoStream(cameraId).start()
         self.videoProcessor = VideoProcessor(self.videoStream).start()
@@ -38,25 +55,29 @@ class Client():
         #DEBUG PREVIEW can remove this if client doesnt need to preview
         self.videoDebug = self.videoProcessor.startDebug()
 
+        while (flag.value):
+            pass
+
+        print("Video stream terminating")
+        self.videoStream.complete()
+        self.videoProcessor.complete()
+        self.videoEncoder.complete()
+    
+    def runAudio(self, flag):
         #init audio stream
         self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
         self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
 
-        #init sensor stream #or maybe no need?
-
-        #init TCP connection
-        #self.sendVideoStream = False
-        #self.videoTCP = ClientTCP(f"Cam {cameraId}", self.videoEncoder, HOST, PORT,startAsPublisher).start() #TODO change to overall TCP connection
-
+        while (flag.value):
+            pass
     
-    def stop(self):
-        self.videoStream.complete()
-        self.videoProcessor.complete()
-        self.videoEncoder.complete()
-
+        print("Audio stream terminating")
         self.audioStream.complete()
         self.audioProcessor.complete()
 
+    def stop(self):
+        self.flag.value = False
+        
 
 #run main code
 def main():
@@ -67,7 +88,8 @@ def main():
     #     if keyboard.is_pressed('q'):
     #         break
 
-    #cam0.stop()
+    sleep(20)
+    cam0.stop()
     #sys.exit(0)
 
 #run main
