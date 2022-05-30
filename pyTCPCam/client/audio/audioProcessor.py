@@ -69,7 +69,7 @@ class AudioProcessor():
             
 
             self.inferredResults = sorted(results,key=itemgetter(1),reverse=True)
-            
+            self.audioStream.ready = False
             #and send the data over tcp, every x seconds [TODO to send only when alert or something]
             #since audio is already every 1 second no need a separate timer to check
             #if self.timestamp + self.tcpTime < time.time():
