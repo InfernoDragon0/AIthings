@@ -5,7 +5,8 @@ from data.imageInference import ImageInference
 
 #unified to be able to change the sequence of these without any issues
 class VideoEncoder:
-    def __init__(self, stream):
+    def __init__(self, stream, tcp):
+        self.tcp = tcp
         self.stream = stream
         self.completed = False
         self.quality = 40
@@ -24,11 +25,12 @@ class VideoEncoder:
                 return
 
             self.encodedFrame = simplejpeg.encode_jpeg(self.stream.getFrame(), self.quality, colorspace='BGR')
-            #move to tcp side
+            
+            #and send the data over tcp
             self.imageInference = ImageInference()
-            self.imageInference.setImageData(self.encodedFrame)
             self.imageInference.addData({"temporray": "encoder"})
-            self.ready = True
+            self.tcp.addData(self.imageInference)
+            self.tcp.start()
             #print(jsonpickle.encode(self.imageInference))
     
     #unified to reduce changes
