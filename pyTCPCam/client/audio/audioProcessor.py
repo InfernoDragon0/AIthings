@@ -1,18 +1,23 @@
 from time import sleep
 import numpy as np
+from data.audioInference import AudioInference
 import yamnet.params as yamnet_params
 import yamnet.yamnet as yamnet_model
 import yamnet.metadata as metadata
 from operator import itemgetter
 from threading import Thread
+import time
 
 class AudioProcessor():
-    def __init__(self, fileName, listenWindow, audioStream): #loading takes a long time, separate thread?
+    def __init__(self, fileName, listenWindow, audioStream, tcp): #loading takes a long time, separate thread?
         self.params = yamnet_params.Params()
         self.yamnet = yamnet_model.yamnet_frames_model(self.params)
         self.yamnet.load_weights(fileName)
         self.yamnet_classes = np.array([x['name'] for x in metadata.CAT_META])
         self.inferredResults = []
+        #self.timestamp = time.time()
+        #self.tcpTime = 1
+        self.tcp = tcp
         self.listenWindow = listenWindow
         self.audioStream = audioStream
         self.completed = False
@@ -64,5 +69,14 @@ class AudioProcessor():
             
 
             self.inferredResults = sorted(results,key=itemgetter(1),reverse=True)
-            self.audioStream.ready = False
+            
+            #and send the data over tcp, every x seconds [TODO to send only when alert or something]
+            #since audio is already every 1 second no need a separate timer to check
+            #if self.timestamp + self.tcpTime < time.time():
+                #self.timestamp = time.time()
+            self.audioInference = AudioInference()
+            self.audioInference.inferredData = self.inferredResults
+            self.tcp.addData(self.audioInference)
+            self.tcp.start()
+            
             print(self.inferredResults)
