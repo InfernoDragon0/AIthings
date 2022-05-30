@@ -33,7 +33,7 @@ class VideoEncoder:
             if self.timestamp + self.tcpTime < time.time():
                 self.timestamp = time.time()
                 self.imageInference = ImageInference()
-                self.imageInference.addData({"temporray": "encoder"})
+                self.imageInference.inferredData = self.stream.result
                 self.tcp.addData(self.imageInference)
                 self.tcp.start()
                 #print(jsonpickle.encode(self.imageInference))

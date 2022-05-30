@@ -76,7 +76,7 @@ class AudioProcessor():
                 #self.timestamp = time.time()
             self.audioInference = AudioInference()
             for k,v in enumerate(self.inferredResults):
-                self.audioInference.addInferenceData(v[0], v[1])
+                self.audioInference.addInferenceData(v[0], str(v[1]))
 
             self.tcp.addData(self.audioInference)
             self.tcp.start()
