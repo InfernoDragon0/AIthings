@@ -28,15 +28,16 @@ class AudioStream:
         self.listenType = listenType
         self.listenWindow = listenWindow
         self.completed = False
+        self.micIndex = 11
 
         try:
             self.CHANNELS = 2
-            self.stream = self.audio.open(format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
+            self.stream = self.audio.open(input_device_index=self.micIndex, format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
             logging.info("Microphone successfully started")
 
         except Exception as e:
             self.CHANNELS = 1
-            self.stream = self.audio.open(format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
+            self.stream = self.audio.open(input_device_index=self.micIndex, format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
             logging.info("Switching to mono channel microphone")
             logging.info("Microphone successfully started")
     
