@@ -68,10 +68,10 @@ class AudioClient():
         self.audioProcess.start()
         #self.audioProcess.join()
 
-    def runAudio(self, flag):
+    #def runAudio(self, flag):
         #init audio stream
-        self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
-        self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
+        #self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
+        #self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
 
         # while (flag.value):
         #     pass
