@@ -1,5 +1,5 @@
-from audio.audioStream import AudioStream
-from audio.audioProcessor import AudioProcessor
+#from audio.audioStream import AudioStream
+#from audio.audioProcessor import AudioProcessor
 from data.imageInference import ImageInference
 from video.videoStream import VideoStream
 from video.videoEncoder import VideoEncoder
@@ -39,8 +39,8 @@ class Client():
         self.videoDebug = self.videoProcessor.startDebug()
 
         #init audio stream
-        self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
-        self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
+        #self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
+        #self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
 
         #init sensor stream #or maybe no need?
 
