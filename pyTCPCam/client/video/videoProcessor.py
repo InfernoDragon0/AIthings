@@ -91,14 +91,9 @@ class VideoProcessor():
                 area = width * height
                 percent = area / msb_area
 
-                if percent < 0.5: #intersecting < 50% of msb_area
-                    final_dict_array.append(dict) # add the dict into the final array
-                    dict_array.remove(dict) #removed to prevent dupes in final array
-                    #TODO: TIDY UP AND OPTIMIZE
-                    # Actually, from here, you can just remove those that intersect more than 0.5,
-                    # those less than 0.5 can stay so it can be compared to each other
-                else: #intersecting > 50% of msb_area (meaning too much overlap, hence, remove it)
+                if percent > 0.5: #intersecting > 50%, hence remove dict from array
                     dict_array.remove(dict)
+                #those < 50% can keep to be checked with the rest that are not eliminated
 
         return final_dict_array
     
