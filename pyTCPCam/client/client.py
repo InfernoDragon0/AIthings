@@ -11,7 +11,6 @@ import multiprocessing
 #NETWORK CONFIG
 HOST = "192.168.1.53"
 PORT = 8100
-startAsPublisher = False #set to True for PUBSUB. Server must run in PUBSUB mode as well
 
 ########################################################################
 # Optimizations done:
@@ -41,10 +40,11 @@ class Client():
         #self.videoTCP = ClientTCP(f"Cam {cameraId}", self.videoEncoder, HOST, PORT,startAsPublisher).start() #TODO change to overall TCP connection
 
     def runCam(self, cameraId, flag):
-        #init video stream. The sequence of these can be swapped at any time but the stream must start first
+        #init video stream
+        self.tcp = ClientTCP(f"Cam {cameraId}", HOST, PORT)
         self.videoStream = VideoStream(cameraId).start()
         self.videoProcessor = VideoProcessor(self.videoStream).start()
-        self.videoEncoder = VideoEncoder(self.videoProcessor).start()
+        self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
 
         #DEBUG PREVIEW can remove this if client doesnt need to preview
         self.videoDebug = self.videoProcessor.startDebug()
@@ -64,14 +64,14 @@ class Client():
 class AudioClient():
     def __init__(self, cameraId):
         self.flag = multiprocessing.Value("I", True)
-        self.audioProcess = multiprocessing.Process(target=self.runAudio, args=(self.flag,))
+        self.audioProcess = multiprocessing.Process(target=self.runAudio, args=(cameraId, self.flag))
         self.audioProcess.start()
-        #self.audioProcess.join()
 
-    #def runAudio(self, flag):
+    def runAudio(self, cameraId, flag):
         #init audio stream
-        #self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
-        #self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
+        self.tcp = ClientTCP(f"Audio {cameraId}", HOST, PORT)
+        self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
+        self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream, self.tcp).start()
 
         # while (flag.value):
         #     pass
@@ -88,6 +88,7 @@ def main():
     #run as many clients as you want as long as it is one camera per Client object
     cam0 = Client(0) #can swap in with a .mp4 file to test without camera
     audio0 = AudioClient(0)
+    
 
     # while(True): #show for client 0
     #     if keyboard.is_pressed('q'):

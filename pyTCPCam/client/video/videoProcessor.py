@@ -13,6 +13,7 @@ class VideoProcessor():
         self.stream = stream
         self.processedFrame = self.stream.getFrame()
         self.ready = False
+        self.result = None
     
     def start(self):
         Thread(target=self.process, args=()).start()
@@ -27,14 +28,14 @@ class VideoProcessor():
             #self.processedFrame is used to get the current frame
             #infer the image with the model to get the result
             image = self.stream.getFrame()
-            result = self.model.inference_json_result(image)
+            self.result = self.model.inference_json_result(image)
 
             if(len(result) > 1): #no need to bother with just 1 item in array
                 result = self.nms(result)
             print(result)
 
             #drawing the bounding boxes based on the result on the image
-            image = self.model.draw_box_xyxy(image, result)
+            image = self.model.draw_box_xyxy(image, self.result)
             self.setProcessedFrame(image)
             self.ready = True
 
