@@ -32,7 +32,7 @@ class VideoProcessor():
 
             if(len(self.result) > 1): #no need to bother with just 1 item in array
                 self.result = self.nms(self.result)
-            print(self.result)
+            #print(self.result)
 
             #drawing the bounding boxes based on the result on the image
             image = self.model.draw_box_xyxy(image, self.result)
