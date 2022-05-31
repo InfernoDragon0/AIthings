@@ -1,9 +1,6 @@
 from threading import Thread
-from typing import final
-from yolov5 import custom
 from yolo_wrapper import Process
 import cv2
-import simplejpeg
 
 #unified to be able to change the sequence of these without any issues
 class VideoProcessor():
