@@ -5,7 +5,7 @@ class VideoStream:
 
     #init and read one frame
     def __init__(self, camera):
-        self.stream = cv2.VideoCapture(camera, cv2.CAP_GSTREAMER)
+        self.stream = cv2.VideoCapture(camera, cv2.CAP_V4L)
         (self.available, self.frame) = self.stream.read()
         self.completed = False
     
