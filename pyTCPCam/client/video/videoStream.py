@@ -27,6 +27,7 @@ class VideoStream:
                 #print("frame available")
             #else:
                 #print("Not available")
+            sleep(0.2)
             
     
     #get the latest frame
