@@ -134,7 +134,7 @@ class AudioStream:
                 self.frames = frame
                 first = False
             else:
-                self.frames = np.concatenate((self.frames,frame),axis=1)
+                self.frames = np.concatenate((self.frames,frame),axis=0) #TODO axis debug
         self.ready = True
 
     def get_all_numpy_tf(self,prev_audio_frame_array): #TODO check threading
