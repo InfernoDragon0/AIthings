@@ -10,8 +10,8 @@ import multiprocessing
 import cv2
 
 #NETWORK CONFIG
-HOST = "127.0.0.1"
-PORT = 8100
+HOST = "192.168.1.195"
+PORT = 2004
 
 ########################################################################
 # Optimizations done:
@@ -43,10 +43,10 @@ class Client():
 
     def runCam(self, cameraId, flag):
         #init video stream
-        #self.tcp = ClientTCP(f"Cam {cameraId}", HOST, PORT)
+        self.tcp = ClientTCP(f"Cam {cameraId}", HOST, PORT)
         self.videoStream = VideoStream(cameraId).start()
         self.videoProcessor = VideoProcessor(self.videoStream).start()
-        #self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
+        self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
 
         #DEBUG PREVIEW can remove this if client doesnt need to preview
         self.videoDebug = self.videoProcessor.startDebug()
