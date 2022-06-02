@@ -16,15 +16,17 @@ def multi_threaded_client(connection):
         data = connection.recv(2048)
         try:
             info = data.decode("utf-8")
+
             print(info)
             for val in info["inferredData"]:
-                if val["name"] == "speech":
+                if val["name"] == "speech" and info == "1":
                     if float(val["value"]) >= 0.5:
                         audio_list.append(val["name"]+":"+ val["value"])
 
             print(audio_list)
         except Exception as e:
             print(f"data not a json? {e}: data is {data}")
+            #print("HELLO")
         if not data:
             break
 
@@ -40,3 +42,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             # for val in json["inferredData"]:
             #     audio_list.append(val["name"]+":"+ val["value"])
             # print(audio_list)
+        conn.close()    
+         
+    
