@@ -1,4 +1,5 @@
 from threading import Thread
+from time import sleep
 from yolo_wrapper import Process
 import cv2
 
@@ -35,6 +36,7 @@ class VideoProcessor():
             image = self.model.draw_box_xyxy(image, self.result)
             self.setProcessedFrame(image)
             self.ready = True
+            sleep(10)
 
     def asInferenceObject(self): #can remove if not needed
         return {"x": 123, "y": 234, "confidence": 1, "inferred": "Person"}

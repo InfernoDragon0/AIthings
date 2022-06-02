@@ -49,7 +49,7 @@ class Client():
         #self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
 
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        self.videoDebug = self.videoProcessor.startDebug()
+        self.videoDebug = self.videoStream.startDebug()
 
         # while (flag.value):
         #     pass
@@ -74,7 +74,7 @@ class AudioClient():
         #init audio stream
         #self.tcp = ClientTCP(f"Audio {cameraId}", HOST, PORT)
         self.audioStream = AudioStream(16000, cameraId, "numpy_tf", 1).start()
-        self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
+        #self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream).start()
 
         # while (flag.value):
         #     pass
