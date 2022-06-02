@@ -122,10 +122,12 @@ class AudioStream:
         self.ready = True
 
     def recorder_numpy_tf(self,listen_window):
+        
+        self.stream.read(self.stream.get_read_available(), exception_on_overflow = False)
 
         first = True
         for i in range(0,int(self.SAMPLERATE/self.CHUNK * listen_window)):
-            data = self.stream.read(self.CHUNK)
+            data = self.stream.read(self.CHUNK, exception_on_overflow = False)
             frame = np.frombuffer(data,dtype=np.int16)
             frame = frame/32768.0
             if self.CHANNELS == 2:
