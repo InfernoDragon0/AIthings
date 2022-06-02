@@ -34,7 +34,7 @@ class Client():
         self.flag = multiprocessing.Value("I", True)
         #self.camProcess = multiprocessing.Process(target=self.runCam, args=(cameraId,self.flag))
         #self.camProcess.start()
-        self.runCam(cameraId)
+        self.runCam(cameraId, False)
         #self.camProcess.join()
 
         #init TCP connection
