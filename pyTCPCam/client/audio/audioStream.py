@@ -13,7 +13,7 @@ class AudioStream:
     class FormatNotSupportedError(Exception):
         pass
 
-    def __init__(self, chunksize, listenType="raw", listenWindow=1):
+    def __init__(self, chunksize, micIndex, listenType="raw", listenWindow=1):
         """[summary]
         Args:
             chunksize ([type]): [description]
@@ -28,16 +28,16 @@ class AudioStream:
         self.listenType = listenType
         self.listenWindow = listenWindow
         self.completed = False
-        self.micIndex = 11
+        self.micIndex = micIndex
 
         try:
             self.CHANNELS = 2
-            self.stream = self.audio.open(format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
+            self.stream = self.audio.open(input_device_index=self.micIndex, format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
             logging.info("Microphone successfully started")
 
         except Exception as e:
             self.CHANNELS = 1
-            self.stream = self.audio.open(format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
+            self.stream = self.audio.open(input_device_index=self.micIndex, format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
             logging.info("Switching to mono channel microphone")
             logging.info("Microphone successfully started")
     

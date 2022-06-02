@@ -66,14 +66,15 @@ class Client():
 class AudioClient():
     def __init__(self, cameraId):
         self.flag = multiprocessing.Value("I", True)
-        self.audioProcess = multiprocessing.Process(target=self.runAudio, args=(cameraId, self.flag))
-        self.audioProcess.start()
+        #self.audioProcess = multiprocessing.Process(target=self.runAudio, args=(cameraId, self.flag))
+        #self.audioProcess.start()
+        self.runAudio(11, False)
 
     def runAudio(self, cameraId, flag):
         #init audio stream
-        self.tcp = ClientTCP(f"Audio {cameraId}", HOST, PORT)
-        self.audioStream = AudioStream(16000, "numpy_tf", 1).start()
-        self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream, self.tcp).start()
+        #self.tcp = ClientTCP(f"Audio {cameraId}", HOST, PORT)
+        self.audioStream = AudioStream(16000, cameraId, "numpy_tf", 1).start()
+        #self.audioProcessor = AudioProcessor('yamnet.h5', 1, self.audioStream, self.tcp).start()
 
         # while (flag.value):
         #     pass
@@ -89,8 +90,8 @@ class AudioClient():
 def main():
     #run as many clients as you want as long as it is one camera per Client object
     #cam0 = Client(0) #can swap in with a .mp4 file to test without camera
-    cam0 = Client("/dev/video0")
-    #audio0 = AudioClient(0)
+    #cam0 = Client("/dev/video0")
+    audio0 = AudioClient(0)
 
             
 
