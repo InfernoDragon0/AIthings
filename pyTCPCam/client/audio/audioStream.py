@@ -1,5 +1,6 @@
 """[summary]
 """
+from time import sleep
 import pyaudio
 import wave
 import logging
@@ -67,6 +68,7 @@ class AudioStream:
             [type]: [description]
         """
         while True:
+            sleep(4)
             if self.completed:
                 return
             print("audio loop running")
