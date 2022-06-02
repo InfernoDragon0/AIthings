@@ -31,9 +31,9 @@ class AudioStream:
         self.micIndex = micIndex
 
         try:
-            self.CHANNELS = 2
-            self.stream = self.audio.open(input_device_index=self.micIndex, format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
-            logging.info("Microphone successfully started")
+            self.CHANNELS = 1
+            self.stream = self.audio.open(format=self.FORMAT, channels=self.CHANNELS,input_device_index=self.micIndex,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
+            print("Microphone successfully started")
 
         except Exception as e:
             self.CHANNELS = 1
@@ -69,6 +69,7 @@ class AudioStream:
         while True:
             if self.completed:
                 return
+            print("audio loop running")
 
             if self.listenType == "numpy":
                 self.recorder_numpy(self.listenWindow)
