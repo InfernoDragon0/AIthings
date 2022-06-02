@@ -9,7 +9,7 @@ from threading import Thread
 import time
 
 class AudioProcessor():
-    def __init__(self, fileName, listenWindow, audioStream): #loading takes a long time, separate thread?
+    def __init__(self, fileName, listenWindow, audioStream, tcp): #loading takes a long time, separate thread?
         self.params = yamnet_params.Params()
         self.yamnet = yamnet_model.yamnet_frames_model(self.params)
         self.yamnet.load_weights(fileName)
@@ -17,7 +17,7 @@ class AudioProcessor():
         self.inferredResults = []
         #self.timestamp = time.time()
         #self.tcpTime = 1
-        #self.tcp = tcp
+        self.tcp = tcp
         self.listenWindow = listenWindow
         self.audioStream = audioStream
         self.completed = False
@@ -79,7 +79,7 @@ class AudioProcessor():
             for k,v in enumerate(self.inferredResults):
                 self.audioInference.addInferenceData(v[0], str(v[1]))
 
-            #self.tcp.addData(self.audioInference)
-            #self.tcp.start()
+            self.tcp.addData(self.audioInference)
+            self.tcp.start()
             
             print(self.inferredResults)
