@@ -2,7 +2,7 @@ from threading import Thread
 from time import sleep
 from yolo_wrapper import Process
 import cv2
-
+import time
 #unified to be able to change the sequence of these without any issues
 class VideoProcessor():
     def __init__(self, stream):
@@ -26,7 +26,11 @@ class VideoProcessor():
             #self.processedFrame is used to get the current frame
             #infer the image with the model to get the result
             image = self.stream.getFrame()
+            start = time.time()
             self.result = self.model.inference_json_result(image)
+            end = time.time()
+
+            print(end - start)
 
             if(len(self.result) > 1): #no need to bother with just 1 item in array
                 self.result = self.nms(self.result)
