@@ -47,6 +47,7 @@ class AudioProcessor():
                 continue
 
             print("Listening")
+            start = time.time()
             audio_data = np.transpose(self.audioStream.getFrames())
             if len(audio_data.shape) > 1:
                 audio_data = np.mean(audio_data,axis=1)
@@ -67,7 +68,8 @@ class AudioProcessor():
 
             unknown_class_score = 1.0 - total_scores
             results.append(("unknown",unknown_class_score))
-            
+            end = time.time()
+            print(f"Audio Inference:{end-start}")
 
             self.inferredResults = sorted(results,key=itemgetter(1),reverse=True)
             self.audioStream.ready = False

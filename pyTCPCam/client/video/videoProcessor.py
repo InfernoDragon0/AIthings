@@ -30,7 +30,7 @@ class VideoProcessor():
             self.result = self.model.inference_json_result(image)
             end = time.time()
 
-            print(end - start)
+            print(f"Image Inference:{end-start}")
 
             if(len(self.result) > 1): #no need to bother with just 1 item in array
                 self.result = self.nms(self.result)
