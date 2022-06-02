@@ -87,7 +87,7 @@ class AudioClient():
 def main():
     #run as many clients as you want as long as it is one camera per Client object
     #cam0 = Client(0) #can swap in with a .mp4 file to test without camera
-    cam0 = Client(0)
+    cam0 = Client("/dev/video0")
     #audio0 = AudioClient(0)
     
 

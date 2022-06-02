@@ -18,11 +18,15 @@ class VideoStream:
     #Read loop for getting OpenCV images
     def readFrames(self):
         while True:
+            print("running while loop")
             if self.completed:
                 return
             
             (self.available, self.frame) = self.stream.read()
-            cv2.imshow('clientFrame', self.getFrame())
+            if (self.available):
+                cv2.imshow('clientFrame', self.getFrame())
+            else:
+                print("Not available")
             cv2.waitKey(1)
     
     #get the latest frame
