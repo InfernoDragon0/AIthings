@@ -7,6 +7,7 @@ from video.videoEncoder import VideoEncoder
 from video.videoProcessor import VideoProcessor
 from clientTCP import ClientTCP
 import multiprocessing
+import cv2
 
 #NETWORK CONFIG
 HOST = "127.0.0.1"
@@ -87,16 +88,26 @@ class AudioClient():
 def main():
     #run as many clients as you want as long as it is one camera per Client object
     #cam0 = Client(0) #can swap in with a .mp4 file to test without camera
-    cam0 = Client("/dev/video0")
+    #cam0 = Client("/dev/video0")
     #audio0 = AudioClient(0)
-    
+    cap = cv2.VideoCapture("/dev/video0")
+
+    while True:
+        ret,frame = cap.read()
+        if ret:
+            cv2.imshow("Test",frame)
+        else:
+            print("Program broken")
+            break
+
+        cv2.waitKey(1)
 
     # while(True): #show for client 0
     #     if keyboard.is_pressed('q'):
     #         break
 
-    sleep(200)
-    cam0.stop()
+    #sleep(200)
+    #cam0.stop()
     #audio0.stop()
     #sys.exit(0)
 
