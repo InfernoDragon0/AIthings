@@ -24,6 +24,8 @@ class VideoStream:
             
             (self.available, self.frame) = self.stream.read()
             if (self.available):
+                cv2.imshow('clientFrame', self.getFrame())
+                cv2.waitKey(1)
                 print("frame available")
             else:
                 print("Not available")
