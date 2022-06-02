@@ -49,7 +49,7 @@ class Client():
         self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
 
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        #self.videoDebug = self.videoProcessor.startDebug()
+        self.videoDebug = self.videoProcessor.startDebug()
 
         # while (flag.value):
         #     pass
