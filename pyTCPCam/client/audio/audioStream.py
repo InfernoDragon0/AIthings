@@ -68,7 +68,6 @@ class AudioStream:
             [type]: [description]
         """
         while True:
-            sleep(4)
             if self.completed:
                 return
             print("audio loop running")
