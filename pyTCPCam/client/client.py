@@ -66,9 +66,9 @@ class Client():
 class AudioClient():
     def __init__(self, cameraId):
         self.flag = multiprocessing.Value("I", True)
-        #self.audioProcess = multiprocessing.Process(target=self.runAudio, args=(cameraId, self.flag))
-        #self.audioProcess.start()
-        self.runAudio(11, False)
+        self.audioProcess = multiprocessing.Process(target=self.runAudio, args=(cameraId, self.flag))
+        self.audioProcess.start()
+        #self.runAudio(11, False)
 
     def runAudio(self, cameraId, flag):
         #init audio stream
