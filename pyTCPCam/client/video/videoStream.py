@@ -31,3 +31,15 @@ class VideoStream:
     def complete(self):
         self.completed = True
         cv2.destroyAllWindows()
+        
+    def startDebug(self):
+        Thread(target=self.showFrames, args=()).start()
+        return self
+
+    def showFrames(self):
+        while True:
+            if self.completed:
+                return
+
+            cv2.imshow('clientFrame', self.getFrame())
+            cv2.waitKey(1)

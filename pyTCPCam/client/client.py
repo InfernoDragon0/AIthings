@@ -41,13 +41,13 @@ class Client():
 
     def runCam(self, cameraId, flag):
         #init video stream
-        self.tcp = ClientTCP(f"Cam {cameraId}", HOST, PORT)
+        #self.tcp = ClientTCP(f"Cam {cameraId}", HOST, PORT)
         self.videoStream = VideoStream(cameraId).start()
-        self.videoProcessor = VideoProcessor(self.videoStream).start()
-        self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
+        #self.videoProcessor = VideoProcessor(self.videoStream).start()
+        #self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
 
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        self.videoDebug = self.videoProcessor.startDebug()
+        self.videoDebug = self.videoStream.startDebug()
 
         # while (flag.value):
         #     pass
@@ -88,16 +88,16 @@ def main():
     #run as many clients as you want as long as it is one camera per Client object
     #cam0 = Client(0) #can swap in with a .mp4 file to test without camera
     cam0 = Client(0)
-    audio0 = AudioClient(0)
+    #audio0 = AudioClient(0)
     
 
     # while(True): #show for client 0
     #     if keyboard.is_pressed('q'):
     #         break
 
-    sleep(20)
+    sleep(200)
     cam0.stop()
-    audio0.stop()
+    #audio0.stop()
     #sys.exit(0)
 
 #run main
