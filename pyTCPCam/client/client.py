@@ -32,9 +32,9 @@ PORT = 8100
 class Client():
     def __init__(self, cameraId):
         self.flag = multiprocessing.Value("I", True)
-        #self.camProcess = multiprocessing.Process(target=self.runCam, args=(cameraId,self.flag))
-        #self.camProcess.start()
-        self.runCam(cameraId, False)
+        self.camProcess = multiprocessing.Process(target=self.runCam, args=(cameraId,self.flag))
+        self.camProcess.start()
+        #self.runCam(cameraId, False)
         #self.camProcess.join()
 
         #init TCP connection
@@ -93,9 +93,10 @@ def main():
     #audio0 = AudioClient(0)
 
     while True:
-        if (cam0.videoStream is not None):
-            cv2.imshow('clientFrame', cam0.videoStream.getFrame())
-            cv2.waitKey(1)
+        pass
+        #if (cam0.videoStream is not None):
+            #cv2.imshow('clientFrame', cam0.videoStream.getFrame())
+            #cv2.waitKey(1)
 
     # while(True): #show for client 0
     #     if keyboard.is_pressed('q'):

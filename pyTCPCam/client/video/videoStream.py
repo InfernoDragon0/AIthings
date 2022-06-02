@@ -25,7 +25,6 @@ class VideoStream:
             (self.available, self.frame) = self.stream.read()
             if (self.available):
                 print("frame available")
-                
             else:
                 print("Not available")
             
