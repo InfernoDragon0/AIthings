@@ -24,6 +24,7 @@ class VideoEncoder:
     #encode loop to encode the latest frame received
     def encode(self):
         while True:
+            time.sleep(0.2)
             if self.completed:
                 return
 
