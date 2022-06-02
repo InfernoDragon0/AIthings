@@ -18,13 +18,13 @@ class VideoStream:
     #Read loop for getting OpenCV images
     def readFrames(self):
         while True:
-            print("running while loop")
+            #print("running while loop")
             if self.completed:
                 return
             
             (self.available, self.frame) = self.stream.read()
             if (self.available):
-                print("frame available")
+                #print("frame available")
             else:
                 print("Not available")
             
