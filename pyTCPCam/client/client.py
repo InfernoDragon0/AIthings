@@ -100,8 +100,8 @@ def main():
     #         break
 
     sleep(200)
-    cam0.stop()
-    #audio0.stop()
+    #cam0.stop()
+    audio0.stop()
     #sys.exit(0)
 
 #run main
