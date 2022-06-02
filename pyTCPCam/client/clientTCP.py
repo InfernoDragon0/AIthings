@@ -32,7 +32,7 @@ class ClientTCP:
         except Exception as e:
             self.connect()
             print(f"reconnecting to server {e}")
-            self.sendData(self)
+            self.sendData()
     
     def addData(self, data):
         self.data = data
