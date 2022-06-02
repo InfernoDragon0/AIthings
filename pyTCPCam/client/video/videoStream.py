@@ -23,10 +23,10 @@ class VideoStream:
                 return
             
             (self.available, self.frame) = self.stream.read()
-            if (self.available):
+            #if (self.available):
                 #print("frame available")
-            else:
-                print("Not available")
+            #else:
+                #print("Not available")
             
     
     #get the latest frame
