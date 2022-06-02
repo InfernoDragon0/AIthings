@@ -39,6 +39,7 @@ class AudioProcessor():
             listen_window (int, optional): _description_. Defaults to 1.
         """
         while True:
+            sleep(10)
             if self.completed:
                 return
             
