@@ -24,10 +24,12 @@ class VideoStream:
             
             (self.available, self.frame) = self.stream.read()
             if (self.available):
+                print("frame available")
                 cv2.imshow('clientFrame', self.getFrame())
+                cv2.waitKey(1)
             else:
                 print("Not available")
-            cv2.waitKey(1)
+            
     
     #get the latest frame
     def getFrame(self):
