@@ -45,11 +45,11 @@ class Client():
         #init video stream
         #self.tcp = ClientTCP(f"Cam {cameraId}", HOST, PORT)
         self.videoStream = VideoStream(cameraId).start()
-        #self.videoProcessor = VideoProcessor(self.videoStream).start()
+        self.videoProcessor = VideoProcessor(self.videoStream).start()
         #self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
 
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        self.videoDebug = self.videoStream.startDebug()
+        self.videoDebug = self.videoProcessor.startDebug()
 
         # while (flag.value):
         #     pass
