@@ -2,8 +2,8 @@
 
 int IN_PIN = 34, OUT_PIN = 26;
 
-const char* ssid = "DogeNetwork_2.4GHz";
-const char* password = "17011570224N4g";
+const char* ssid = "";
+const char* password = "";
 const uint16_t port = 2004;
 const char * host = "192.168.2.197";
 
