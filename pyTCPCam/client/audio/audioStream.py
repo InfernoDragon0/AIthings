@@ -70,7 +70,6 @@ class AudioStream:
         while True:
             if self.completed:
                 return
-            print("audio loop running")
 
             if self.listenType == "numpy":
                 self.recorder_numpy(self.listenWindow)
@@ -89,6 +88,7 @@ class AudioStream:
                     #return filename + ".wav"
             else:
                 raise self.FormatNotSupportedError("Supported Formats are 'raw' and 'wav'")
+            sleep(1)
 
     def recorder(self,listen_window):
         """[summary]

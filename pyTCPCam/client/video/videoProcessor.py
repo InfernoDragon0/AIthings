@@ -36,7 +36,7 @@ class VideoProcessor():
             image = self.model.draw_box_xyxy(image, self.result)
             self.setProcessedFrame(image)
             self.ready = True
-            sleep(1)
+            sleep(0.2)
 
     def asInferenceObject(self): #can remove if not needed
         return {"x": 123, "y": 234, "confidence": 1, "inferred": "Person"}
