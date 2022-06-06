@@ -42,6 +42,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             # for val in json["inferredData"]:
             #     audio_list.append(val["name"]+":"+ val["value"])
             # print(audio_list)
-        conn.close()    
          
     

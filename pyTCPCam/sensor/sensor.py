@@ -53,9 +53,9 @@ while True:
     info = json.loads(client_data.decode("utf-8").replace("'", '"'))
     #read json file
 
-    # for val in info['MotionData']:
-    #     if info['MotionData'][val] == "True":
-    #         microwave_list.append(val + ": True")
+    for val in info['MotionData']:
+        if info['MotionData'][val] == "True":
+            microwave_list.append(val + ": True")
             # messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second) + "\nMotion detected at: ")
     print(microwave_list)
     microwave_list.clear()

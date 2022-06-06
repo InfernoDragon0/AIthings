@@ -9,8 +9,8 @@ from clientTCP import ClientTCP
 import multiprocessing
 
 #NETWORK CONFIG
-HOST = "192.168.1.195"
-PORT = 2004
+HOST = "192.168.1.55"
+PORT = 8100
 
 ########################################################################
 # Optimizations done:
@@ -86,7 +86,8 @@ class AudioClient():
 #run main code
 def main():
     #run as many clients as you want as long as it is one camera per Client object
-    cam0 = Client(0) #can swap in with a .mp4 file to test without camera
+    #cam0 = Client(0) #can swap in with a .mp4 file to test without camera
+    cam0 = Client(0)
     audio0 = AudioClient(0)
     
 
