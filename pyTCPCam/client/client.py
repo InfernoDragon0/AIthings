@@ -29,9 +29,9 @@ PORT = 8100
 
 #Client class to start multiple cameras
 class Client():
-    def __init__(self, cameraId):
+    def __init__(self, cameraId, fpsTarget):
         self.flag = multiprocessing.Value("I", True)
-        self.camProcess = multiprocessing.Process(target=self.runCam, args=(cameraId,self.flag))
+        self.camProcess = multiprocessing.Process(target=self.runCam, args=(cameraId,self.flag, fpsTarget))
         self.camProcess.start()
         #self.camProcess.join()
 
@@ -42,7 +42,7 @@ class Client():
     def runCam(self, cameraId, flag):
         #init video stream
         self.tcp = ClientTCP(f"Cam {cameraId}", HOST, PORT)
-        self.videoStream = VideoStream(cameraId).start()
+        self.videoStream = VideoStream(cameraId, fpsTarget).start()
         self.videoProcessor = VideoProcessor(self.videoStream).start()
         self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
 

@@ -1,4 +1,5 @@
 from threading import Thread
+import time
 from yolo_wrapper import Process
 import cv2
 
@@ -24,17 +25,23 @@ class VideoProcessor():
             
             #self.processedFrame is used to get the current frame
             #infer the image with the model to get the result
-            image = self.stream.getFrame()
-            self.result = self.model.inference_json_result(image)
+            if self.stream.available:
+                start = time.perf_counter()
+                image = self.stream.getFrame()
+                self.result = self.model.inference_json_result(image)
 
-            if(len(self.result) > 1): #no need to bother with just 1 item in array
-                self.result = self.nms(self.result)
-            #print(self.result)
+                if(len(self.result) > 1): #no need to bother with just 1 item in array
+                    self.result = self.nms(self.result)
+                #print(self.result)
 
-            #drawing the bounding boxes based on the result on the image
-            image = self.model.draw_box_xyxy(image, self.result)
-            self.setProcessedFrame(image)
-            self.ready = True
+                #drawing the bounding boxes based on the result on the image
+                image = self.model.draw_box_xyxy(image, self.result)
+                self.setProcessedFrame(image)
+                end = time.perf_counter()
+                print(f"perf counter is {start-end}")
+                self.ready = True
+                self.stream.available = False
+
 
     def asInferenceObject(self): #can remove if not needed
         return {"x": 123, "y": 234, "confidence": 1, "inferred": "Person"}

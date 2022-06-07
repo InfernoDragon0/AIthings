@@ -1,13 +1,16 @@
+from time import time
 import cv2
 from threading import Thread
 
 class VideoStream:
 
     #init and read one frame
-    def __init__(self, camera):
+    def __init__(self, camera, fpsTarget):
         self.stream = cv2.VideoCapture(camera)
+        self.stream.set(cv2.CAP_PROP_BUFFERSIZE, 2) #lower the buffer size
         (self.available, self.frame) = self.stream.read()
         self.completed = False
+        self.fps = 1/fpsTarget
     
     #run a thread to read all the frames continuously
     def start(self):
@@ -21,6 +24,7 @@ class VideoStream:
                 return
             
             (self.available, self.frame) = self.stream.read()
+            time.sleep(self.fps)
     
     #get the latest frame
     def getFrame(self):
