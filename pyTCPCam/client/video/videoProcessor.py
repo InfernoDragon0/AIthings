@@ -38,9 +38,10 @@ class VideoProcessor():
                 image = self.model.draw_box_xyxy(image, self.result)
                 self.setProcessedFrame(image)
                 end = time.perf_counter()
-                print(f"perf counter is {start-end}")
+                print(f"perf counter is {end-start}")
                 self.ready = True
                 self.stream.available = False
+                time.sleep(self.stream.fps - (end-start))
 
 
     def asInferenceObject(self): #can remove if not needed
