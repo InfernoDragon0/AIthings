@@ -9,7 +9,7 @@ from clientTCP import ClientTCP
 import multiprocessing
 
 #NETWORK CONFIG
-HOST = "127.0.0.1"
+HOST = "192.168.1.53"
 PORT = 8100
 
 ########################################################################
@@ -39,7 +39,7 @@ class Client():
         #self.sendVideoStream = False
         #self.videoTCP = ClientTCP(f"Cam {cameraId}", self.videoEncoder, HOST, PORT,startAsPublisher).start() #TODO change to overall TCP connection
 
-    def runCam(self, cameraId, flag):
+    def runCam(self, cameraId, flag, fpsTarget):
         #init video stream
         self.tcp = ClientTCP(f"Cam {cameraId}", HOST, PORT)
         self.videoStream = VideoStream(cameraId, fpsTarget).start()
