@@ -41,7 +41,8 @@ class VideoProcessor():
                 print(f"perf counter is {end-start}")
                 self.ready = True
                 self.stream.available = False
-                time.sleep(self.stream.fps - (end-start))
+                if (self.stream.fps - (end-start) > 0):
+                    time.sleep(self.stream.fps - (end-start))
 
 
     def asInferenceObject(self): #can remove if not needed
