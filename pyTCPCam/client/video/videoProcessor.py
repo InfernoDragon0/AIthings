@@ -43,7 +43,8 @@ class VideoProcessor():
                 self.stream.available = False
                 if (self.stream.fps - (end-start) > 0):
                     time.sleep(self.stream.fps - (end-start))
-
+            else:
+                time.sleep(self.stream.fps)
 
     def asInferenceObject(self): #can remove if not needed
         return {"x": 123, "y": 234, "confidence": 1, "inferred": "Person"}
