@@ -5,13 +5,14 @@ import cv2
 
 #unified to be able to change the sequence of these without any issues
 class VideoProcessor():
-    def __init__(self, stream):
+    def __init__(self, camQueue, fpsTarget):
         self.model = Process(device=0, weights="./atasv3.pt")
         self.completed = False
-        self.stream = stream
         self.processedFrame = self.stream.getFrame()
         self.ready = False
         self.result = None
+        self.camQueue = camQueue
+        self.fps = 1/fpsTarget
     
     def start(self):
         Thread(target=self.process, args=()).start()
@@ -25,9 +26,9 @@ class VideoProcessor():
             
             #self.processedFrame is used to get the current frame
             #infer the image with the model to get the result
-            if self.stream.available:
+            image = self.camQueue.get()
+            if image is not None:
                 start = time.perf_counter()
-                image = self.stream.getFrame()
                 self.result = self.model.inference_json_result(image)
 
                 if(len(self.result) > 1): #no need to bother with just 1 item in array
@@ -40,11 +41,10 @@ class VideoProcessor():
                 end = time.perf_counter()
                 print(f"perf counter is {end-start}")
                 self.ready = True
-                self.stream.available = False
-                if (self.stream.fps - (end-start) > 0):
-                    time.sleep(self.stream.fps - (end-start))
+                if (self.fps - (end-start) > 0):
+                    time.sleep(self.fps - (end-start))
             else:
-                time.sleep(self.stream.fps)
+                time.sleep(self.fps)
 
     def asInferenceObject(self): #can remove if not needed
         return {"x": 123, "y": 234, "confidence": 1, "inferred": "Person"}

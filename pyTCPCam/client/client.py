@@ -29,33 +29,16 @@ PORT = 8100
 
 #Client class to start multiple cameras
 class Client():
-    def __init__(self, cameraId, fpsTarget):
+    def __init__(self,camQueue):
         self.flag = multiprocessing.Value("I", True)
-        self.camProcess = multiprocessing.Process(target=self.runCam, args=(cameraId,self.flag, fpsTarget))
+        self.camProcess = multiprocessing.Process(target=self.runCam, args=(self.flag, camQueue))
         self.camProcess.start()
         #self.camProcess.join()
 
-        #init TCP connection
-        #self.sendVideoStream = False
-        #self.videoTCP = ClientTCP(f"Cam {cameraId}", self.videoEncoder, HOST, PORT,startAsPublisher).start() #TODO change to overall TCP connection
-
-    def runCam(self, cameraId, flag, fpsTarget):
-        #init video stream
-        self.tcp = ClientTCP(f"Cam {cameraId}", HOST, PORT)
-        self.videoStream = VideoStream(cameraId, fpsTarget).start()
-        self.videoProcessor = VideoProcessor(self.videoStream).start()
+    def runCam(self, flag, camQueue):
+        self.tcp = ClientTCP(f"Image Inference Client", HOST, PORT)
+        self.videoProcessor = VideoProcessor(camQueue).start()
         self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
-
-        #DEBUG PREVIEW can remove this if client doesnt need to preview
-        self.videoDebug = self.videoProcessor.startDebug()
-
-        # while (flag.value):
-        #     pass
-
-        # print("Video stream terminating")
-        # self.videoStream.complete()
-        # self.videoProcessor.complete()
-        # self.videoEncoder.complete()
 
     def stop(self):
         self.camProcess.terminate()
@@ -87,7 +70,13 @@ class AudioClient():
 def main():
     #run as many clients as you want as long as it is one camera per Client object
     #cam0 = Client(0) #can swap in with a .mp4 file to test without camera
-    cam0 = Client(0,30)
+    camQueue = multiprocessing.Queue(1) #only put the latest image in the queue
+
+    #TODO one camQueue for each camera
+    imageModel = Client(0,30, camQueue)
+    #start each video stream as a separate process
+    videoStream0 = VideoStream(0, 30, camQueue).startAsProcess()
+    
     audio0 = AudioClient(0)
     
 
@@ -96,7 +85,7 @@ def main():
     #         break
 
     sleep(20)
-    cam0.stop()
+    imageModel.stop()
     audio0.stop()
     #sys.exit(0)
 
