@@ -10,7 +10,7 @@ import multiprocessing
 
 #NETWORK CONFIG
 HOST = "192.168.1.55"
-PORT = 8100
+PORT = 2004
 
 ########################################################################
 # Optimizations done:
