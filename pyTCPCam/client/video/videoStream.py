@@ -1,3 +1,4 @@
+import multiprocessing
 from time import sleep
 import cv2
 from threading import Thread
@@ -15,6 +16,23 @@ class VideoStream:
         print("Stream Thread started")
         Thread(target=self.readFrames, args=()).start()
         return self
+    
+    def startAsProcess(self):
+        print("Stream Process started")
+        self.camProcess = multiprocessing.Process(target=self.readAndDebug, args=())
+        self.camProcess.start()
+        return self
+    
+    #Read loop for getting OpenCV images
+    def readAndDebug(self):
+        while True:
+            #print("running while loop")
+            if self.completed:
+                return
+            
+            (self.available, self.frame) = self.stream.read()
+            cv2.imshow('clientFrame', self.frame)
+            cv2.waitKey(1)
     
     #Read loop for getting OpenCV images
     def readFrames(self):
