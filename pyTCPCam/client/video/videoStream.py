@@ -7,8 +7,10 @@ class VideoStream:
 
     #init and read one frame
     def __init__(self, camera):
-        self.stream = cv2.VideoCapture(camera)
-        (self.available, self.frame) = self.stream.read()
+        #self.stream = cv2.VideoCapture(camera)
+        #(self.available, self.frame) = self.stream.read()
+        self.available = None
+        self.frame = None
         self.completed = False
     
     #run a thread to read all the frames continuously
@@ -25,6 +27,7 @@ class VideoStream:
     
     #Read loop for getting OpenCV images
     def readAndDebug(self):
+        self.stream = cv2.VideoCapture(0)
         while True:
             #print("running while loop")
             if self.completed:
