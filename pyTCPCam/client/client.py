@@ -94,6 +94,7 @@ def main():
     cam0 = Client("v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! videoconvert ! video/x-raw,format=BGR ! appsink")
     audio0 = AudioClient(11)
 
+
             
 
     # while(True): #show for client 0
