@@ -33,7 +33,7 @@ class Process:
 
     def inference_json_result(self,imgs):
         result = self.model(imgs)
-        
+        result.print()
         result = result.xyxy[0].tolist()
 
         result_array = []

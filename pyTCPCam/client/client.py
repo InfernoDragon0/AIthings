@@ -49,7 +49,7 @@ class Client():
         self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
 
         #DEBUG PREVIEW can remove this if client doesnt need to preview
-        #self.videoDebug = self.videoProcessor.startDebug()
+        self.videoDebug = self.videoProcessor.startDebug()
 
         # while (flag.value):
         #     pass
@@ -91,7 +91,8 @@ def main():
     #run as many clients as you want as long as it is one camera per Client object
     #cam0 = Client(0) #can swap in with a .mp4 file to test without camera
     #cam0 = Client("/dev/video0")
-    cam0 = Client("v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! videoconvert ! video/x-raw,format=BGR ! appsink")
+    #cam0 = Client("v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! videoconvert ! video/x-raw,format=BGR ! appsink")
+    cam0 = Client("rtsp://admin:amarisipc1@192.168.1.64:554/Streaming/Channels/101/")
     audio0 = AudioClient(11)
 
 

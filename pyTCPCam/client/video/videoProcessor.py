@@ -93,7 +93,7 @@ class VideoProcessor():
                 width = self.calculateIntersection(X0, X1, x0, x1)
                 height = self.calculateIntersection(Y0, Y1, y0, y1)
                 area = width * height
-                percent = area / msb_area
+                percent = area / msb_area + area
 
                 if percent > 0.5: #intersecting > 50%, hence remove dict from array
                     dict_array.remove(dict)
