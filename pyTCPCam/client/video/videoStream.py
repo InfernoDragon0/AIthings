@@ -29,8 +29,11 @@ class VideoStream:
             #print("running while loop")
             if self.completed:
                 return
+            try:
+                (self.available, self.frame) = self.stream.read()
+            except Exception as e:
+                print(f"Error reading the camera: {e}")
             
-            (self.available, self.frame) = self.stream.read()
             cv2.imshow('clientFrame', self.frame)
             cv2.waitKey(1)
     
