@@ -35,6 +35,7 @@ class VideoEncoder:
                 self.timestamp = time.time()
                 self.imageInference = ImageInference()
                 self.imageInference.inferredData = self.stream.result
+                self.imageInference.setImageData(self.encodedFrame)
                 self.tcp.addData(self.imageInference)
                 self.tcp.start()
                 #print(jsonpickle.encode(self.imageInference))
