@@ -10,26 +10,35 @@ class VideoStream:
         self.camera = camera
         self.completed = False
         self.fps = 1/fpsTarget
+        self.camQueue = camQueue
     
     def startAsProcess(self):
         print("Stream Process started")
-        self.camProcess = multiprocessing.Process(target=self.readFrames, args=(self.fps, self.camera, True))
+        self.camProcess = multiprocessing.Process(target=self.readFrames, args=(self.fps, self.camera, True, self.camQueue))
         self.camProcess.start()
         return self
     
     #Read loop for getting OpenCV images
-    def readFrames(self, fps, camera, debug):
+    def readFrames(self, fps, camera, debug, camQueue):
         self.stream = cv2.VideoCapture(camera)
         self.stream.set(cv2.CAP_PROP_BUFFERSIZE, 2) #lower the buffer size
         while True:
             if self.completed:
                 return
             
+            start = time.perf_counter()
             (self.available, self.frame) = self.stream.read()
-            if debug:
-                cv2.imshow('clientFrame', self.frame)
-                cv2.waitKey(1)
-            time.sleep(fps)
+            if self.available:
+                if camQueue.empty():
+                    camQueue.put(self.frame) #only put into the queue if the previous frame is already consumed
+
+                if debug:
+                    cv2.imshow('clientFrame', self.frame)
+                    cv2.resizeWindow("clientFrame", 960, 1080)
+                    cv2.waitKey(1)
+            end = time.perf_counter()
+            if (fps - (end - start) > 0):
+                time.sleep(fps - (end - start))
     
     #get the latest frame
     def getFrame(self):

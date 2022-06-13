@@ -8,7 +8,7 @@ class VideoProcessor():
     def __init__(self, camQueue, fpsTarget):
         self.model = Process(device=0, weights="./atasv3.pt")
         self.completed = False
-        self.processedFrame = self.stream.getFrame()
+        self.processedFrame = None
         self.ready = False
         self.result = None
         self.camQueue = camQueue
@@ -26,23 +26,28 @@ class VideoProcessor():
             
             #self.processedFrame is used to get the current frame
             #infer the image with the model to get the result
-            image = self.camQueue.get()
-            if image is not None:
-                start = time.perf_counter()
-                self.result = self.model.inference_json_result(image)
+            if not self.camQueue.empty():
+                image = self.camQueue.get()
+                
+                if image is not None:
+                    start = time.perf_counter()
+                    self.result = self.model.inference_json_result(image)
 
-                if(len(self.result) > 1): #no need to bother with just 1 item in array
-                    self.result = self.nms(self.result)
-                #print(self.result)
+                    if(len(self.result) > 1): #no need to bother with just 1 item in array
+                        self.result = self.nms(self.result)
+                    #print(self.result)
 
-                #drawing the bounding boxes based on the result on the image
-                image = self.model.draw_box_xyxy(image, self.result)
-                self.setProcessedFrame(image)
-                end = time.perf_counter()
-                print(f"perf counter is {end-start}")
-                self.ready = True
-                if (self.fps - (end-start) > 0):
-                    time.sleep(self.fps - (end-start))
+                    #drawing the bounding boxes based on the result on the image
+                    image = self.model.draw_box_xyxy(image, self.result)
+                    self.setProcessedFrame(image)
+                    end = time.perf_counter()
+                    print(f"perf counter is {end-start}")
+                    self.ready = True
+
+                    cv2.imshow("processor", self.processedFrame)
+                    cv2.waitKey(1)
+                    if (self.fps - (end-start) > 0):
+                        time.sleep(self.fps - (end-start))
             else:
                 time.sleep(self.fps)
 

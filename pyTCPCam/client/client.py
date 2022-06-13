@@ -36,9 +36,9 @@ class Client():
         #self.camProcess.join()
 
     def runCam(self, flag, camQueue):
-        self.tcp = ClientTCP(f"Image Inference Client", HOST, PORT)
-        self.videoProcessor = VideoProcessor(camQueue).start()
-        self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
+        #self.tcp = ClientTCP(f"Image Inference Client", HOST, PORT)
+        self.videoProcessor = VideoProcessor(camQueue, 5).process()
+        #self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
 
     def stop(self):
         self.camProcess.terminate()
@@ -73,20 +73,17 @@ def main():
     camQueue = multiprocessing.Queue(1) #only put the latest image in the queue
 
     #TODO one camQueue for each camera
-    imageModel = Client(0,30, camQueue)
+    imageModel = Client(camQueue)
     #start each video stream as a separate process
-    videoStream0 = VideoStream(0, 30, camQueue).startAsProcess()
+    videoStream0 = VideoStream("vlc.mp4", 5, camQueue).startAsProcess()
     
-    audio0 = AudioClient(0)
+    #audio0 = AudioClient(0)
     
 
     # while(True): #show for client 0
     #     if keyboard.is_pressed('q'):
     #         break
-
-    sleep(20)
-    imageModel.stop()
-    audio0.stop()
+    #audio0.stop()
     #sys.exit(0)
 
 #run main
