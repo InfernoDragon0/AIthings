@@ -28,21 +28,24 @@ PORT = 8100
 ########################################################################
 
 #Client class to start multiple cameras
-class Client():
+class TCPClient():
     def __init__(self,camQueue):
         self.flag = multiprocessing.Value("I", True)
-        self.camProcess = multiprocessing.Process(target=self.runCam, args=(self.flag, camQueue))
-        self.camProcess.start()
+        self.camQueue = camQueue
+        self.tcp = ClientTCP(f"Image Inference Client", HOST, PORT)
+        self.tcp.start()
         #self.camProcess.join()
 
-    def runCam(self, flag, camQueue):
-        #self.tcp = ClientTCP(f"Image Inference Client", HOST, PORT)
-        self.videoProcessor = VideoProcessor(camQueue, 5).process()
-        #self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
+class Client():
+    def __init__(self,camQueue):
+        self.camProcess = multiprocessing.Process(target=self.runCam, args=(camQueue,))
+        self.camProcess.start()
+
+    def runCam(self, camQueue):
+        self.videoProcessor = VideoProcessor(camQueue,20).process()
 
     def stop(self):
         self.camProcess.terminate()
-        
 
 class AudioClient():
     def __init__(self, cameraId):
@@ -75,14 +78,11 @@ def main():
     #TODO one camQueue for each camera
     imageModel = Client(camQueue)
     #start each video stream as a separate process
-    videoStream0 = VideoStream("vlc.mp4", 5, camQueue).startAsProcess()
+    #videoStream0 = VideoStream("vlc.mp4", 60, camQueue, True).startAsProcess()
+    videoStream0 = VideoStream("rtsp://admin:amarisipc1@192.168.1.64:554/Streaming/Channels/101/", 60, camQueue, True).startAsProcess()
     
     #audio0 = AudioClient(0)
     
-
-    # while(True): #show for client 0
-    #     if keyboard.is_pressed('q'):
-    #         break
     #audio0.stop()
     #sys.exit(0)
 

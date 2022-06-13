@@ -41,15 +41,14 @@ class VideoProcessor():
                     image = self.model.draw_box_xyxy(image, self.result)
                     self.setProcessedFrame(image)
                     end = time.perf_counter()
-                    print(f"perf counter is {end-start}")
-                    self.ready = True
-
+                    #print(f"perf counter is {end-start}")
+                    
                     cv2.imshow("processor", self.processedFrame)
                     cv2.waitKey(1)
-                    if (self.fps - (end-start) > 0):
-                        time.sleep(self.fps - (end-start))
-            else:
-                time.sleep(self.fps)
+                    #if (self.fps - (end-start) > 0):
+                        #time.sleep(self.fps - (end-start))
+            # else:
+            #     time.sleep(self.fps)
 
     def asInferenceObject(self): #can remove if not needed
         return {"x": 123, "y": 234, "confidence": 1, "inferred": "Person"}

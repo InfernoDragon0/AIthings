@@ -6,15 +6,16 @@ from threading import Thread
 class VideoStream:
 
     #init and read one frame
-    def __init__(self, camera, fpsTarget, camQueue):
+    def __init__(self, camera, fpsTarget, camQueue, debug):
         self.camera = camera
         self.completed = False
         self.fps = 1/fpsTarget
         self.camQueue = camQueue
+        self.debug = debug
     
     def startAsProcess(self):
         print("Stream Process started")
-        self.camProcess = multiprocessing.Process(target=self.readFrames, args=(self.fps, self.camera, True, self.camQueue))
+        self.camProcess = multiprocessing.Process(target=self.readFrames, args=(self.fps, self.camera, self.debug, self.camQueue))
         self.camProcess.start()
         return self
     
