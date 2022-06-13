@@ -1,7 +1,6 @@
 import multiprocessing
 import time
 import cv2
-from threading import Thread
 
 class VideoStream:
 
@@ -44,7 +43,6 @@ class VideoStream:
     #get the latest frame
     def getFrame(self):
         return self.frame
-        #return cv2.resize(self.frame, (1280, 720))
     
     #end the thread
     def complete(self):

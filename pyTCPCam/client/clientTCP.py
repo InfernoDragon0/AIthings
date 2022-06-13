@@ -1,5 +1,6 @@
 from threading import Thread
 import socket
+import time
 import jsonpickle
 
 #connects to a TCP server to send image data over the network
@@ -32,7 +33,8 @@ class ClientTCP:
         except Exception as e:
             self.connect()
             print(f"reconnecting to server {e}")
-            self.sendData(self)
+            time.sleep(1)
+            self.sendData()
     
     def addData(self, data):
         self.data = data

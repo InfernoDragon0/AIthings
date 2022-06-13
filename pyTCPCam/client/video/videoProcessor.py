@@ -4,10 +4,12 @@ import cv2
 
 #unified to be able to change the sequence of these without any issues
 class VideoProcessor():
-    def __init__(self, camQueue):
+    def __init__(self, camQueue, encQueue, resultQueue):
         self.completed = False
         self.ready = False
         self.camQueue = camQueue
+        self.encQueue = encQueue
+        self.resultQueue = resultQueue
 
     def startAsProcess(self):
         print("Processor Process started")
@@ -44,9 +46,13 @@ class VideoProcessor():
                     self.setProcessedFrame(image)
                     end = time.perf_counter()
                     #print(f"perf counter is {end-start}")
+
+                    if self.encQueue.empty() and self.resultQueue.empty():
+                        self.encQueue.put(image)
+                        self.resultQueue.put(self.result)
                     
-                    cv2.imshow("processor", self.processedFrame)
-                    cv2.waitKey(1)
+                    # cv2.imshow("processor", self.processedFrame)
+                    # cv2.waitKey(1)
                     #if (self.fps - (end-start) > 0):
                         #time.sleep(self.fps - (end-start))
             # else:
