@@ -35,7 +35,7 @@ class VideoStream:
 
                 if debug:
                     cv2.imshow('clientFrame', self.frame)
-                    cv2.resizeWindow("clientFrame", 960, 1080)
+                    #cv2.resizeWindow("clientFrame", 960, 1080)
                     cv2.waitKey(1)
             end = time.perf_counter()
             if (fps - (end - start) > 0):
