@@ -76,15 +76,13 @@ def main():
     camQueue = multiprocessing.Queue(1) #only put the latest image in the queue
 
     #TODO one camQueue for each camera
-    imageModel = Client(camQueue)
+    imageModel = VideoProcessor(camQueue).startAsProcess()
+
     #start each video stream as a separate process
-    #videoStream0 = VideoStream("vlc.mp4", 60, camQueue, True).startAsProcess()
-    videoStream0 = VideoStream("rtsp://admin:amarisipc1@192.168.1.64:554/Streaming/Channels/101/", 60, camQueue, True).startAsProcess()
-    
+    videoStream0 = VideoStream("vlc.mp4", 60, camQueue, True).startAsProcess()
+    #videoStream0 = VideoStream("rtsp://admin:amarisipc1@192.168.1.64:554/Streaming/Channels/101/", 60, camQueue, True).startAsProcess()
     #audio0 = AudioClient(0)
-    
-    #audio0.stop()
-    #sys.exit(0)
+ 
 
 #run main
 if __name__ == '__main__':

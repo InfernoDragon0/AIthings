@@ -1,25 +1,27 @@
-from threading import Thread
+import multiprocessing
 import time
-from yolo_wrapper import Process
 import cv2
 
 #unified to be able to change the sequence of these without any issues
 class VideoProcessor():
-    def __init__(self, camQueue, fpsTarget):
-        self.model = Process(device=0, weights="./atasv3.pt")
+    def __init__(self, camQueue):
         self.completed = False
-        self.processedFrame = None
         self.ready = False
-        self.result = None
         self.camQueue = camQueue
-        self.fps = 1/fpsTarget
-    
-    def start(self):
-        Thread(target=self.process, args=()).start()
+
+    def startAsProcess(self):
+        print("Processor Process started")
+        self.processorProcess = multiprocessing.Process(target=self.process, args=())
+        self.processorProcess.start()
         return self
 
     #encode loop to encode the latest frame received
     def process(self):
+        from yolo_wrapper import Process #it is a sin that has to be done
+
+        self.processedFrame = None
+        self.result = None
+        self.model = Process(device=0, weights="./atasv3.pt")
         while True:
             if self.completed:
                 return
@@ -50,9 +52,6 @@ class VideoProcessor():
             # else:
             #     time.sleep(self.fps)
 
-    def asInferenceObject(self): #can remove if not needed
-        return {"x": 123, "y": 234, "confidence": 1, "inferred": "Person"}
-
     #unified to reduce changes
     def getFrame(self):
         return self.processedFrame
@@ -63,19 +62,6 @@ class VideoProcessor():
     #end the thread
     def complete(self):
         self.completed = True
-
-        #run a thread to show frames continuously
-    def startDebug(self):
-        Thread(target=self.showFrames, args=()).start()
-        return self
-
-    def showFrames(self):
-        while True:
-            if self.completed:
-                return
-
-            cv2.imshow('clientFrame', self.getFrame())
-            cv2.waitKey(1)
     
     #filters the result to remove intersecting boxes
     def nms(self, result):
