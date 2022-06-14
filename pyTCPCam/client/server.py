@@ -7,20 +7,35 @@ import jsonpickle
 import cv2
 import json
 from threading import Thread
-#bind to all interfaces, can change this as needed
+import base64
+import binascii
+
 HOST = "192.168.1.55"
 PORT = 2004
 audio_list = []
 microwave_list = []
 image_list = []
 counter_face = 0
+def is_json(myjson):
+  try:
+    json.loads(myjson)
+  except ValueError as e:
+    return False
+  return True
+def is_base64(s):
+    try:
+        base64.decodestring(s)
+        return True
+    except binascii.Error:
+        return False
+
 def multi_threaded_client(connection):
     microwave_list = []
     connection.send(str.encode('Server is working:'))
     while True:
         data = connection.recv(2048)
         info = data.decode("utf8").replace("'", "\"")
-        if info[0] == "{": 
+        if is_json(info) == True: 
             dict = json.loads(data.decode("utf8").replace("'", "\""))
             # Checking for Image value
             if dict["packetType"] == "Image":
@@ -61,4 +76,3 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         conn, addr = s.accept()
         Thread(target=multi_threaded_client, args=(conn, )).start()
-
