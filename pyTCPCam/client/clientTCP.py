@@ -34,7 +34,7 @@ class ClientTCP:
             self.connect()
             print(f"reconnecting to server {e}")
             time.sleep(1)
-            self.sendData()
+            #just drop the frame if the connection failed, and restart the connection for the next frame
 
     def complete(self):
         self.completed = True

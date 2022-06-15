@@ -1,10 +1,10 @@
 """[summary]
 """
+import multiprocessing
 import pyaudio
 import wave
 import logging
 import numpy as np
-from threading import Thread
 
 class AudioStream:
     """Class representing the microphone device.
@@ -13,7 +13,7 @@ class AudioStream:
     class FormatNotSupportedError(Exception):
         pass
 
-    def __init__(self, chunksize, listenType="raw", listenWindow=1):
+    def __init__(self, chunksize, audQueue, micIndex, listenType="raw", listenWindow=1):
         """[summary]
         Args:
             chunksize ([type]): [description]
@@ -21,28 +21,19 @@ class AudioStream:
         self.completed = False
         self.SAMPLERATE = 16000
         self.CHUNK = chunksize
-        self.FORMAT = pyaudio.paInt16
         self.frames = []
         self.ready = False
-        self.audio = pyaudio.PyAudio()
         self.listenType = listenType
         self.listenWindow = listenWindow
         self.completed = False
-        self.micIndex = 11
+        self.micIndex = micIndex
+        self.audQueue = audQueue
 
-        try:
-            self.CHANNELS = 2
-            self.stream = self.audio.open(format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
-            logging.info("Microphone successfully started")
-
-        except Exception as e:
-            self.CHANNELS = 1
-            self.stream = self.audio.open(format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
-            logging.info("Switching to mono channel microphone")
-            logging.info("Microphone successfully started")
     
-    def start(self):
-        Thread(target=self.getAudio, args=()).start()
+    def startAsProcess(self):
+        print("Audio Stream Process started")
+        self.camProcess = multiprocessing.Process(target=self.getAudio, args=(self.audQueue,))
+        self.camProcess.start()
         return self
 
     def getFrames(self):
@@ -51,7 +42,7 @@ class AudioStream:
     def complete(self):
         self.completed = True
 
-    def getAudio(self,filename="data"):
+    def getAudio(self,audQueue, filename="data"):
         """[summary]
 
         Args:
@@ -66,6 +57,20 @@ class AudioStream:
         Returns:
             [type]: [description]
         """
+        self.FORMAT = pyaudio.paInt16
+        self.audio = pyaudio.PyAudio()
+        try:
+            self.CHANNELS = 2
+            self.stream = self.audio.open(input_device_index=self.micIndex, format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
+            logging.info("Microphone successfully started")
+
+        except Exception as e:
+            
+            self.CHANNELS = 1
+            self.stream = self.audio.open(input_device_index=self.micIndex, format=self.FORMAT,channels=self.CHANNELS,rate=self.SAMPLERATE,input=True,frames_per_buffer=self.CHUNK)
+            logging.info("Switching to mono channel microphone")
+            logging.info("Microphone successfully started")
+
         while True:
             if self.completed:
                 return
@@ -134,7 +139,9 @@ class AudioStream:
                 first = False
             else:
                 self.frames = np.concatenate((self.frames,frame),axis=1)
-        self.ready = True
+       
+        if self.audQueue.empty():
+            self.audQueue.put(self.frames)
 
     def get_all_numpy_tf(self,prev_audio_frame_array): #TODO check threading
         """
