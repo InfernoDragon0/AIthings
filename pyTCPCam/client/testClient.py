@@ -49,7 +49,7 @@ if __name__ == '__main__':
     # #here the main process will encode and send thru tcp
     tcp = ClientTCP("Integrated Audio/Video Client", "127.0.0.1", 8100)
     #audio process
-    audioStream0 = AudioStream(16000, audQueue, 0, "numpy_tf", 1).startAsProcess()
+    audioStream0 = AudioStream(16000, audQueue, 11, "numpy_tf", 1).startAsProcess()
     audioProcessor = AudioProcessor('yamnet.h5', 1, audQueue, tcp).startAsProcess()
 
     #encoder and TCP
