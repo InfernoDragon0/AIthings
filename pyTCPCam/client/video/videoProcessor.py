@@ -51,8 +51,8 @@ class VideoProcessor():
                         encQueue.put(image)
                         resultQueue.put(self.result)
                     
-                    # cv2.imshow("processor", self.processedFrame)
-                    # cv2.waitKey(1)
+                    cv2.imshow("processor", self.processedFrame)
+                    cv2.waitKey(1)
                     #if (self.fps - (end-start) > 0):
                         #time.sleep(self.fps - (end-start))
             # else:
