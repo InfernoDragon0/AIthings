@@ -1,35 +1,32 @@
+import multiprocessing
 from time import sleep
 import numpy as np
 from data.audioInference import AudioInference
-import yamnet.params as yamnet_params
-import yamnet.yamnet as yamnet_model
-import yamnet.metadata as metadata
 from operator import itemgetter
-from threading import Thread
-import time
 
 class AudioProcessor():
-    def __init__(self, fileName, listenWindow, audioStream, tcp): #loading takes a long time, separate thread?
-        self.params = yamnet_params.Params()
-        self.yamnet = yamnet_model.yamnet_frames_model(self.params)
-        self.yamnet.load_weights(fileName)
-        self.yamnet_classes = np.array([x['name'] for x in metadata.CAT_META])
-        self.inferredResults = []
+    def __init__(self, fileName, listenWindow, audQueue, tcp): #loading takes a long time, separate thread?
+        self.fileName = fileName
         #self.timestamp = time.time()
         #self.tcpTime = 1
         self.tcp = tcp
         self.listenWindow = listenWindow
-        self.audioStream = audioStream
         self.completed = False
+        self.audQueue = audQueue
 
-    def start(self):
-        Thread(target=self.listen, args=()).start()
+    def startAsProcess(self):
+        print("Audio Processor Process started")
+        self.camProcess = multiprocessing.Process(target=self.listen, args=(self.fileName, self.audQueue,self.tcp))
+        self.camProcess.start()
         return self
     
     def complete(self):
         self.completed = True
     
-    def listen(self):
+    def listen(self, fileName, audQueue, tcp): 
+        import yamnet.params as yamnet_params #scary but necessary
+        import yamnet.yamnet as yamnet_model
+        import yamnet.metadata as metadata
         """
         Function that listens from the latest <listen_window> amount of seconds from
         the microphone and prints the results to console. Used for unit testing.
@@ -38,15 +35,22 @@ class AudioProcessor():
             microphone (_type_): _description_
             listen_window (int, optional): _description_. Defaults to 1.
         """
+        self.params = yamnet_params.Params()
+        self.yamnet = yamnet_model.yamnet_frames_model(self.params)
+        self.yamnet.load_weights(fileName)
+        self.yamnet_classes = np.array([x['name'] for x in metadata.CAT_META])
+        self.inferredResults = []
+
         while True:
             if self.completed:
                 return
             
-            if (not self.audioStream.ready):
+            if audQueue.empty():
+                sleep(0.2) #todo change to fps
                 continue
 
             print("Listening")
-            audio_data = np.transpose(self.audioStream.getFrames())
+            audio_data = np.transpose(audQueue.get())
             if len(audio_data.shape) > 1:
                 audio_data = np.mean(audio_data,axis=1)
 
@@ -69,7 +73,6 @@ class AudioProcessor():
             
 
             self.inferredResults = sorted(results,key=itemgetter(1),reverse=True)
-            self.audioStream.ready = False
             #and send the data over tcp, every x seconds [TODO to send only when alert or something]
             #since audio is already every 1 second no need a separate timer to check
             #if self.timestamp + self.tcpTime < time.time():
@@ -78,7 +81,6 @@ class AudioProcessor():
             for k,v in enumerate(self.inferredResults):
                 self.audioInference.addInferenceData(v[0], str(v[1]))
 
-            self.tcp.addData(self.audioInference)
-            self.tcp.start()
+            tcp.sendData(self.audioInference)
             
             print(self.inferredResults)

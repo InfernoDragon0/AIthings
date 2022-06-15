@@ -9,7 +9,7 @@ from clientTCP import ClientTCP
 import multiprocessing
 
 #NETWORK CONFIG
-HOST = "127.0.0.1"
+HOST = "192.168.1.53"
 PORT = 8100
 
 ########################################################################
@@ -28,38 +28,24 @@ PORT = 8100
 ########################################################################
 
 #Client class to start multiple cameras
-class Client():
-    def __init__(self, cameraId):
+class TCPClient():
+    def __init__(self,camQueue):
         self.flag = multiprocessing.Value("I", True)
-        self.camProcess = multiprocessing.Process(target=self.runCam, args=(cameraId,self.flag))
-        self.camProcess.start()
+        self.camQueue = camQueue
+        self.tcp = ClientTCP(f"Image Inference Client", HOST, PORT)
+        self.tcp.start()
         #self.camProcess.join()
 
-        #init TCP connection
-        #self.sendVideoStream = False
-        #self.videoTCP = ClientTCP(f"Cam {cameraId}", self.videoEncoder, HOST, PORT,startAsPublisher).start() #TODO change to overall TCP connection
+class Client():
+    def __init__(self,camQueue):
+        self.camProcess = multiprocessing.Process(target=self.runCam, args=(camQueue,))
+        self.camProcess.start()
 
-    def runCam(self, cameraId, flag):
-        #init video stream
-        self.tcp = ClientTCP(f"Cam {cameraId}", HOST, PORT)
-        self.videoStream = VideoStream(cameraId).start()
-        self.videoProcessor = VideoProcessor(self.videoStream).start()
-        self.videoEncoder = VideoEncoder(self.videoProcessor, self.tcp).start()
-
-        #DEBUG PREVIEW can remove this if client doesnt need to preview
-        self.videoDebug = self.videoProcessor.startDebug()
-
-        # while (flag.value):
-        #     pass
-
-        # print("Video stream terminating")
-        # self.videoStream.complete()
-        # self.videoProcessor.complete()
-        # self.videoEncoder.complete()
+    def runCam(self, camQueue):
+        self.videoProcessor = VideoProcessor(camQueue,20).process()
 
     def stop(self):
         self.camProcess.terminate()
-        
 
 class AudioClient():
     def __init__(self, cameraId):
@@ -87,18 +73,16 @@ class AudioClient():
 def main():
     #run as many clients as you want as long as it is one camera per Client object
     #cam0 = Client(0) #can swap in with a .mp4 file to test without camera
-    cam0 = Client(0)
-    audio0 = AudioClient(0)
-    
+    camQueue = multiprocessing.Queue(1) #only put the latest image in the queue
 
-    # while(True): #show for client 0
-    #     if keyboard.is_pressed('q'):
-    #         break
+    #TODO one camQueue for each camera
+    imageModel = VideoProcessor(camQueue).startAsProcess()
 
-    sleep(20)
-    cam0.stop()
-    audio0.stop()
-    #sys.exit(0)
+    #start each video stream as a separate process
+    videoStream0 = VideoStream("vlc.mp4", 60, camQueue, True).startAsProcess()
+    #videoStream0 = VideoStream("rtsp://admin:amarisipc1@192.168.1.64:554/Streaming/Channels/101/", 60, camQueue, True).startAsProcess()
+    #audio0 = AudioClient(0)
+ 
 
 #run main
 if __name__ == '__main__':

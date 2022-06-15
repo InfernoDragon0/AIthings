@@ -1,43 +1,62 @@
-from threading import Thread
-from yolo_wrapper import Process
+import multiprocessing
+import time
 import cv2
 
 #unified to be able to change the sequence of these without any issues
 class VideoProcessor():
-    def __init__(self, stream):
-        self.model = Process(device=0, weights="./atasv3.pt")
+    def __init__(self, camQueue, encQueue, resultQueue):
         self.completed = False
-        self.stream = stream
-        self.processedFrame = self.stream.getFrame()
         self.ready = False
-        self.result = None
-    
-    def start(self):
-        Thread(target=self.process, args=()).start()
+        self.camQueue = camQueue
+        self.encQueue = encQueue
+        self.resultQueue = resultQueue
+
+    def startAsProcess(self):
+        print("Processor Process started")
+        self.processorProcess = multiprocessing.Process(target=self.process, args=(self.camQueue, self.encQueue, self.resultQueue))
+        self.processorProcess.start()
         return self
 
     #encode loop to encode the latest frame received
-    def process(self):
+    def process(self, camQueue, encQueue, resultQueue):
+        from yolo_wrapper import Process #it is a sin that has to be done
+
+        self.processedFrame = None
+        self.result = None
+        self.model = Process(device=0, weights="./atasv3.pt")
         while True:
             if self.completed:
                 return
             
             #self.processedFrame is used to get the current frame
             #infer the image with the model to get the result
-            image = self.stream.getFrame()
-            self.result = self.model.inference_json_result(image)
+            if not camQueue.empty():
+                image = camQueue.get()
+                
+                if image is not None:
+                    start = time.perf_counter()
+                    self.result = self.model.inference_json_result(image)
 
-            if(len(self.result) > 1): #no need to bother with just 1 item in array
-                self.result = self.nms(self.result)
-            #print(self.result)
+                    if(len(self.result) > 1): #no need to bother with just 1 item in array
+                        self.result = self.nms(self.result)
+                    #print(self.result)
 
-            #drawing the bounding boxes based on the result on the image
-            image = self.model.draw_box_xyxy(image, self.result)
-            self.setProcessedFrame(image)
-            self.ready = True
+                    #drawing the bounding boxes based on the result on the image
+                    image = self.model.draw_box_xyxy(image, self.result)
+                    self.setProcessedFrame(image)
+                    end = time.perf_counter()
+                    #print(f"perf counter is {end-start}")
 
-    def asInferenceObject(self): #can remove if not needed
-        return {"x": 123, "y": 234, "confidence": 1, "inferred": "Person"}
+                    if encQueue.empty() and resultQueue.empty():
+                        encQueue.put(image)
+                        resultQueue.put(self.result)
+                    
+                    cv2.imshow("processor", image)
+                    cv2.waitKey(1)
+                    #if (self.fps - (end-start) > 0):
+                        #time.sleep(self.fps - (end-start))
+            # else:
+            #     time.sleep(self.fps)
 
     #unified to reduce changes
     def getFrame(self):
@@ -49,19 +68,6 @@ class VideoProcessor():
     #end the thread
     def complete(self):
         self.completed = True
-
-        #run a thread to show frames continuously
-    def startDebug(self):
-        Thread(target=self.showFrames, args=()).start()
-        return self
-
-    def showFrames(self):
-        while True:
-            if self.completed:
-                return
-
-            cv2.imshow('clientFrame', self.getFrame())
-            cv2.waitKey(1)
     
     #filters the result to remove intersecting boxes
     def nms(self, result):
