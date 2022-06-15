@@ -36,8 +36,7 @@ class VideoEncoder:
                     self.timestamp = time.time()
                     self.imageInference = ImageInference()
                     self.imageInference.inferredData = self.results
-                    self.tcp.addData(self.imageInference)
-                    self.tcp.sendData()
+                    self.tcp.sendData(self.imageInference)
             end = time.perf_counter()
 
             if (self.fps - (end - start) > 0):

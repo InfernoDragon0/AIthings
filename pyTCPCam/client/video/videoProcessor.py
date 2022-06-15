@@ -13,12 +13,12 @@ class VideoProcessor():
 
     def startAsProcess(self):
         print("Processor Process started")
-        self.processorProcess = multiprocessing.Process(target=self.process, args=())
+        self.processorProcess = multiprocessing.Process(target=self.process, args=(self.camQueue, self.encQueue, self.resultQueue))
         self.processorProcess.start()
         return self
 
     #encode loop to encode the latest frame received
-    def process(self):
+    def process(self, camQueue, encQueue, resultQueue):
         from yolo_wrapper import Process #it is a sin that has to be done
 
         self.processedFrame = None
@@ -30,8 +30,8 @@ class VideoProcessor():
             
             #self.processedFrame is used to get the current frame
             #infer the image with the model to get the result
-            if not self.camQueue.empty():
-                image = self.camQueue.get()
+            if not camQueue.empty():
+                image = camQueue.get()
                 
                 if image is not None:
                     start = time.perf_counter()
@@ -47,9 +47,9 @@ class VideoProcessor():
                     end = time.perf_counter()
                     #print(f"perf counter is {end-start}")
 
-                    if self.encQueue.empty() and self.resultQueue.empty():
-                        self.encQueue.put(image)
-                        self.resultQueue.put(self.result)
+                    if encQueue.empty() and resultQueue.empty():
+                        encQueue.put(image)
+                        resultQueue.put(self.result)
                     
                     # cv2.imshow("processor", self.processedFrame)
                     # cv2.waitKey(1)

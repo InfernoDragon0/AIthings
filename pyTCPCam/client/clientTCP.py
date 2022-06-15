@@ -23,21 +23,18 @@ class ClientTCP:
         except socket.error as e:
             print(e)
     
-    def start(self):
-        Thread(target=self.sendData, args=()).start()
-        return self
+    # def start(self):
+    #     Thread(target=self.sendData, args=()).start()
+    #     return self
     
-    def sendData(self):
+    def sendData(self,data):
         try:
-            self.socket.sendall(str.encode(jsonpickle.encode(self.data)))
+            self.socket.sendall(str.encode(jsonpickle.encode(data)))
         except Exception as e:
             self.connect()
             print(f"reconnecting to server {e}")
             time.sleep(1)
             self.sendData()
-    
-    def addData(self, data):
-        self.data = data
 
     def complete(self):
         self.completed = True
