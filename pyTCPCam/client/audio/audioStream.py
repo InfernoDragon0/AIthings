@@ -70,6 +70,13 @@ class AudioStream:
         while True:
             if self.completed:
                 return
+            
+            else:
+                self.recorder_numpy_tf(self.listenWindow)
+                #raise self.FormatNotSupportedError("Supported Formats are 'raw' and 'wav'")
+            sleep(1)
+
+            """
 
             if self.listenType == "numpy":
                 self.recorder_numpy(self.listenWindow)
@@ -86,9 +93,8 @@ class AudioStream:
                     wavefile.setsampwidth(self.audio.get_sample_size(self.FORMAT))
                     wavefile.writeframes(b''.join(raw_data))
                     #return filename + ".wav"
-            else:
-                raise self.FormatNotSupportedError("Supported Formats are 'raw' and 'wav'")
-            sleep(1)
+            """
+            
 
     def recorder(self,listen_window):
         """[summary]
