@@ -8,6 +8,7 @@ import json
 from threading import Thread
 import base64
 from datetime import datetime, timedelta
+import simplejpeg
 
 HOST = "0.0.0.0"
 PORT = 2004
@@ -34,46 +35,41 @@ def multi_threaded_client(connection):
     test = []
     connection.send(str.encode('Server is working:'))
     while True:
-        data = connection.recv(2048)
-        info = data.decode("utf8").replace("'", "\"")
-        if is_json(info) == True: 
-            dict = json.loads(data.decode("utf8").replace("'", "\""))
-            
-            # Checking if Camera and microphone loading
-            if dict["inferredData"] == None or dict["inferredData"] != []:
-                print("Loading Camera and Audio")
-            else:
-                #Check timestamp
-                # print(dict)
-                # checktimestamp(time)
-                # dt_object = datetime.fromtimestamp(dict["timestamp"])
-                # dt_objectadd =dt_object + timedelta(seconds=0.4)
-                # print(dict["packetType"]+": "+dt_object)
-                # if dt_object <= dt_objectadd:
-                #     test.append(dict)
-                test.append(dict)     
-            for val in range(0,len(test)):
-                if test[val]["packetType"] == "Image":
-                    counter_face = 0
-                    for i in test[val]["inferredData"]:
-                        if i["class"] == "face":
-                            counter_face += 1
-                    f = open("output.txt", "a")
-                    print("Number of face = "+ counter_face + " Time: "+ int(datetime.fromtimestamp(test[val]["timestamp"])), file=f)
-                    f.close()
-                elif test[val]["packetType"] == "Audio":
-                    f = open("output.txt", "a")
-                    print("Audio sound and value = "+ str(test[val]["inferredData"]) + " Time: "+ int(datetime.fromtimestamp(test[val]["timestamp"])), file=f)
-                    f.close()
-                elif test[val]["packetType"] == "Sensor":
-                    f = open("output.txt", "a")
-                    print("Sensor value = "+ str(test[val]["inferredData"]) + " Time: "+ int(datetime.fromtimestamp(test[val]["timestamp"])), file=f)
-                    f.close()
-            test = []
+        data = connection.recv(16000)
+        try:
+            dataPickle = jsonpickle.decode(data)
 
-        else:
+            #global inference data check
+            if dataPickle.inferredData is None or len(dataPickle.inferredData) == 0:
+                print(f"{dataPickle.packetType}: No data available for inference")
+                continue
+            
+            f = open("output.txt", "a") #this is taxing if you keep opening and closing in the while loop
+
+            if dataPickle.packetType == 'Audio':
+                print(f"Audio data received: {dataPickle.inferredData} at time {dataPickle.timestamp}")
+
+            elif dataPickle.packetType == 'Image':
+                print(f"Number of faces received: {len(dataPickle.inferredData)} at time {dataPickle.timestamp}")
+                if dataPickle.imageData is not None:
+                    decodedImage = simplejpeg.decode_jpeg(dataPickle.imageData, colorspace='BGR')
+                    cv2.imshow("server", decodedImage)
+                    cv2.waitKey(1)
+            
+            elif dataPickle.packetType == 'Sensor':
+                print(f"Sensor data received: {dataPickle.inferredData} at time {dataPickle.timestamp}")
+            
+            else:
+                print(f"New data type found: {dataPickle.packetType}")
+            
+            f.close()
+
+        
+        except Exception as e:
+            print(f"Error reading data json {e}")
+        
             f = open("error.txt", "a")
-            print(info, file=f)
+            print(data, file=f)
             f.close()          
             
         if not data:
