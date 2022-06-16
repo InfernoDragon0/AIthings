@@ -1,6 +1,5 @@
 import tkinter
 from tkinter import messagebox
-import datetime
 import socket
 import struct
 import jsonpickle
@@ -8,9 +7,9 @@ import cv2
 import json
 from threading import Thread
 import base64
-import binascii
+from datetime import datetime, timedelta
 
-HOST = "192.168.1.55"
+HOST = "0.0.0.0"
 PORT = 2004
 audio_list = []
 microwave_list = []
@@ -22,48 +21,60 @@ def is_json(myjson):
   except ValueError as e:
     return False
   return True
-def is_base64(s):
+
+def validjson(myvalue):
     try:
-        base64.decodestring(s)
-        return True
-    except binascii.Error:
+        json.loads(myvalue)
+    except ValueError as e:
         return False
+    return True
+# def checktimestamp(time):
 
 def multi_threaded_client(connection):
-    microwave_list = []
+    test = []
     connection.send(str.encode('Server is working:'))
     while True:
         data = connection.recv(2048)
         info = data.decode("utf8").replace("'", "\"")
         if is_json(info) == True: 
             dict = json.loads(data.decode("utf8").replace("'", "\""))
-            # Checking for Image value
-            if dict["packetType"] == "Image":
-                # Camera and microphone loading
-                if dict["inferredData"] == None:
-                    print("Loading Camera and Audio")
-                # Load finish
-                else:
-                    if dict["inferredData"] != []:
-                        for val in dict["inferredData"]:
-                            counter_face = 0
-                            if val["class"] == "face":
-                                counter_face += 1
-
-
-                        image_list.append(counter_face)
-                    
-                    print(image_list)
-            # Checking for audio
-            elif dict["packetType"] == "Audio":
-                audio_list.append(dict["inferredData"])
-                print(audio_list)                    
-            # Checking for Sensor value
-            elif dict["packetType"] == "Sensor":
-                microwave_list.append(dict["inferredData"])
+            
+            # Checking if Camera and microphone loading
+            if dict["inferredData"] == None or dict["inferredData"] != []:
+                print("Loading Camera and Audio")
+            else:
+                #Check timestamp
+                # print(dict)
+                # checktimestamp(time)
+                # dt_object = datetime.fromtimestamp(dict["timestamp"])
+                # dt_objectadd =dt_object + timedelta(seconds=0.4)
+                # print(dict["packetType"]+": "+dt_object)
+                # if dt_object <= dt_objectadd:
+                #     test.append(dict)
+                test.append(dict)     
+            for val in range(0,len(test)):
+                if test[val]["packetType"] == "Image":
+                    counter_face = 0
+                    for i in test[val]["inferredData"]:
+                        if i["class"] == "face":
+                            counter_face += 1
+                    f = open("output.txt", "a")
+                    print("Number of face = "+ counter_face + " Time: "+ int(datetime.fromtimestamp(test[val]["timestamp"])), file=f)
+                    f.close()
+                elif test[val]["packetType"] == "Audio":
+                    f = open("output.txt", "a")
+                    print("Audio sound and value = "+ str(test[val]["inferredData"]) + " Time: "+ int(datetime.fromtimestamp(test[val]["timestamp"])), file=f)
+                    f.close()
+                elif test[val]["packetType"] == "Sensor":
+                    f = open("output.txt", "a")
+                    print("Sensor value = "+ str(test[val]["inferredData"]) + " Time: "+ int(datetime.fromtimestamp(test[val]["timestamp"])), file=f)
+                    f.close()
+            test = []
 
         else:
-            print(info)                
+            f = open("error.txt", "a")
+            print(info, file=f)
+            f.close()          
             
         if not data:
             break
@@ -76,3 +87,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         conn, addr = s.accept()
         Thread(target=multi_threaded_client, args=(conn, )).start()
+
+    
+
