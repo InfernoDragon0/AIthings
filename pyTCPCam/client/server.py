@@ -26,10 +26,11 @@ def audio_class_names(class_map_csv):
     return np.array([display_name for (_, _, display_name) in reader])
 
 def multi_threaded_client(connection):
-    test = []
-    flag_count = 0
     connection.send(str.encode('Server is working:'))
     while True:
+        flag_image = 0
+        flag_audio = 0
+        flag_sensor = 0
         data = connection.recv(64000)
         try:
             dataPickle = jsonpickle.decode(data)
@@ -48,27 +49,35 @@ def multi_threaded_client(connection):
                         if audio_name[val] == dataPickle.inferredData[i]['name']:
                             if float(dataPickle.inferredData[i]['value']) >= 0.5:       
                                 print("Human sound detected")
-                                flag_count += 1           
+                                flag_audio += 1           
                                 break
                         break
                 print("Continue with Image")
-
             elif dataPickle.packetType == 'Image':
+                face_counter = len(dataPickle.inferredData)
                 print(f"Number of faces received: {len(dataPickle.inferredData)} at time {dataPickle.timestamp}")
                 if dataPickle.imageData is not None:
                     decodedImage = simplejpeg.decode_jpeg(dataPickle.imageData, colorspace='BGR')
                     cv2.imshow("server", decodedImage)
                     cv2.waitKey(1)
-
+                #Check for faces
+                if len(dataPickle.inferredData) >= 1:
+                    print("Human is detected")
+                    flag_image += 1
             elif dataPickle.packetType == 'Sensor':
                 print(f"Sensor data received: {dataPickle.inferredData} at time {dataPickle.timestamp}")
+                #Sensor check
                 if dataPickle.inferredData == 1:
-                    flag_count += 1
-            flag_count = 0
+                    flag_sensor += 1
             else:
                 print(f"New data type found: {dataPickle.packetType}")
-            # if flag_count >= 2:
+            #check flag
+            if flag_audio == 1 and flag_image== 1 or flag_sensor== 1 and flag_audio == 1 or flag_image == 1 and flag_sensor == 1:
                 #alert will pop up
+                if flag_image == 1:
+                    messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second)+ "\nNumber of people at location now: "+ face_counter)
+                else:
+                    messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second)+ "\nNumber of people at location now: not found \nAudio and Sensor detected people")
         except Exception as e:
             print(f"Error reading data json {e}")
         
