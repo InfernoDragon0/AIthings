@@ -44,7 +44,14 @@ def multi_threaded_client(connection):
 
             if dataPickle.packetType == 'Audio':
                 print(f"Audio data received: {dataPickle.inferredData} at time "+ str(datetime.fromtimestamp(int(dataPickle.timestamp))))
-                  
+                #Get audio name
+                audio_name = audio_class_names("yamnet_class_map.csv")
+                
+                #Check audio sound is human and check for value that is great or equal to 10
+                for val in range(0,67):
+                    if audio_name[val]:
+                        if dataPickle.inferredData.value >= 0.5:       
+                            print(dataPickle.inferredData.name + " and value is " + dataPickle.inferredData.value)           
             elif dataPickle.packetType == 'Image':
                 counter = 0
                 print(f"Number of faces received: {len(dataPickle.inferredData)} at time " + str(datetime.fromtimestamp(int(dataPickle.timestamp))))
@@ -76,8 +83,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.listen()
     print("Server running")
     audio_name = audio_class_names("yamnet_class_map.csv")
-    for val in range(len(audio_name)):
-        print(audio_name[val]) 
+    for val in range(0,67):
+        if audio_name[val]:
+            print(audio_name[val])
     # while True:
     #     conn, addr = s.accept()
     #     Thread(target=multi_threaded_client, args=(conn, )).start()
