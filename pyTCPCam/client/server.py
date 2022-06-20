@@ -5,7 +5,6 @@ import struct
 import jsonpickle
 import cv2
 from threading import Thread
-from datetime import datetime
 import simplejpeg
 import time
 import csv
@@ -16,7 +15,7 @@ PORT = 2004
 audio_list = []
 microwave_list = []
 image_list = []
-counter_face = 0
+image_counter = 0
 def audio_class_names(class_map_csv):
 #   Read the class name definition file and return a list of strings.
   if tf.is_tensor(class_map_csv):
@@ -33,40 +32,43 @@ def multi_threaded_client(connection):
     while True:
         data = connection.recv(64000)
         try:
-            currenttiming = datetime.time()
             dataPickle = jsonpickle.decode(data)
 
             #global inference data check
             if dataPickle.inferredData is None or len(dataPickle.inferredData) == 0: 
                 print(f"{dataPickle.packetType}: No data available for inference")
                 continue
-
-
             if dataPickle.packetType == 'Audio':
-                print(f"Audio data received: {dataPickle.inferredData} at time "+ str(datetime.fromtimestamp(int(dataPickle.timestamp))))
+                print(f"Audio data received: {dataPickle.inferredData} at time {dataPickle.timestamp}")
                 #Get audio name
                 audio_name = audio_class_names("yamnet_class_map.csv")
-                
                 #Check audio sound is human and check for value that is great or equal to 10
                 for val in range(0,67):
-                    if audio_name[val]:
-                        if dataPickle.inferredData.value >= 0.5:       
-                            print(dataPickle.inferredData.name + " and value is " + dataPickle.inferredData.value)           
+                    for i in range(0,4):
+                        if audio_name[val] == dataPickle.inferredData[i]['name']:
+                            if float(dataPickle.inferredData[i]['value']) >= 0.5:       
+                                print("Human sound detected")
+                                flag_count += 1           
+                                break
+                        break
+                print("Continue with Image")
+
             elif dataPickle.packetType == 'Image':
-                counter = 0
-                print(f"Number of faces received: {len(dataPickle.inferredData)} at time " + str(datetime.fromtimestamp(int(dataPickle.timestamp))))
+                print(f"Number of faces received: {len(dataPickle.inferredData)} at time {dataPickle.timestamp}")
                 if dataPickle.imageData is not None:
                     decodedImage = simplejpeg.decode_jpeg(dataPickle.imageData, colorspace='BGR')
                     cv2.imshow("server", decodedImage)
                     cv2.waitKey(1)
 
-                print("FPS: ", 1.0 / (time.time() - dataPickle.timestamp))
             elif dataPickle.packetType == 'Sensor':
-                print(f"Sensor data received: {dataPickle.inferredData} at time "+ str(datetime.fromtimestamp(int(dataPickle.timestamp))))
-            
+                print(f"Sensor data received: {dataPickle.inferredData} at time {dataPickle.timestamp}")
+                if dataPickle.inferredData == 1:
+                    flag_count += 1
+            flag_count = 0
             else:
                 print(f"New data type found: {dataPickle.packetType}")
-        
+            # if flag_count >= 2:
+                #alert will pop up
         except Exception as e:
             print(f"Error reading data json {e}")
         
@@ -82,10 +84,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     s.listen()
     print("Server running")
-    audio_name = audio_class_names("yamnet_class_map.csv")
-    for val in range(0,67):
-        if audio_name[val]:
-            print(audio_name[val])
-    # while True:
-    #     conn, addr = s.accept()
-    #     Thread(target=multi_threaded_client, args=(conn, )).start()
+
+    while True:
+        conn, addr = s.accept()
+        Thread(target=multi_threaded_client, args=(conn, )).start()
