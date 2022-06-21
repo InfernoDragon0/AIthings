@@ -37,6 +37,7 @@ class VideoStream:
                     #cv2.resizeWindow("clientFrame", 960, 1080)
                     cv2.waitKey(1)
             end = time.perf_counter()
+            print(f"Frame Time: {end}")
             if (fps - (end - start) > 0):
                 time.sleep(fps - (end - start))
     

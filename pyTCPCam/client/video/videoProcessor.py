@@ -45,7 +45,7 @@ class VideoProcessor():
                     image = self.model.draw_box_xyxy(image, self.result)
                     self.setProcessedFrame(image)
                     end = time.perf_counter()
-                    #print(f"perf counter is {end-start}")
+                    print(f"perf counter is {end-start}")
 
                     if encQueue.empty() and resultQueue.empty():
                         encQueue.put(image)
