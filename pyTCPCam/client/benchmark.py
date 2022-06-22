@@ -53,7 +53,7 @@ if __name__ == '__main__':
     encQueue = multiprocessing.Queue(1)
     resultQueue = multiprocessing.Queue(1)
 
-    rtspSrc = "rtsp://admin:amarisipc1@192.168.1.64:554/Streaming/Channels/101/"
+    rtspSrc = "rtsp://admin:amarisipc1@10.1.1.10:554/Streaming/Channels/101/"
 
     imageModel = VideoProcessor(camQueue, encQueue, resultQueue).startAsProcess()
     
@@ -62,4 +62,5 @@ if __name__ == '__main__':
     #videoStream0 = VideoStream(f"rtspsrc location ={rtspSrc} latency=0 ! rtph264depay ! h264parse ! nvv4l2decoder ! nvvidconv ! video/x-raw, format=BGRx, width=1920, height=1080 ! videorate ! 'video/x-raw(memory:NVMM),framerate=20/1'", 20, camQueue, True).startAsProcess()
     #videoStream0 = VideoStream(f"rtspsrc location ={rtspSrc} latency=0 ! rtph264depay ! h264parse ! nvv4l2decoder ! nvvidconv ! video/x-raw, format=BGRx, width=2048, height=1536 ! videorate ! 'video/x-raw(memory:NVMM),framerate=20/1'", 20, camQueue, True).startAsProcess()
     #videoStream0 = VideoStream(f"rtspsrc location ={rtspSrc} latency=0 ! rtph264depay ! h264parse ! nvv4l2decoder ! nvvidconv ! video/x-raw, format=BGRx, width=3840, height=2160 ! videorate ! 'video/x-raw(memory:NVMM),framerate=20/1'", 20, camQueue, True).startAsProcess()
-    videoStream0 = VideoStream(f"rtspsrc location ={rtspSrc} latency=0 ! rtph264depay ! h264parse ! nvv4l2decoder ! nvvidconv ! video/x-raw, format=BGRx, width=1280, height=720", 60, camQueue, True).startAsProcess()
+    videoStream0 = VideoStream(f"rtspsrc location ={rtspSrc} latency=0 ! rtph264depay ! h264parse ! nvv4l2decoder ! nvvidconv ! video/x-raw, format=BGRx, width=1280, height=720 ! videoconvert ! video/x-raw,format=BGR ! appsink", 60, camQueue, True).startAsProcess()
+    #videoStream0 = VideoStream("rtsp://admin:amarisipc1@10.1.1.10:554/Streaming/Channels/101/", 60, camQueue, True).startAsProcess()
