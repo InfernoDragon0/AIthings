@@ -7,12 +7,11 @@ import yamnet.metadata as metadata
 from operator import itemgetter
 from threading import Thread
 import time
+import tensorflow as tf
 
 class AudioProcessor():
     def __init__(self, fileName, listenWindow, audioStream, tcp): #loading takes a long time, separate thread?
-        self.params = yamnet_params.Params()
-        self.yamnet = yamnet_model.yamnet_frames_model(self.params)
-        self.yamnet.load_weights(fileName)
+        self.yamnet = tf.lite.Interpreter('yamnet.tflite')
         self.yamnet_classes = np.array([x['name'] for x in metadata.CAT_META])
         self.inferredResults = []
         #self.timestamp = time.time()
@@ -48,11 +47,34 @@ class AudioProcessor():
 
             print("Listening")
             start = time.time()
-            audio_data = np.transpose(self.audioStream.getFrames())
-            if len(audio_data.shape) > 1:
-                audio_data = np.mean(audio_data,axis=1)
+            input_details = self.yamnet.get_input_details()
+            waveform_input_index = input_details[0]['index']
+            output_details = self.yamnet.get_output_details()
+            scores_output_index = output_details[0]['index']
+            embeddings_output_index = output_details[1]['index']
+            spectrogram_output_index = output_details[2]['index']
 
-            scores,embeddings,spectrogram = self.yamnet(audio_data)
+            audio_data = np.transpose(audio_data)
+
+            if len(audio_data.shape) > 1:
+                audio_data = np.mean(audio_data, axis=1)
+
+            
+
+            waveform = np.float32(audio_data)
+
+
+            self.yamnet.resize_tensor_input(waveform_input_index,[len(waveform)], strict=True)
+            print("Before allocate tensors")
+            self.yamnet.allocate_tensors()
+            print("After allocate tensors")
+            self.yamnet.set_tensor(waveform_input_index,waveform)
+            self.yamnet.invoke()
+
+            scores, embeddings, spectrogram = (
+                self.yamnet.get_tensor(scores_output_index),
+                self.yamnet.get_tensor(embeddings_output_index),
+                self.yamnet.get_tensor(spectrogram_output_index))
 
             top_N = 5
             mean_scores = np.mean(scores,axis=0)
