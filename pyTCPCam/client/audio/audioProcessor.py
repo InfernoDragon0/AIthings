@@ -11,7 +11,7 @@ import tensorflow as tf
 
 class AudioProcessor():
     def __init__(self, fileName, listenWindow, audioStream, tcp): #loading takes a long time, separate thread?
-        self.yamnet = tf.lite.Interpreter('yamnet.tflite')
+        self.yamnet = tf.lite.Interpreter(fileName)
         self.yamnet_classes = np.array([x['name'] for x in metadata.CAT_META])
         self.inferredResults = []
         #self.timestamp = time.time()
@@ -54,7 +54,7 @@ class AudioProcessor():
             embeddings_output_index = output_details[1]['index']
             spectrogram_output_index = output_details[2]['index']
 
-            audio_data = np.transpose(audio_data)
+            audio_data = np.transpose(self.audioStream.getFrames())
 
             if len(audio_data.shape) > 1:
                 audio_data = np.mean(audio_data, axis=1)
