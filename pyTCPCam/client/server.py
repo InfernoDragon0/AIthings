@@ -83,7 +83,7 @@ def multi_threaded_client(connection):
                     if dataPickle['inferredData'][0]['value'] == 1:
                         print("Sensor data received: " + str(dataPickle['inferredData'][0]['name']) + " at time " + str(packetTime_sensor), file=f)
                         flag_sensor = 1
-                        # sensor_value = dataPickle['inferredData']
+                        sensor_value = dataPickle['inferredData']
                         print("flag sensor "+ str(flag_sensor))
             else:
                 print(f"New data type found: {dataPickle.packetType}")
