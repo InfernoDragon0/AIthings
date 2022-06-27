@@ -202,5 +202,3 @@ Sensor data received: ultrasonic at time 27-06-2022 13:57:16
 Sensor data received: ultrasonic at time 27-06-2022 13:57:18
 Sensor data received: ultrasonic at time 27-06-2022 13:57:24
 Sensor data received: ultrasonic at time 27-06-2022 13:59:20
-Sensor data received: ultrasonic at time 27-06-2022 14:20:13
-Sensor data received: ultrasonic at time 27-06-2022 14:20:17
