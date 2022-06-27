@@ -9,7 +9,7 @@ from clientTCP import ClientTCP
 import multiprocessing
 
 #NETWORK CONFIG
-HOST = "192.168.162.179"
+HOST = "192.168.1.198"
 PORT = 2004
 
 ########################################################################
