@@ -13,6 +13,9 @@ import tensorflow as tf
 import datetime 
 HOST = "0.0.0.0"
 PORT = 2004
+audio_list = []
+microwave_list = []
+image_list = []
 image_counter = 0
 def audio_class_names(class_map_csv):
 #   Read the class name definition file and return a list of strings.
@@ -38,7 +41,7 @@ def multi_threaded_client(connection):
                 print(f"{dataPickle.packetType}: No object of interest in image")
                 continue
             if dataPickle.packetType == 'Audio':
-                packetTime_audio = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S') 
+                packetTime_audio = datetime.datetime.now() 
                 print(f"Audio data received: {dataPickle.inferredData} at time {packetTime_audio}")
                 #Get audio name
                 audio_name = audio_class_names("yamnet_class_map.csv")
@@ -48,15 +51,13 @@ def multi_threaded_client(connection):
                         if audio_name[val] == dataPickle.inferredData[i]['name']:
                             if float(dataPickle.inferredData[i]['value']) >= 0.5:       
                                 print("Human sound detected")
-                                print("Audio data received: " + dataPickle.inferredData[i]['name'] +" and the value is "+ dataPickle.inferredData[i]['value'] +" at time " +str(packetTime_audio),file=f)
-                                audio_soundname = dataPickle.inferredData[i]['name']
-                                audio_value = dataPickle.inferredData[i]['value']
-                                flag_audio = 1           
+                                print("Audio data received:" + dataPickle.inferredData[i]['name'] +" and the value is "+ dataPickle.inferredData[i]['value'] +" at time " +str(packetTime_audio),file=f)
+                                flag_audio += 1           
                                 break
                         break
             elif dataPickle.packetType == 'Image':
                 face_counter = len(dataPickle.inferredData)
-                packetTime_image = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+                packetTime_image = datetime.datetime.now()
 
                 print(f"Number of faces received: {len(dataPickle.inferredData)} at time {packetTime_image}")
                 if dataPickle.imageData is not None:
@@ -66,39 +67,25 @@ def multi_threaded_client(connection):
                 #Check for faces
                 if len(dataPickle.inferredData) >= 1:
                     print("Human is detected")
-                    print("Number of faces received: "+ str(len(dataPickle.inferredData)) + " at time " + str(packetTime_image),file=f)
-                    flag_image = 2
-                #Check image
+                    print("Number of faces received:" +len(dataPickle.inferredData) +" at time " +str(packetTime_image))
+
+                    flag_image += 1
             elif dataPickle.packetType == 'Sensor':
-                packetTime_sensor = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+                packetTime_sensor = datetime.datetime.now()
                 print(f"Sensor data received: {dataPickle.inferredData} at time {packetTime_sensor}")
                 #Sensor check
-                if dataPickle.inferredData['name'] == "ultrasonic":
-                    if dataPickle.inferredData['value'] == 1:
-                        print("Sensor data received: "+ str(dataPickle.inferredData['name']) + " at time "+str(packetTime_sensor),file=f)
-                        sensor_value = dataPickle.inferredData
-                        flag_sensor = 1
-                
-
+                if dataPickle.inferredData == 1:
+                    print("Sensor data received: "+ dataPickle.inferredData+ " at time "+str(packetTime_sensor))
+                    flag_sensor += 1
             else:
                 print(f"New data type found: {dataPickle.packetType}")
             #check flag
-            
-            print("Flag Audio "+str(flag_audio) + " Flag image"+ str(flag_image))
-            if (flag_audio + flag_image + flag_sensor) >= 2:
-                image = 'Not detected'
-                audio ='Not detected '
-                sensor ='Not detected'
+            if flag_audio == 1 and flag_image== 1 or flag_sensor== 1 and flag_audio == 1 or flag_image == 1 and flag_sensor == 1 or flag_audio == 1 and flag_image == 1 and flag_sensor == 1:
                 #alert will pop up
-                packetTime_alert = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-                if flag_image == 2:
-                    image = "Number of people at location now: "+ str(len(dataPickle.inferredData))
-                if flag_audio == 1:
-                    audio = "Audio sound "+ audio_soundname + " value of sound " + audio_value
-                if flag_sensor == 1:
-                    sensor = "Sensor " + sensor_value
-                
-                messagebox.showerror("Alert", "Date of Alert and Time: "+packetTime_alert + "\nImage: "+ image+"\nAudio: " + audio +"\nSensor: " +sensor)
+                if flag_image == 1:
+                    messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second)+ "\nNumber of people at location now: "+ face_counter)
+                else:
+                    messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second)+ "\nNumber of people at location now: not found \nAudio and Sensor detected people")
             f.close()
         except Exception as e:
             print(f"Error reading data json {e}")
