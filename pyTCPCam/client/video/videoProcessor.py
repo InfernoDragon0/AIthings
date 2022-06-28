@@ -31,6 +31,7 @@ class VideoProcessor():
             #self.processedFrame is used to get the current frame
             #infer the image with the model to get the result
             if not camQueue.empty():
+                print("video processor is processing...")
                 image = camQueue.get()
                 
                 if image is not None:

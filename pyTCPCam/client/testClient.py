@@ -48,10 +48,9 @@ if __name__ == '__main__':
 
     # #here the main process will encode and send thru tcp
     tcp = ClientTCP("Integrated Audio/Video Client", "192.168.31.53", 2004)
-    tcp2 = ClientTCP("Integrated Audio/Video Client 2", "192.168.31.53", 2004)
     #audio process
     audioStream0 = AudioStream(16000, audQueue, 11, "numpy_tf", 1).startAsProcess()
-    audioProcessor = AudioProcessor('yamnet.tflite', 1, audQueue, tcp2).startAsProcess()
+    audioProcessor = AudioProcessor('yamnet.tflite', 1, audQueue, tcp).startAsProcess()
 
     #encoder and TCP
     videoEncoder0 = VideoEncoder(encQueue, resultQueue, 5, tcp).start()
