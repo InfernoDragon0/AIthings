@@ -36,6 +36,7 @@ class VideoEncoder:
                     self.timestamp = time.time()
                     self.imageInference = ImageInference()
                     self.imageInference.inferredData = self.results
+                    self.imageInference.imageData = self.encodedFrame
                     self.tcp.sendData(self.imageInference)
                 print("video encoder is encoding & sending to server...")
             end = time.perf_counter()
