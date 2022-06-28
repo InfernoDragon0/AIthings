@@ -47,7 +47,7 @@ if __name__ == '__main__':
     #videoStream0 = VideoStream("rtsp://admin:amarisipc1@192.168.1.64:554/Streaming/Channels/101/", 60, camQueue, True).startAsProcess()
 
     # #here the main process will encode and send thru tcp
-    tcp = ClientTCP("Integrated Audio/Video Client", "192.168.1.199", 2004)
+    tcp = ClientTCP("Integrated Audio/Video Client", "192.168.31.53", 2004)
     #audio process
     audioStream0 = AudioStream(16000, audQueue, 11, "numpy_tf", 1).startAsProcess()
     audioProcessor = AudioProcessor('yamnet.h5', 1, audQueue, tcp).startAsProcess()
