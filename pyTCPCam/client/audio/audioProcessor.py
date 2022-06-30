@@ -25,8 +25,8 @@ class AudioProcessor():
         self.completed = True
     
     def listen(self, fileName, audQueue, tcp): 
-        import yamnet.params as yamnet_params #scary but necessary
-        import yamnet.yamnet as yamnet_model
+        #import yamnet.params as yamnet_params #scary but necessary
+        #import yamnet.yamnet as yamnet_model
         import yamnet.metadata as metadata
         """
         Function that listens from the latest <listen_window> amount of seconds from

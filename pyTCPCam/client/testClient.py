@@ -42,9 +42,9 @@ if __name__ == '__main__':
     audQueue = multiprocessing.Queue(1)
 
     imageModel = VideoProcessor(camQueue, encQueue, resultQueue).startAsProcess()
-    # #start each video stream as a separate process
+    #start each video stream as a separate process
     videoStream0 = VideoStream("/dev/video0", 60, camQueue, False).startAsProcess()
-    #videoStream0 = VideoStream("rtsp://admin:amarisipc1@192.168.1.64:554/Streaming/Channels/101/", 60, camQueue, True).startAsProcess()
+    videoStream0 = VideoStream("rtsp://admin:amarisipc1@192.168.1.64:554/Streaming/Channels/101/", 60, camQueue, True).startAsProcess()
 
     # #here the main process will encode and send thru tcp
     tcp = ClientTCP("Integrated Audio/Video Client", "192.168.31.53", 2004)
