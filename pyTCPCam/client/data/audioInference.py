@@ -4,6 +4,7 @@ from data.baseInference import BaseInference
 class AudioInference(BaseInference):
     def __init__(self):
         super().__init__()
+        self.inferenceType = "dog"
         self.packetType = "Audio"
         self.audioData = None
 
