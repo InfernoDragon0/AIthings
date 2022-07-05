@@ -92,7 +92,7 @@ def multi_threaded_client(connection):
                     cv2.waitKey(1)
                 #Check for faces
                 if len(dataPickle.inferredData) >= 1:
-                    print("Human is detected")
+                    print("Target is detected")
                     print("Number of faces received:" +len(dataPickle.inferredData) +" at time " +str(packetTime_image))
 
                     flag_image += 1
@@ -126,12 +126,12 @@ def multi_threaded_client(connection):
                 sensor ='Not detected'
                 #alert will pop up
                 if flag_image == 1:
-                    messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second)+ "\nNumber of people at location now: "+ face_counter)
+                    messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second)+ "\nNumber of targets at location now: "+ face_counter)
                 else:
-                    messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second)+ "\nNumber of people at location now: not found \nAudio and Sensor detected people")
+                    messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second)+ "\nNumber of targets at location now: not found \nAudio and Sensor detected targets")
                 packetTime_alert = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
                 if flag_image == 2:
-                    image = "Number of people at location now: "+ str(len(dataPickle.inferredData))
+                    image = "Number of targets at location now: "+ str(len(dataPickle.inferredData))
                 if flag_audio == 1:
                     audio = "Audio sound "+ audio_soundname + " value of sound " + audio_value
                 if flag_sensor == 1:
