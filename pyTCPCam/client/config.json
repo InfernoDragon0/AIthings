@@ -1,0 +1,16 @@
+{
+    "py/object": "data.configData.ConfigData",
+    "videoSource": "h264nvenc10000.mp4",
+    "videoModel": "./atasv3small.pt",
+    "videoDebug": false,
+    "targetFPS": 60,
+    "audioSource": 1,
+    "audioModel": "yamnet.tflite",
+    "audioListenTime": 1,
+    "audioListenType": "numpy_tf",
+    "audioBitRate": 16000,
+    "tcpHost": "127.0.0.1",
+    "tcpPort": 8100,
+    "tcpName": "Integrated Audio/Video Client",
+    "tcpSendTime": 5
+}
