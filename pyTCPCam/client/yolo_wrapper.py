@@ -44,7 +44,7 @@ class Process:
             result_dict['score'] = i[4]
             result_dict['class'] = self.names[int(i[5])]
 
-            if result_dict['class'] == "face":
+            if result_dict['class'] == "person":
                 result_array.append(result_dict)
             #result_array.append(result_dict)
 
