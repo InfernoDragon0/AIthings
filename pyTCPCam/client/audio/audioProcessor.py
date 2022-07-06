@@ -6,7 +6,7 @@ from operator import itemgetter
 import tensorflow as tf
 
 class AudioProcessor():
-    def __init__(self, fileName, listenWindow, audQueue, tcp): #loading takes a long time, separate thread?
+    def __init__(self, fileName, listenWindow, audQueue, tcp, inferenceType): #loading takes a long time, separate thread?
         self.fileName = fileName
         #self.timestamp = time.time()
         #self.tcpTime = 1
@@ -14,17 +14,18 @@ class AudioProcessor():
         self.listenWindow = listenWindow
         self.completed = False
         self.audQueue = audQueue
+        self.inferenceType = inferenceType
 
     def startAsProcess(self):
         print("Audio Processor Process started")
-        self.camProcess = multiprocessing.Process(target=self.listen, args=(self.fileName, self.audQueue,self.tcp))
+        self.camProcess = multiprocessing.Process(target=self.listen, args=(self.fileName, self.audQueue,self.tcp, self.inferenceType))
         self.camProcess.start()
         return self
     
     def complete(self):
         self.completed = True
     
-    def listen(self, fileName, audQueue, tcp): 
+    def listen(self, fileName, audQueue, tcp, inferenceType): 
         #import yamnet.params as yamnet_params #scary but necessary
         #import yamnet.yamnet as yamnet_model
         import yamnet.metadata as metadata
@@ -98,7 +99,7 @@ class AudioProcessor():
             #since audio is already every 1 second no need a separate timer to check
             #if self.timestamp + self.tcpTime < time.time():
                 #self.timestamp = time.time()
-            self.audioInference = AudioInference()
+            self.audioInference = AudioInference(inferenceType)
             for k,v in enumerate(self.inferredResults):
                 self.audioInference.addInferenceData(v[0], str(v[1]))
 

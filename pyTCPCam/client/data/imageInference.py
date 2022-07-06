@@ -2,9 +2,9 @@ from data.baseInference import BaseInference
 
 
 class ImageInference(BaseInference):
-    def __init__(self):
+    def __init__(self, inferenceType):
         super().__init__()
-        self.inferenceType = "dog"
+        self.inferenceType = inferenceType
         self.packetType = "Image"
         self.streamImage = False #set to true if want to send the image as well
         self.imageData = None

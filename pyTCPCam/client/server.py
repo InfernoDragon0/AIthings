@@ -10,7 +10,7 @@ PORT = 8100
 def multi_threaded_client(connection):
     connection.send(str.encode('Server is working:'))
     while True:
-        data = connection.recv(2048)
+        data = connection.recv(65536)
         try:
             pickledData = jsonpickle.decode(data)
             print(pickledData)

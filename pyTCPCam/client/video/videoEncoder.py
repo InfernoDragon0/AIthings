@@ -5,7 +5,7 @@ import time
 
 #unified to be able to change the sequence of these without any issues
 class VideoEncoder:
-    def __init__(self, encQueue, resultQueue, fpsTarget, tcp):
+    def __init__(self, encQueue, resultQueue, fpsTarget, tcp, inferenceType):
         self.tcp = tcp
         self.encQueue = encQueue
         self.resultQueue = resultQueue
@@ -14,6 +14,7 @@ class VideoEncoder:
         self.ready = True
         self.timestamp = time.time()
         self.fps = 1/fpsTarget
+        self.inferenceType = inferenceType
     
     def start(self):
         Thread(target=self.encode, args=()).start()
@@ -34,7 +35,7 @@ class VideoEncoder:
                 #and send the data over tcp, every x seconds [TODO to send only when alert or something]
                 if self.timestamp + self.fps < time.time():
                     self.timestamp = time.time()
-                    self.imageInference = ImageInference()
+                    self.imageInference = ImageInference(self.inferenceType)
                     self.imageInference.inferredData = self.results
                     self.imageInference.imageData = self.encodedFrame
                     self.tcp.sendData(self.imageInference)

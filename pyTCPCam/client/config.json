@@ -12,5 +12,7 @@
     "tcpHost": "127.0.0.1",
     "tcpPort": 8100,
     "tcpName": "Integrated Audio/Video Client",
-    "tcpSendTime": 5
+    "tcpSendTime": 5,
+    "audioInferenceType": "people",
+    "videoInferenceType": "face"
 }

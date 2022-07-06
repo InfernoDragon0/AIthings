@@ -43,7 +43,7 @@ if __name__ == '__main__':
     tcp = ClientTCP(config.tcpName, config.tcpHost, config.tcpPort)
     # #audio process
     audioStream0 = AudioStream(config.audioBitRate, audQueue, config.audioSource, config.audioListenType, config.audioListenTime).startAsProcess()
-    audioProcessor = AudioProcessor(config.audioModel, config.audioListenTime, audQueue, tcp).startAsProcess()
+    audioProcessor = AudioProcessor(config.audioModel, config.audioListenTime, audQueue, tcp, config.audioInferenceType).startAsProcess()
 
     # #encoder and TCP
-    videoEncoder0 = VideoEncoder(encQueue, resultQueue, config.tcpSendTime, tcp).start()
+    videoEncoder0 = VideoEncoder(encQueue, resultQueue, config.tcpSendTime, tcp, config.videoInferenceType).start()

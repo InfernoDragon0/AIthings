@@ -2,9 +2,9 @@ from data.baseInference import BaseInference
 
 
 class AudioInference(BaseInference):
-    def __init__(self):
+    def __init__(self, inferenceType):
         super().__init__()
-        self.inferenceType = "dog"
+        self.inferenceType = inferenceType
         self.packetType = "Audio"
         self.audioData = None
 
