@@ -9,6 +9,7 @@ class sensorStream:
     def __init__(self):
         self.GPIO_TRIGGER = 23
         self.GPIO_ECHO = 24
+        self.distance = 0
 
     def startAsProcess(self):
         print("Sensor Stream Process started")
@@ -42,11 +43,11 @@ class sensorStream:
             StopTime = time.time()
 
             TimeElapsed = StopTime - StartTime
-            distance = (TimeElapsed * 0.034) / 2
+            self.distance = (TimeElapsed * 0.034) / 2
             time.sleep(0.3)
 
     # Get dummy distance from ultrasonic sensor
     def dummyDistance(self):
         while True:
-            distance = 20
+            self.distance = 20
             time.sleep(0.3)
