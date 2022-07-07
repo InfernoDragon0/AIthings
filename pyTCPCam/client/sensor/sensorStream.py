@@ -14,7 +14,8 @@ class sensorStream:
         print("Sensor Stream Process started")
         self.gpioSetup()
 
-        self.sensorProcess = multiprocessing.Process(target=self.distance)
+        #self.sensorProcess = multiprocessing.Process(target=self.distance)
+        self.sensorProcess = multiprocessing.Process(target=self.dummyDistance)
         self.sensorProcess.start()
         return self
 
@@ -42,4 +43,10 @@ class sensorStream:
 
             TimeElapsed = StopTime - StartTime
             distance = (TimeElapsed * 0.034) / 2
+            time.sleep(0.3)
+
+    # Get dummy distance from ultrasonic sensor
+    def dummyDistance(self):
+        while True:
+            distance = 20
             time.sleep(0.3)
