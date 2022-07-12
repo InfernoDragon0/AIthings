@@ -137,9 +137,9 @@ except Exception as e:
 try:
     print("Attempting to create .engine file from " + FILE_WTS + " & yolov5 compiled exe... please wait...")
     pipe = subprocess.Popen(CMD_CRENGINE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-    print(pipe.stdout)
     print("entering password...")
-    pipe.communicate("{}\n".format(USER_PASS))
+    pipe.stdin.write(USER_PASS)
+    pipe.communicate()
     
     if(pipe.returncode == 0):
         print(".engine file created successfully!\n")
