@@ -34,13 +34,17 @@ else:
 # GENERATING .WTS FILE FROM MODEL
 try:
     print("Attempting to generate the .wts file... please wait...")
-    
+
+    # if(os.path.exists(DIR_CURRENT + PATH_GENFILE + FILE_WTS)):
+    #     print("atasv3.wts have been found, generation stopped") 
     CMD_GENWTS= ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
     output = subprocess.run(CMD_GENWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
     if(output.stderr == ""):
         if(output.stdout == ""):
             print(".wts generation successful!\n")
     else:
+        print(".wts generation error!\n")
+        print(output.stdout)
         print(output.stderr)
         print("exiting...")
         exit()
