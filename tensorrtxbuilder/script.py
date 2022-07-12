@@ -96,13 +96,13 @@ except Exception as e:
 
 # GENERATING MAKEFILES WITH CMAKE
 try:
-    print("Attempting to CMAKE required Makefiles in yolov5/build folder... please wait...")
+    print("Attempting to CMAKE required Buildfiles in yolov5/build folder... please wait...")
     output = subprocess.run(CMD_CMAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
     if(output.returncode == 0):
         print(output.stdout)
-        print("Makefile created successfully!\n")
+        print("Buildfiles created successfully!\n")
     else:
-        print("CMAKE generation error!")
+        print("CMAKE build error!")
         print("printing full output...")
         print(output)
         print("exiting...")
@@ -117,7 +117,7 @@ try:
     output = subprocess.run(CMD_MAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
     if(output.returncode == 0):
         print(output.stdout)
-        print("Makefile ran, compilede yolo exe generated sucessfully!")
+        print("Makefile compiled yolo exe sucessfully!")
     else:
         print("Makefile error!")
         print("printing full output...")
