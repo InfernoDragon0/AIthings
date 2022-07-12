@@ -14,7 +14,7 @@ FILE_GENWTS = "gen_wts.py"
 FILE_WTS = "atasv3.wts"
 
 modelName = "" # to be filled input by user later
-CMD_GENWTS = ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
+CMD_genwts = ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
 
 
 #Script requires at least python 3 for the input
@@ -38,15 +38,17 @@ else:
 try:
     print("Attempting to generate the .wts file... please wait...")
     
-    output = subprocess.run(CMD_GENWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
+    output = subprocess.run(CMD_genwts, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
     if(output.stderr == ""):
         print(output.stdout)
     else:
         print(output.stderr)
+        print("exiting...")
         exit()
 
 except Exception as e:
     print(e)
+    print("exiting...")
     exit()
 
 # GENERATING YOLO EXECUTABLE WITH CMAKE
