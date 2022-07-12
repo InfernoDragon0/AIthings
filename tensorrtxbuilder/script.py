@@ -14,7 +14,7 @@ FILE_GENWTS = "gen_wts.py"
 FILE_WTS = "atasv3.wts"
 
 modelName = "" # to be filled input by user later
-CMD_genwts = ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
+CMD_GENWTS= ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
 
 
 #Script requires at least python 3 for the input
