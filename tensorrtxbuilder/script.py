@@ -38,7 +38,7 @@ else:
 try:
     print("Attempting to generate the .wts file... please wait...")
     
-    output = subprocess.run(CMD_GENWTS, capture_output=True, text=True, cwd=DIR_CURRENT+PATH_GENFILE)
+    output = subprocess.run(CMD_GENWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
     print(output.stdout)
 
 except Exception as e:
