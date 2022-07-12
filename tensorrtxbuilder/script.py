@@ -40,9 +40,8 @@ try:
     else:
         CMD_GENWTS= ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
         output = subprocess.run(CMD_GENWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
-        if(output.stderr == ""):
-            if(output.stdout == ""):
-                print(".wts generation successful!\n")
+        if output.returncode == 0:
+            print(".wts generation successful!\n")
         else:
             print(".wts generation error!\n")
             print("printing full output...")
