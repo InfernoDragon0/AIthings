@@ -41,9 +41,9 @@ try:
         CMD_GENWTS= ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
         output = subprocess.run(CMD_GENWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
         if output.returncode == 0:
-            print(".wts generation successful!\n")
+            print(".wts file generation successful!\n")
         else:
-            print(".wts generation error!\n")
+            print(".wts file generation error!\n")
             print("printing full output...")
             print(output)
             print("exiting...")
@@ -53,6 +53,10 @@ except Exception as e:
     print(e)
     print("exiting...")
     exit()
+
+# CREATING BUILD FOLDER IN YOLOV5 FOLDER 
+
+# COPYING .WTS FILE OVER TO BUILD FOLDER IN YOLOV5
 
 # GENERATING YOLO EXECUTABLE WITH CMAKE
 
