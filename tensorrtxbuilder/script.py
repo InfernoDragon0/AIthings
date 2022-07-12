@@ -139,14 +139,16 @@ try:
     pipe = subprocess.Popen(CMD_CRENGINE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
     print("entering password...")
     pipe.stdin.write(USER_PASS)
-    pipe.communicate()
+    pipeout, pipeerr = pipe.communicate()
     
     if(pipe.returncode == 0):
         print(".engine file created successfully!\n")
     else:
         print(".engine file generation error!")
-        print("printing full output...")
-        print(output)
+        print("printing stderr...")
+        print(pipeerr)
+        print("printing stdout...")
+        print(pipeout)
         print("exiting...")
         exit()
 except Exception as e:
