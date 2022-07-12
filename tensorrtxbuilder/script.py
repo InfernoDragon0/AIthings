@@ -16,6 +16,8 @@ FILE_WTS = "atasv3.wts"
 
 CMD_MKBUILDFD = ["mkdir", "build"]
 CMD_CPWTS = ["cp", DIR_CURRENT+PATH_GENFILE+FILE_WTS, DIR_CURRENT+PATH_YOLOV5_BUILD]
+CMD_CMAKE = ["cmake", ".."]
+CMD_MAKE = ["make"]
 
 #Script requires at least python 3 for the input
 print("Starting tensorrtxbuilder...")
@@ -83,14 +85,27 @@ try:
     if(output.returncode == 0):
         print("atasv3.wts have been copied over to yolov5/build successfully!\n")
     else:
-            print("copying atasv3.pt over to yolov5/build error!")
-            print("printing full output...")
-            print(output)
-            print("exiting...")
-            exit()
+        print("copying atasv3.pt over to yolov5/build error!")
+        print("printing full output...")
+        print(output)
+        print("exiting...")
+        exit()
 except Exception as e:
     print(e)
 
-# GENERATING YOLO EXECUTABLE WITH CMAKE
-
+# GENERATING YOLO COMPILED EXECUTABLE WITH CMAKE
+try:
+    print("Generating CMAKE files in yolov5/build folder... please wait...")
+    output = subprocess.run(CMD_CMAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
+    if(output.returncode == 0):
+        print(output.stdout)
+        print("CMAKE generation success!\n")
+    else:
+        print("CMAKE generation error!")
+        print("printing full output...")
+        print(output)
+        print("exiting...")
+        exit()
+except Exception as e:
+    print(e)
 
