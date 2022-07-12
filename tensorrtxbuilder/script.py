@@ -39,7 +39,11 @@ try:
     print("Attempting to generate the .wts file... please wait...")
     
     output = subprocess.run(CMD_GENWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
-    print(output.stdout)
+    if(output.stderr == ""):
+        print(output.stdout)
+    else:
+        print(output.stderr)
+        exit()
 
 except Exception as e:
     print(e)
