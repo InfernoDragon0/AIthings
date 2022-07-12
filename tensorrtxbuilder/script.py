@@ -13,9 +13,6 @@ PATH_YOLOV5INF = "/yolov5_inferenceonly/"
 FILE_GENWTS = "gen_wts.py"
 FILE_WTS = "atasv3.wts"
 
-modelName = "" # to be filled input by user later
-CMD_GENWTS= ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
-
 
 #Script requires at least python 3 for the input
 print("Starting tensorrtxbuilder...")
@@ -38,7 +35,8 @@ else:
 try:
     print("Attempting to generate the .wts file... please wait...")
     
-    output = subprocess.run(CMD_genwts, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
+    CMD_GENWTS= ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
+    output = subprocess.run(CMD_GENWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
     if(output.stderr == ""):
         print(output.stdout)
     else:
