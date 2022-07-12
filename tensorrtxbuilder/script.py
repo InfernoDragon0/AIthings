@@ -13,11 +13,16 @@ PATH_YOLOV5INF = "/yolov5_inferenceonly/"
 
 FILE_GENWTS = "gen_wts.py"
 FILE_WTS = "atasv3.wts"
+FILE_YOLOV5 = "yolov5"
+FILE_ENGINE = "atasv3.engine"
 
 CMD_MKBUILDFD = ["mkdir", "build"]
 CMD_CPWTS = ["cp", DIR_CURRENT+PATH_GENFILE+FILE_WTS, DIR_CURRENT+PATH_YOLOV5_BUILD]
 CMD_CMAKE = ["cmake", ".."]
 CMD_MAKE = ["make"]
+CMD_CRENGINE = ["sudo", "./"+FILE_YOLOV5, "-s", FILE_WTS, FILE_ENGINE, "s"]
+
+USER_PASS = "amarisjetson"
 
 #Script requires at least python 3 for the input
 print("Starting tensorrtxbuilder...")
@@ -117,7 +122,7 @@ try:
     output = subprocess.run(CMD_MAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
     if(output.returncode == 0):
         print(output.stdout)
-        print("Makefile compiled yolo exe sucessfully!")
+        print("Makefile compiled yolov5 exe sucessfully!\n")
     else:
         print("Makefile error!")
         print("printing full output...")
@@ -127,3 +132,22 @@ try:
 except Exception as e:
     print(e)
 
+
+# GENERATING .ENGINE FILE FROM COMPILED YOLOV5 EXE AND .WTS
+try:
+    print("Attempting to create .engine file from " + FILE_WTS + " & yolov5 compiled exe... please wait...")
+    pipe = subprocess.Popen(CMD_CRENGINE, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(pipe.stdout.readline())
+    print("entering password...")
+    pipe.communicate("{}\n".format(USER_PASS))
+    
+    if(pipe.returncode == 0):
+        print(".engine file created successfully!\n")
+    else:
+        print(".engine file generation error!")
+        print("printing full output...")
+        print(output)
+        print("exiting...")
+        exit()
+except Exception as e:
+    print(e)
