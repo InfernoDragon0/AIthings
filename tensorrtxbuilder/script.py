@@ -22,7 +22,7 @@ CMD_CMAKE = ["cmake", ".."]
 CMD_MAKE = ["make"]
 CMD_CRENGINE = ["sudo", "-S", "./"+FILE_YOLOV5, "-s", FILE_WTS, FILE_ENGINE, "s"]
 
-USER_PASS = "amarisjetson"
+USER_PASS = "amarisjetson".encode()
 
 #Script requires at least python 3 for the input
 print("Starting tensorrtxbuilder...")
