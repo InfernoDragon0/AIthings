@@ -1,3 +1,4 @@
+from asyncio.subprocess import SubprocessStreamProtocol
 import os
 import subprocess
 
@@ -7,6 +8,7 @@ DIR_CURRENT = os.path.abspath(os.getcwd()) # you should be in the dir with the s
 PATH_GENFILE = "/yolov5_v6_genfile/" 
 #used for creating compiled yolo executable with .wts
 PATH_YOLOV5 = "/yolov5/"
+PATH_YOLOV5_BUILD = "/yolov5/build/"
 #used for inferencing with compiled yolo and .engine
 PATH_YOLOV5INF = "/yolov5_inferenceonly/"
 
@@ -14,6 +16,7 @@ FILE_GENWTS = "gen_wts.py"
 FILE_WTS = "atasv3.wts"
 
 CMD_MKBUILDFD = ["mkdir", "build"]
+CMD_CPWTS = ["cp", DIR_CURRENT+PATH_GENFILE+FILE_WTS, DIR_CURRENT+PATH_YOLOV5_BUILD]
 
 #Script requires at least python 3 for the input
 print("Starting tensorrtxbuilder...")
@@ -37,7 +40,7 @@ try:
     print("Attempting to generate the .wts file... please wait...")
 
     if(os.path.exists(DIR_CURRENT + PATH_GENFILE + FILE_WTS)):
-        print(FILE_WTS + " have been found, generation stopped")
+        print(FILE_WTS + " have been found, generation stopped\n")
     else:
         CMD_GENWTS= ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
         output = subprocess.run(CMD_GENWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
@@ -49,28 +52,45 @@ try:
             print(output)
             print("exiting...")
             exit()
-
 except Exception as e:
     print(e)
     print("exiting...")
     exit()
 
+
 # CREATING BUILD FOLDER IN YOLOV5 FOLDER 
 try:
-    print("Creating /build folder in yolov5 folder...")
-    output = subprocess.run(CMD_MKBUILDFD, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5)
-    if (output.returncode == 0):
-        print("build folder created successfully!\n")
+    print("Attempting to create /build folder in yolov5 folder... please wait...")
+    if(os.path.exists(DIR_CURRENT + PATH_YOLOV5_BUILD)):
+        print(PATH_YOLOV5_BUILD + " folder already exists, creation stopped\n")
     else:
-            print("build folder creation error!")
+        output = subprocess.run(CMD_MKBUILDFD, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5)
+        if (output.returncode == 0):
+            print("build folder created successfully!\n")
+        else:
+                print("build folder creation error!")
+                print("printing full output...")
+                print(output)
+                print("exiting...")
+                exit()
+except Exception as e:
+    print(e)
+
+
+# COPYING .WTS FILE OVER TO BUILD FOLDER IN YOLOV5
+try:
+    print("Copying atasv3.wts over to yolov5/build...")
+    output = subprocess.run(CMD_CPWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if(output.returncode == 0):
+        print("atasv3.wts have been copied over to yolov5/build successfully!\n")
+    else:
+            print("copying atasv3.pt over to yolov5/build error!")
             print("printing full output...")
             print(output)
             print("exiting...")
             exit()
 except Exception as e:
     print(e)
-
-# COPYING .WTS FILE OVER TO BUILD FOLDER IN YOLOV5
 
 # GENERATING YOLO EXECUTABLE WITH CMAKE
 
