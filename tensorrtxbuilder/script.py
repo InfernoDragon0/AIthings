@@ -20,7 +20,7 @@ CMD_MKBUILDFD = ["mkdir", "build"]
 CMD_CPWTS = ["cp", DIR_CURRENT+PATH_GENFILE+FILE_WTS, DIR_CURRENT+PATH_YOLOV5_BUILD]
 CMD_CMAKE = ["cmake", ".."]
 CMD_MAKE = ["make"]
-CMD_CRENGINE = ["./"+FILE_YOLOV5, "-s", FILE_WTS, FILE_ENGINE, "s"]
+CMD_CRENGINE = ["sudo", "-S", "./"+FILE_YOLOV5, "-s", FILE_WTS, FILE_ENGINE, "s"]
 
 USER_PASS = "amarisjetson"
 
