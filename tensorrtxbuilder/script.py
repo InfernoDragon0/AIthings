@@ -93,15 +93,33 @@ try:
 except Exception as e:
     print(e)
 
-# GENERATING YOLO COMPILED EXECUTABLE WITH CMAKE
+
+# GENERATING MAKEFILES WITH CMAKE
 try:
-    print("Generating CMAKE files in yolov5/build folder... please wait...")
+    print("Attempting to CMAKE required Makefiles in yolov5/build folder... please wait...")
     output = subprocess.run(CMD_CMAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
     if(output.returncode == 0):
         print(output.stdout)
-        print("CMAKE generation success!\n")
+        print("Makefile created successfully!\n")
     else:
         print("CMAKE generation error!")
+        print("printing full output...")
+        print(output)
+        print("exiting...")
+        exit()
+except Exception as e:
+    print(e)
+
+
+# GENERATING YOLOV5 COMPILED EXE WITH MAKE
+try:
+    print("Attempting to Makefile to generate compiled yolo exe in yolov5/build folder... please wait...")
+    output = subprocess.run(CMD_MAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
+    if(output.returncode == 0):
+        print(output.stdout)
+        print("Makefile ran, compilede yolo exe generated sucessfully!")
+    else:
+        print("Makefile error!")
         print("printing full output...")
         print(output)
         print("exiting...")
