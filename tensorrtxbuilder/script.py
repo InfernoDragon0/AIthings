@@ -2,7 +2,7 @@ import os
 import subprocess
 
 #used for in conjunction with the below PATHs
-DIR_CURRENT = os.path.abspath(os.getcwd())
+DIR_CURRENT = os.path.abspath(os.getcwd()) # you should be in the dir with the script.py
 #used for generation of .wts from .pt
 PATH_GENFILE = "/yolov5_v6_genfile/" 
 #used for creating compiled yolo executable with .wts
@@ -22,10 +22,10 @@ print("Please ensure that your model is placed inside of yolov5_v6_genfile folde
 modelName = input("Enter Model name: ").strip()
 PATH_MODEL = PATH_GENFILE + modelName
 
-print("\nSearching for your model...\n")
+print("\nSearching for your model...")
 
 if (os.path.exists(DIR_CURRENT + PATH_MODEL)):
-    print("model found")
+    print("model found!\n")
 else:
     print("model/directory cannot be found, exiting...")
     exit()
@@ -38,7 +38,8 @@ try:
     CMD_GENWTS= ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
     output = subprocess.run(CMD_GENWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
     if(output.stderr == ""):
-        print(output.stdout)
+        if(output.stdout == ""):
+            print(".wts generation successful!\n")
     else:
         print(output.stderr)
         print("exiting...")
