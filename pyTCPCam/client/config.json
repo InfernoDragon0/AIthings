@@ -1,7 +1,7 @@
 {
     "py/object": "data.configData.ConfigData",
     "videoSource": "/dev/video0",
-    "videoModel": "./yolov5.pt",
+    "videoModel": "./yolov5s.pt",
     "videoDebug": false,
     "targetFPS": 60,
     "audioSource": 11,
