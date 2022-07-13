@@ -1,8 +1,7 @@
 """[summary]
 """
 import multiprocessing
-import pyaudio
-import wave
+
 import logging
 import numpy as np
 
@@ -43,6 +42,7 @@ class AudioStream:
         self.completed = True
 
     def getAudio(self,audQueue, filename="data"):
+        import pyaudio
         """[summary]
 
         Args:

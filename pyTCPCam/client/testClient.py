@@ -4,6 +4,7 @@ import multiprocessing
 import jsonpickle
 from audio.audioStream import AudioStream
 from audio.audioProcessor import AudioProcessor
+from video.videoTracker import VideoTracker
 from data.configData import ConfigData
 from clientTCP import ClientTCP
 from video.videoEncoder import VideoEncoder
@@ -18,6 +19,8 @@ if __name__ == '__main__':
     encQueue = multiprocessing.Queue(1)
     resultQueue = multiprocessing.Queue(1)
     audQueue = multiprocessing.Queue(1)
+    trackedQueue = multiprocessing.Queue(1)
+    trackedResultQueue = multiprocessing.Queue(1)
     
     #config read
     config = ConfigData()
@@ -27,7 +30,6 @@ if __name__ == '__main__':
         print("file exists")
         f = open(configFile, "r")
         config = jsonpickle.decode(f.read())
-        print(config.tcpHost)
         
     else:
         f = open(configFile, "w+")
@@ -38,6 +40,7 @@ if __name__ == '__main__':
 
 
     imageModel = VideoProcessor(camQueue, encQueue, resultQueue, config.videoModel).startAsProcess()
+    imageTracker = VideoTracker(encQueue, trackedQueue, trackedResultQueue, resultQueue, config.maxFrameLoss, config.targetFPS).startAsProcess()
     # #start each video stream as a separate process
     videoStream0 = VideoStream(config.videoSource, config.targetFPS, camQueue, config.videoDebug).startAsProcess()
     tcp = ClientTCP(config.tcpName, config.tcpHost, config.tcpPort)
@@ -46,4 +49,4 @@ if __name__ == '__main__':
     audioProcessor = AudioProcessor(config.audioModel, config.audioListenTime, audQueue, tcp, config.audioInferenceType).startAsProcess()
 
     # #encoder and TCP
-    videoEncoder0 = VideoEncoder(encQueue, resultQueue, config.tcpSendTime, tcp, config.videoInferenceType).start()
+    videoEncoder0 = VideoEncoder(trackedQueue, trackedResultQueue, config.tcpSendTime, tcp, config.videoInferenceType).start()

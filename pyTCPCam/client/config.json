@@ -1,7 +1,7 @@
 {
     "py/object": "data.configData.ConfigData",
-    "videoSource": "h264nvenc10000.mp4",
-    "videoModel": "./atasv3small.pt",
+    "videoSource": "vlc2.mp4",
+    "videoModel": "./yolov5n6.pt",
     "videoDebug": false,
     "targetFPS": 60,
     "audioSource": 1,
@@ -14,5 +14,6 @@
     "tcpName": "Integrated Audio/Video Client",
     "tcpSendTime": 5,
     "audioInferenceType": "people",
-    "videoInferenceType": "face"
+    "videoInferenceType": "person",
+    "maxFrameLoss": 5
 }

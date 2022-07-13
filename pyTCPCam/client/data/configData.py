@@ -6,6 +6,7 @@ class ConfigData():
         self.videoDebug = False
         self.targetFPS = 60
         self.videoInferenceType = "face"
+        self.maxFrameLoss = 5
 
         self.audioSource = 11
         self.audioModel = "yamnet.tflite"
