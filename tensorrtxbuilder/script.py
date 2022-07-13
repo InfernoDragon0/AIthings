@@ -139,8 +139,9 @@ try:
     pipe = subprocess.Popen(CMD_CRENGINE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
 
     print("entering password...")
-    # pipe.stdin.write(USER_PASS)
-    pipeout, pipeerr = pipe.communicate(input=USER_PASS)
+    pipe.stdin.write(USER_PASS)
+    print("password entered...")
+    pipeout, pipeerr = pipe.communicate()
     
     if(pipe.returncode == 0):
         print(".engine file created successfully!\n")
