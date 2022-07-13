@@ -117,8 +117,8 @@ class VideoTracker():
                     if trackedResultQueue.empty():
                         trackedResultQueue.put(rects)
 
-                    cv2.imshow("tracker", processedImage)
-                    cv2.waitKey(1)
+                    #cv2.imshow("tracker", processedImage)
+                    #cv2.waitKey(1)
                     #if (self.fps - (end-start) > 0):
                         #time.sleep(self.fps - (end-start))\
                 end = time.perf_counter()
