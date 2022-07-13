@@ -3,8 +3,9 @@ import cv2
 
 
 class Process:
-    def __init__(self,device="cpu",weights="./atasv3.pt"):
+    def __init__(self,device="cpu",weights="./atasv3.pt", inferenceType="person"):
         self.model = custom(path=weights,device=device)
+        self.inferencetype = inferenceType
         self.names = self.model.module.names if hasattr(self.model, 'module') else self.model.names
         print(self.names)
 
@@ -44,7 +45,7 @@ class Process:
             result_dict['score'] = i[4]
             result_dict['class'] = self.names[int(i[5])]
 
-            if result_dict['class'] == "face":
+            if result_dict['class'] == self.inferencetype:
                 result_array.append(result_dict)
             #result_array.append(result_dict)
 

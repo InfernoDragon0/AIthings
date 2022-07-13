@@ -3,7 +3,7 @@ from time import sleep
 import numpy as np
 from data.audioInference import AudioInference
 from operator import itemgetter
-import tensorflow as tf
+
 
 class AudioProcessor():
     def __init__(self, fileName, listenWindow, audQueue, tcp, inferenceType): #loading takes a long time, separate thread?
@@ -28,6 +28,7 @@ class AudioProcessor():
     def listen(self, fileName, audQueue, tcp, inferenceType): 
         #import yamnet.params as yamnet_params #scary but necessary
         #import yamnet.yamnet as yamnet_model
+        import tensorflow as tf
         import yamnet.metadata as metadata
         """
         Function that listens from the latest <listen_window> amount of seconds from
