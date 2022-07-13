@@ -9,7 +9,7 @@ from clientTCP import ClientTCP
 import multiprocessing
 
 #NETWORK CONFIG
-HOST = "192.168.1.53"
+HOST = "192.168.31.53"
 PORT = 8100
 
 ########################################################################
