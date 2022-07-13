@@ -22,7 +22,7 @@ CMD_CMAKE = ["cmake", ".."]
 CMD_MAKE = ["make"]
 CMD_CRENGINE = ["sudo", "-S", "./"+FILE_YOLOV5, "-s", FILE_WTS, FILE_ENGINE, "s6"]
 
-USER_PASS = str.encode("amarisjetson")
+USER_PASS = str.encode("amarisjetson\n")
 
 #Script requires at least python 3 for the input
 print("Starting tensorrtxbuilder...")
@@ -136,12 +136,14 @@ except Exception as e:
 # GENERATING .ENGINE FILE FROM COMPILED YOLOV5 EXE AND .WTS
 try:
     print("Attempting to create .engine file from " + FILE_WTS + " & yolov5 compiled exe... please wait...")
-    pipe = subprocess.Popen(CMD_CRENGINE, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
+    pipe = subprocess.Popen(CMD_CRENGINE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
 
     print("entering password...")
     pipe.stdin.write(USER_PASS)
-    print("password entered...")
+    print("access granted...")
+    print("building engine... please wait...")
     pipeout, pipeerr = pipe.communicate()
+
     
     if(pipe.returncode == 0):
         print(".engine file created successfully!\n")
