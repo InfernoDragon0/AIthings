@@ -32,7 +32,7 @@ class VideoEncoder:
                 self.results = self.resultQueue.get()
                 self.encodedFrame = simplejpeg.encode_jpeg(self.frame, self.quality, colorspace='BGR')
                 
-                #and send the data over tcp, every x seconds [TODO to send only when alert or something]
+                #and send the data over tcp, every x seconds
                 if self.timestamp + self.fps < time.time():
                     self.timestamp = time.time()
                     self.imageInference = ImageInference(self.inferenceType)

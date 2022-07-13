@@ -1,24 +1,25 @@
+from concurrent.futures import process
 import multiprocessing
 import time
-import cv2
-from scipy.spatial import distance as dist
-import numpy as np
+
 
 #unified to be able to change the sequence of these without any issues
 class VideoTracker():
-    def __init__(self, encQueue, trackedQueue, resultQueue, maxFrameLoss):
+    def __init__(self, encQueue, trackedQueue, trackedResultQueue, resultQueue, maxFrameLoss, targetFPS):
         self.completed = False
         self.ready = False
         self.resultQueue = resultQueue
         self.trackedQueue = trackedQueue
+        self.trackedResultQueue = trackedResultQueue
         self.encQueue = encQueue
         self.currentID = 0
         self.maxFrameLoss = maxFrameLoss
+        self.fps = 1/targetFPS
         
 
     def startAsProcess(self):
         print("Tracking Process started")
-        self.processorProcess = multiprocessing.Process(target=self.process, args=(self.encQueue, self.trackedQueue, self.resultQueue, self.maxFrameLoss))
+        self.processorProcess = multiprocessing.Process(target=self.process, args=(self.encQueue, self.trackedQueue, self.trackedResultQueue, self.resultQueue, self.maxFrameLoss, self.fps))
         self.processorProcess.start()
         return self
     
@@ -33,7 +34,10 @@ class VideoTracker():
 
 
     #encode loop to encode the latest frame received
-    def process(self, encQueue, trackedQueue, resultQueue, maxFrameLoss):
+    def process(self, encQueue, trackedQueue, trackedResultQueue, resultQueue, maxFrameLoss, fps):
+        import cv2
+        from scipy.spatial import distance as dist
+        import numpy as np
         self.tracked = {}
         self.leaving = {}
         self.result = None
@@ -43,6 +47,7 @@ class VideoTracker():
             
             #take box data from the video processor
             if not encQueue.empty() and not resultQueue.empty():
+                start = time.perf_counter()
                 rects = resultQueue.get()
                 processedImage = encQueue.get()
 
@@ -106,10 +111,21 @@ class VideoTracker():
                     for i, trackable in self.tracked.items():
                         processedImage = cv2.putText(processedImage, f"ID: {i}", trackable, cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,255), 2)
 
-                    cv2.imshow("processor", processedImage)
+                    if trackedQueue.empty():
+                        trackedQueue.put(processedImage)
+
+                    if trackedResultQueue.empty():
+                        trackedResultQueue.put(rects)
+
+                    cv2.imshow("tracker", processedImage)
                     cv2.waitKey(1)
                     #if (self.fps - (end-start) > 0):
-                        #time.sleep(self.fps - (end-start))
+                        #time.sleep(self.fps - (end-start))\
+                end = time.perf_counter()
+                print(f"tracking time: {end - start}")
+                if (fps - (end - start) > 0):
+                    time.sleep(fps - (end - start))
+
             # else:
             #     time.sleep(self.fps)
 
