@@ -23,6 +23,7 @@ CMD_MAKE = ["make"]
 CMD_CRENGINE = ["sudo", "-S", "./"+FILE_YOLOV5, "-s", FILE_WTS, FILE_ENGINE, "s6"]
 
 USER_PASS = str.encode("amarisjetson")
+USER_PASS2 = "amarisjetson"
 
 #Script requires at least python 3 for the input
 print("Starting tensorrtxbuilder...")
@@ -140,7 +141,7 @@ try:
 
     print("entering password...")
     # pipe.stdin.write(USER_PASS)
-    pipeout, pipeerr = pipe.communicate(input=USER_PASS)
+    pipeout, pipeerr = pipe.communicate(input=USER_PASS2)
     
     if(pipe.returncode == 0):
         print(".engine file created successfully!\n")
