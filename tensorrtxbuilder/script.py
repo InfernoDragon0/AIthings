@@ -21,6 +21,7 @@ CMD_CPWTS = ["cp", DIR_CURRENT+PATH_GENFILE+FILE_WTS, DIR_CURRENT+PATH_YOLOV5_BU
 CMD_CMAKE = ["cmake", ".."]
 CMD_MAKE = ["make"]
 CMD_CRENGINE = ["sudo", "-S", "./"+FILE_YOLOV5, "-s", FILE_WTS, FILE_ENGINE, "s6"]
+CMD_CPENGEXE = ["cp", FILE_YOLOV5, FILE_ENGINE, DIR_CURRENT+PATH_YOLOV5INF]
 
 USER_PASS = str.encode("amarisjetson\n")
 
@@ -155,3 +156,21 @@ try:
         exit()
 except Exception as e:
     print(e)
+
+
+# COPYING FILES OVER TO /YOLOV5_INFERENCE ONLY FOLDER
+try:
+    print("Attempting to copy .engine and .yolov5 over to /yolov5_inferenceonly")
+    output = subprocess.Popen(CMD_CPENGEXE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
+    if(output.returncode == 0):
+        print(".engine and .yolov5 have been copied over to /yolov5_inferenceonly sucessfully!\n")
+    else:
+        print("copying .engine and .yolov5 over to /yolov5_inferenceonly error!")
+        print("printing full output...")
+        print(output)
+        print("exiting...")
+        exit()
+except Exception as e:
+    print(e)
+
+print("Script executed successfully. Exiting...")
