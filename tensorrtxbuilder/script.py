@@ -140,8 +140,6 @@ try:
 
     print("entering password...")
     pipe.stdin.write(USER_PASS)
-    print("access granted...")
-    print("building engine... please wait...")
     pipeout, pipeerr = pipe.communicate()
 
     
