@@ -36,15 +36,15 @@ PATH_MODEL = PATH_GENFILE + modelName
 print("\nSearching for your model...")
 
 if (os.path.exists(DIR_CURRENT + PATH_MODEL)):
-    print("model found!\n")
+    print(modelName + " model found!\n")
 else:
-    print("model/directory cannot be found, exiting...")
+    print(modelName + " cannot be found, exiting...")
     exit()
 
 
 # GENERATING .WTS FILE FROM MODEL
 try:
-    print("Attempting to generate the .wts file... please wait...")
+    print("Attempting to generate the " + FILE_WTS + "... please wait...")
 
     if(os.path.exists(DIR_CURRENT + PATH_GENFILE + FILE_WTS)):
         print(FILE_WTS + " have been found, generation stopped\n")
@@ -52,9 +52,9 @@ try:
         CMD_GENWTS= ["python", FILE_GENWTS, "-w", modelName, "-o", FILE_WTS]
         output = subprocess.run(CMD_GENWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_GENFILE)
         if output.returncode == 0:
-            print(".wts file generation successful!\n")
+            print(FILE_WTS + " file generation successful!\n")
         else:
-            print(".wts file generation error!\n")
+            print(FILE_WTS + " file generation error!\n")
             print("printing full output...")
             print(output)
             print("exiting...")
@@ -86,12 +86,12 @@ except Exception as e:
 
 # COPYING .WTS FILE OVER TO BUILD FOLDER IN YOLOV5
 try:
-    print("Copying atasv3.wts over to yolov5/build...")
+    print("Copying " + FILE_WTS + " over to yolov5/build...")
     output = subprocess.run(CMD_CPWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if(output.returncode == 0):
-        print("atasv3.wts have been copied over to yolov5/build successfully!\n")
+        print(FILE_WTS + " have been copied over to yolov5/build successfully!\n")
     else:
-        print("copying atasv3.pt over to yolov5/build error!")
+        print("copying " + FILE_WTS + " over to yolov5/build error!")
         print("printing full output...")
         print(output)
         print("exiting...")
@@ -136,7 +136,7 @@ except Exception as e:
 
 # GENERATING .ENGINE FILE FROM COMPILED YOLOV5 EXE AND .WTS
 try:
-    print("Attempting to create .engine file from " + FILE_WTS + " & yolov5 compiled exe... please wait...")
+    print("Attempting to create .engine file from " + FILE_WTS + " & " + FILE_YOLOV5 + " compiled exe... please wait...")
     pipe = subprocess.Popen(CMD_CRENGINE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
 
     print("getting sudo access...")
@@ -145,9 +145,9 @@ try:
 
     
     if(pipe.returncode == 0):
-        print(".engine file created successfully!\n")
+        print(FILE_ENGINE + " file created successfully!\n")
     else:
-        print(".engine file generation error!")
+        print(FILE_ENGINE + " file generation error!")
         print("printing stderr...")
         print(pipeerr)
         print("printing stdout...")
@@ -160,12 +160,12 @@ except Exception as e:
 
 # COPYING FILES OVER TO /YOLOV5_INFERENCE ONLY FOLDER
 try:
-    print("Attempting to copy .engine and .yolov5 over to /yolov5_inferenceonly")
+    print("Attempting to copy " + FILE_ENGINE + " and " + FILE_YOLOV5 + " over to /yolov5_inferenceonly")
     output = subprocess.run(CMD_CPENGEXE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
     if(output.returncode == 0):
-        print(".engine and .yolov5 have been copied over to /yolov5_inferenceonly sucessfully!\n")
+        print(FILE_ENGINE + " and " + FILE_YOLOV5 + " have been copied over to /yolov5_inferenceonly sucessfully!\n")
     else:
-        print("copying .engine and .yolov5 over to /yolov5_inferenceonly error!")
+        print("copying " + FILE_ENGINE + " and " + FILE_YOLOV5 + " over to /yolov5_inferenceonly error!")
         print("printing full output...")
         print(output)
         print("exiting...")
