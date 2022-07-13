@@ -140,7 +140,7 @@ try:
 
     print("entering password...")
     # pipe.stdin.write(USER_PASS)
-    pipeout, pipeerr = pipe.communicate("{}\n".format(USER_PASS))
+    pipeout, pipeerr = pipe.communicate(input=USER_PASS)
     
     if(pipe.returncode == 0):
         print(".engine file created successfully!\n")
