@@ -13,7 +13,7 @@
     "tcpPort": 8100,
     "tcpName": "Integrated Audio/Video Client",
     "tcpSendTime": 5,
-    "audioInferenceType": "dogs",
-    "videoInferenceType": "dogs",
+    "audioInferenceType": "dog",
+    "videoInferenceType": "dog",
     "maxFrameLoss": 5
 }
