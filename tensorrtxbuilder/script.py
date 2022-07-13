@@ -138,7 +138,7 @@ try:
     print("Attempting to create .engine file from " + FILE_WTS + " & yolov5 compiled exe... please wait...")
     pipe = subprocess.Popen(CMD_CRENGINE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
 
-    print("entering password...")
+    print("getting sudo access...")
     pipe.stdin.write(USER_PASS)
     pipeout, pipeerr = pipe.communicate()
 
