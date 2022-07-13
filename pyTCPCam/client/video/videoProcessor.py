@@ -4,27 +4,28 @@ import cv2
 
 #unified to be able to change the sequence of these without any issues
 class VideoProcessor():
-    def __init__(self, camQueue, encQueue, resultQueue, videoModel):
+    def __init__(self, camQueue, encQueue, resultQueue, videoModel, inferenceType):
         self.completed = False
         self.ready = False
         self.camQueue = camQueue
         self.encQueue = encQueue
         self.resultQueue = resultQueue
         self.videoModel = videoModel
+        self.inferenceType = inferenceType
 
     def startAsProcess(self):
         print("Processor Process started")
-        self.processorProcess = multiprocessing.Process(target=self.process, args=(self.camQueue, self.encQueue, self.resultQueue, self.videoModel))
+        self.processorProcess = multiprocessing.Process(target=self.process, args=(self.camQueue, self.encQueue, self.resultQueue, self.videoModel, self.inferenceType))
         self.processorProcess.start()
         return self
 
     #encode loop to encode the latest frame received
-    def process(self, camQueue, encQueue, resultQueue, videoModel):
+    def process(self, camQueue, encQueue, resultQueue, videoModel, inferenceType):
         from yolo_wrapper import Process #it is a sin that has to be done
 
         self.processedFrame = None
         self.result = None
-        self.model = Process(device=0, weights=videoModel)
+        self.model = Process(device=0, weights=videoModel, inferenceType=inferenceType)
         while True:
             if self.completed:
                 return
