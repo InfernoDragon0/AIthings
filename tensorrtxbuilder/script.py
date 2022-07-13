@@ -161,7 +161,7 @@ except Exception as e:
 # COPYING FILES OVER TO /YOLOV5_INFERENCE ONLY FOLDER
 try:
     print("Attempting to copy .engine and .yolov5 over to /yolov5_inferenceonly")
-    output = subprocess.Popen(CMD_CPENGEXE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
+    output = subprocess.run(CMD_CPENGEXE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
     if(output.returncode == 0):
         print(".engine and .yolov5 have been copied over to /yolov5_inferenceonly sucessfully!\n")
     else:
