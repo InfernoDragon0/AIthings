@@ -43,6 +43,7 @@ class SensorStream:
             print(f"after first loop")
 
             while GPIO.input(self.GPIO_ECHO):
+                self.counter += 1
                 if self.counter > 10000000:
                     self.counter = 0
                     break
