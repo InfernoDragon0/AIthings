@@ -1,7 +1,9 @@
 #include <WiFi.h>
 #include "time.h"
 
-int TRIG_PIN = 26, ECHO_PIN = 34, LED = 27;
+int TRIG_PIN = 26, ECHO_PIN = 34, LED = 27, current, benchmark, past, cnt = 0;
+
+bool initSetup = false;
 
 #define SOUND_SPEED 0.034
 
@@ -17,10 +19,10 @@ const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 0;
 const int   daylightOffset_sec = 3600;
 
-const char* ssid = "AlienMesh";                   // Change this to your network SSID
-const char* password = "WinBig@0101";             // Change this to your network password
+const char* ssid = "";                   // Change this to your network SSID
+const char* password = "";             // Change this to your network password
 const uint16_t port = 2004;
-const char * host = "192.168.1.209";              // Change this to your host ip
+const char * host = "192.168.1.198";              // Change this to your host ip
 
 void setup() {
   pinMode(TRIG_PIN, OUTPUT);
@@ -45,9 +47,41 @@ void setup() {
 
 void loop() {
   getLocalTime(&timeinfo);
+
+  if(!initSetup) {
+    digitalWrite(LED, HIGH);
+    getDistance();
+    past = distanceCm;
+    while(true) {
+      getDistance();
+      current = distanceCm;
+      //Serial.println(String(cnt) + ": " + String(past) + " " + String(current));
+      if(current >= (past-5) && current <= (past+5)) {
+        //past = distanceCm;
+        cnt++;
+      }
+      else {
+        //Serial.println("minus");
+        cnt--;
+      }
+      if(cnt >= 5) {
+        benchmark = past;
+        break;
+      }
+      else if(cnt <= -5) {
+        past = distanceCm;
+        //Serial.println("reset");
+        cnt = 0;
+      }
+      delay(100);
+    }
+    initSetup = true;
+    digitalWrite(LED, LOW);
+  }
+  
   getDistance();
 
-  if(distanceCm < 80) {
+  if(distanceCm < benchmark) {
     //Serial.println(distanceCm);
     state = "1";
     digitalWrite(LED, HIGH);
@@ -82,6 +116,6 @@ void getDistance() {
 }
 
 String parseValue(String value) {
-  String data = "{'py/object': 'data.SensorInference', 'packetType': 'Sensor', 'inferredData': [{'name': 'ultrasonic', 'value': '" + value + "'}], 'timestamp': " + time(&now) + "}";
+  String data = "{\"py/object\": \"data.SensorInference\", \"packetType\": \"Sensor\", \"inferredData\": [{\"name\": \"ultrasonic\", \"value\": " + value + "}], \"timestamp\": " + time(&now) + "}";
   return data;
 }
