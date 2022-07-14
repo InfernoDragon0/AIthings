@@ -34,27 +34,21 @@ class SensorStream:
         self.counter = 0
         while True:
             GPIO.output(self.GPIO_TRIGGER, True)
-            time.sleep(0.0001)
+            time.sleep(0.00001)
             GPIO.output(self.GPIO_TRIGGER, False)
 
             while not GPIO.input(self.GPIO_ECHO):
                 pass
 
             StartTime = time.time()
-            print(f"after first loop")
 
             while GPIO.input(self.GPIO_ECHO):
-                #self.counter += 1
-                #if self.counter > 1000:
-                    #self.counter = 0
-                    #break
                 pass
-            print(f"after second loop")
             
             StopTime = time.time()
 
             TimeElapsed = StopTime - StartTime
-            self.distance = (TimeElapsed * 0.034) / 2
+            self.distance = (TimeElapsed * 34300) / 2
             self.sensorInference = SensorInference("real ultrasonic sensor")
             self.sensorInference.addData(self.distance)
             tcp.sendData(self.sensorInference)
