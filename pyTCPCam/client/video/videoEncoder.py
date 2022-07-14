@@ -5,7 +5,7 @@ import time
 
 #unified to be able to change the sequence of these without any issues
 class VideoEncoder:
-    def __init__(self, encQueue, resultQueue, fpsTarget, tcp, inferenceType):
+    def __init__(self, encQueue, resultQueue, fpsTarget, tcp, inferenceType, countQueue):
         self.tcp = tcp
         self.encQueue = encQueue
         self.resultQueue = resultQueue
@@ -15,6 +15,7 @@ class VideoEncoder:
         self.timestamp = time.time()
         self.fps = 1/fpsTarget
         self.inferenceType = inferenceType
+        self.countQueue = countQueue
     
     def start(self):
         Thread(target=self.encode, args=()).start()
@@ -27,7 +28,7 @@ class VideoEncoder:
                 return
 
             start = time.perf_counter()
-            if not self.encQueue.empty() and not self.resultQueue.empty():
+            if not self.encQueue.empty() and not self.resultQueue.empty() and not self.countQueue.empty():
                 self.frame = self.encQueue.get()
                 self.results = self.resultQueue.get()
                 self.encodedFrame = simplejpeg.encode_jpeg(self.frame, self.quality, colorspace='BGR')
@@ -38,6 +39,7 @@ class VideoEncoder:
                     self.imageInference = ImageInference(self.inferenceType)
                     self.imageInference.inferredData = self.results
                     self.imageInference.imageData = self.encodedFrame
+                    self.imageInference.objectCount = self.countQueue.get()
                     self.tcp.sendData(self.imageInference)
                 #print("video encoder is encoding & sending to server...")
             end = time.perf_counter()

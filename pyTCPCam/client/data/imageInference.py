@@ -8,6 +8,7 @@ class ImageInference(BaseInference):
         self.packetType = "Image"
         self.streamImage = False #set to true if want to send the image as well
         self.imageData = None
+        self.objectCount = 0
 
     def setStreamImage(self, stream):
         self.streamImage = stream
