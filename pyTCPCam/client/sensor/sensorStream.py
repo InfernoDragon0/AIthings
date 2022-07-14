@@ -44,7 +44,7 @@ class SensorStream:
 
             while GPIO.input(self.GPIO_ECHO):
                 self.counter += 1
-                if self.counter > 10000000:
+                if self.counter > 1000:
                     self.counter = 0
                     break
                 pass
