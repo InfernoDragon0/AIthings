@@ -18,7 +18,7 @@ class SensorStream:
         self.gpioSetup()
 
         #self.sensorProcess = multiprocessing.Process(target=self.distance)
-        self.sensorProcess = multiprocessing.Process(target=self.dummyDistance, args=(self.tcp,))
+        self.sensorProcess = multiprocessing.Process(target=self.Distance, args=(self.tcp,))
         self.sensorProcess.start()
         return self
 
