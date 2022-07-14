@@ -45,10 +45,10 @@ class SensorStream:
             print(f"after first loop")
 
             while GPIO.input(self.GPIO_ECHO):
-                self.counter += 1
-                if self.counter > 1000:
-                    self.counter = 0
-                    break
+                #self.counter += 1
+                #if self.counter > 1000:
+                    #self.counter = 0
+                    #break
                 pass
             print(f"after second loop")
             
