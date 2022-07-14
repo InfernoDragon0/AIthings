@@ -8,8 +8,10 @@ class SensorStream:
 
     # init and read one frame
     def __init__(self, tcp):
-        self.GPIO_TRIGGER = 23
-        self.GPIO_ECHO = 24
+        #self.GPIO_TRIGGER = 23
+        #self.GPIO_ECHO = 24
+        self.GPIO_TRIGGER = 11
+        self.GPIO_ECHO = 8
         self.distance = 0
         self.tcp = tcp
 
@@ -34,7 +36,6 @@ class SensorStream:
             GPIO.output(self.GPIO_TRIGGER, True)
             time.sleep(0.0001)
             GPIO.output(self.GPIO_TRIGGER, False)
-            print(f"first loop")
 
             while not GPIO.input(self.GPIO_ECHO):
                 pass
@@ -43,10 +44,10 @@ class SensorStream:
             print(f"after first loop")
 
             while GPIO.input(self.GPIO_ECHO):
-                self.counter += 1
-                if self.counter > 1000:
-                    self.counter = 0
-                    break
+                #self.counter += 1
+                #if self.counter > 1000:
+                    #self.counter = 0
+                    #break
                 pass
             print(f"after second loop")
             
@@ -59,6 +60,7 @@ class SensorStream:
             tcp.sendData(self.sensorInference)
 
             print(f"sensor time: {TimeElapsed}")
+            print(f"sensor distance: {self.distance}")
             time.sleep(0.3)
 
     # Get dummy distance from ultrasonic sensor
