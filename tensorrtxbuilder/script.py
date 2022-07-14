@@ -231,7 +231,7 @@ except Exception as e:
 # COPYING yolov5 compiled binary FROM /YOLOV5/build TO /YOLOV5_INFERENCE ONLY FOLDER
 try:
     print("Attempting to copy " + FILE_YOLOV5 + " over to /yolov5_inferenceonly")
-    output = subprocess.run(CMD_CPENG, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF_BUILD)
+    output = subprocess.run(CMD_CPYOLO, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF_BUILD)
     if(output.returncode == 0):
         print(FILE_YOLOV5 + " have been copied over to /yolov5_inferenceonly sucessfully!\n")
     else:
