@@ -10,7 +10,6 @@ PATH_YOLOV5 = "/yolov5/"
 PATH_YOLOV5_BUILD = "/yolov5/build/"
 #used for inferencing with compiled yolo and .engine
 PATH_YOLOV5INF = "/yolov5_inferenceonly/"
-PATH_YOLOV5INF_BUILD = "/yolov5_inferenceonly/build/"
 
 FILE_GENWTS = "gen_wts.py"
 FILE_WTS = "atasv3.wts"
@@ -18,7 +17,7 @@ FILE_YOLOV5 = "yolov5"
 FILE_ENGINE = "atasv3.engine"
 
 CMD_MKBUILDFD = ["mkdir", "build"]
-CMD_CPWTS = ["cp", DIR_CURRENT+PATH_GENFILE+FILE_WTS, DIR_CURRENT+PATH_YOLOV5INF_BUILD]
+CMD_CPWTS = ["cp", DIR_CURRENT+PATH_GENFILE+FILE_WTS, DIR_CURRENT+PATH_YOLOV5_BUILD]
 CMD_CMAKE = ["cmake", ".."]
 CMD_MAKE = ["make"]
 CMD_CRENGINE = ["sudo", "-S", "./"+FILE_YOLOV5, "-s", FILE_WTS, FILE_ENGINE, "s6"]
@@ -66,13 +65,13 @@ except Exception as e:
     exit()
 
 
-# CREATING BUILD FOLDER IN YOLOV5_INFERENCEONLY FOLDER 
+# CREATING BUILD FOLDER IN YOLOV5 FOLDER 
 try:
-    print("Attempting to create /build folder in /yolov5_inferenceonly folder... please wait...")
-    if(os.path.exists(DIR_CURRENT + PATH_YOLOV5INF_BUILD)):
-        print(PATH_YOLOV5INF + " folder already exists, creation stopped\n")
+    print("Attempting to create /build folder in yolov5 folder... please wait...")
+    if(os.path.exists(DIR_CURRENT + PATH_YOLOV5_BUILD)):
+        print(PATH_YOLOV5_BUILD + " folder already exists, creation stopped\n")
     else:
-        output = subprocess.run(CMD_MKBUILDFD, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF)
+        output = subprocess.run(CMD_MKBUILDFD, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5)
         if (output.returncode == 0):
             print("build folder created successfully!\n")
         else:
@@ -85,14 +84,14 @@ except Exception as e:
     print(e)
 
 
-# COPYING .WTS FILE OVER TO BUILD FOLDER IN /yolov5_inferenceonly
+# COPYING .WTS FILE OVER TO BUILD FOLDER IN YOLOV5
 try:
-    print("Copying " + FILE_WTS + " over to yolov5_inferenceonly/build...")
+    print("Copying " + FILE_WTS + " over to yolov5/build...")
     output = subprocess.run(CMD_CPWTS, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if(output.returncode == 0):
-        print(FILE_WTS + " have been copied over to yolov5_inferenceonly/build successfully!\n")
+        print(FILE_WTS + " have been copied over to yolov5/build successfully!\n")
     else:
-        print("copying " + FILE_WTS + " over to yolov5_inferenceonly/build error!")
+        print("copying " + FILE_WTS + " over to yolov5/build error!")
         print("printing full output...")
         print(output)
         print("exiting...")
@@ -101,10 +100,10 @@ except Exception as e:
     print(e)
 
 
-# GENERATING MAKEFILES WITH CMAKE (of yolov5_inferenceonly)
+# GENERATING MAKEFILES WITH CMAKE
 try:
-    print("Attempting to CMAKE required Buildfiles in yolov5_inferenceonly/build folder... please wait...")
-    output = subprocess.run(CMD_CMAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF_BUILD)
+    print("Attempting to CMAKE required Buildfiles in yolov5/build folder... please wait...")
+    output = subprocess.run(CMD_CMAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
     if(output.returncode == 0):
         print(output.stdout)
         print("Buildfiles created successfully!\n")
@@ -120,8 +119,8 @@ except Exception as e:
 
 # GENERATING YOLOV5 COMPILED EXE WITH MAKE
 try:
-    print("Attempting to Makefile to generate compiled yolo exe in yolov5_inferenceonly/build folder... please wait...")
-    output = subprocess.run(CMD_MAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF_BUILD)
+    print("Attempting to Makefile to generate compiled yolo exe in yolov5/build folder... please wait...")
+    output = subprocess.run(CMD_MAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
     if(output.returncode == 0):
         print(output.stdout)
         print("Makefile compiled yolov5 exe sucessfully!\n")
@@ -138,7 +137,7 @@ except Exception as e:
 # GENERATING .ENGINE FILE FROM COMPILED YOLOV5 EXE AND .WTS
 try:
     print("Attempting to create .engine file from " + FILE_WTS + " & " + FILE_YOLOV5 + " compiled exe... please wait...")
-    pipe = subprocess.Popen(CMD_CRENGINE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF_BUILD)
+    pipe = subprocess.Popen(CMD_CRENGINE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
 
     print("getting sudo access...")
     pipe.stdin.write(USER_PASS)
@@ -160,18 +159,18 @@ except Exception as e:
 
 
 # COPYING FILES OVER TO /YOLOV5_INFERENCE ONLY FOLDER
-# try:
-#     print("Attempting to copy " + FILE_ENGINE + " and " + FILE_YOLOV5 + " over to /yolov5_inferenceonly")
-#     output = subprocess.run(CMD_CPENGEXE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
-#     if(output.returncode == 0):
-#         print(FILE_ENGINE + " and " + FILE_YOLOV5 + " have been copied over to /yolov5_inferenceonly sucessfully!\n")
-#     else:
-#         print("copying " + FILE_ENGINE + " and " + FILE_YOLOV5 + " over to /yolov5_inferenceonly error!")
-#         print("printing full output...")
-#         print(output)
-#         print("exiting...")
-#         exit()
-# except Exception as e:
-#     print(e)
+try:
+    print("Attempting to copy " + FILE_ENGINE + " and " + FILE_YOLOV5 + " over to /yolov5_inferenceonly")
+    output = subprocess.run(CMD_CPENGEXE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
+    if(output.returncode == 0):
+        print(FILE_ENGINE + " and " + FILE_YOLOV5 + " have been copied over to /yolov5_inferenceonly sucessfully!\n")
+    else:
+        print("copying " + FILE_ENGINE + " and " + FILE_YOLOV5 + " over to /yolov5_inferenceonly error!")
+        print("printing full output...")
+        print(output)
+        print("exiting...")
+        exit()
+except Exception as e:
+    print(e)
 
 print("Script executed successfully. Exiting...")
