@@ -1,5 +1,5 @@
 import multiprocessing
-import RPi.GPIO as GPIO
+import Jetson.GPIO as GPIO
 import time
 
 from data.sensorInference import SensorInference
