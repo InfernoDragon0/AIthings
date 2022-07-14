@@ -1,6 +1,8 @@
 import multiprocessing
 import time
 import cv2
+import subprocess
+import os
 
 #unified to be able to change the sequence of these without any issues
 class VideoProcessor():
@@ -37,6 +39,26 @@ class VideoProcessor():
                 if image is not None:
                     start = time.perf_counter()
                     self.result = self.model.inference_json_result(image)
+
+                    #Setting up constants
+                    ####PATH = "../../tensorrtxbuilder/yolov5_inferenceonly/"                    
+                    DIR_CURRENT = os.path.dirname(os.path.dirname(os.path.abspath(os.getcwd()))) #/amaris/
+                    #print(DIR_CURRENT)
+                    #going to tensorrtxbuilder/yolov5_inferenceonly
+                    DIR_YOLO5INF = os.path.join(DIR_CURRENT, "tensorrtxbuilder", "yolov5_inferenceonly")
+                    #print(DIR_YOLO5INF)
+
+
+                    CMD_INF = ["./yolov5", "-i", "atasv3.engine"]
+                    PROCESS = str.encode("process_img\n")
+                    ## save image to folder inferenceonly folder first
+                    cv2.imwrite(os.path.join(DIR_YOLO5INF, "temp.jpg"), image)
+                    ## use subprocess to run the .engine to read
+                    pipe = subprocess.Popen(CMD_INF, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_YOLO5INF, shell=True)
+                    pipe.stdin.write(PROCESS)
+                    pipeout, pipeer = pipe.communicate()
+                    print(pipeout)
+
 
                     if(len(self.result) > 1): #no need to bother with just 1 item in array
                         self.result = self.nms(self.result)

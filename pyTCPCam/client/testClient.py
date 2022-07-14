@@ -2,9 +2,9 @@
 import multiprocessing
 
 import jsonpickle
-from audio.audioStream import AudioStream
-from audio.audioProcessor import AudioProcessor
-from video.videoTracker import VideoTracker
+#from audio.audioStream import AudioStream
+#from audio.audioProcessor import AudioProcessor
+#from video.videoTracker import VideoTracker
 from data.configData import ConfigData
 from clientTCP import ClientTCP
 from video.videoEncoder import VideoEncoder
@@ -40,13 +40,13 @@ if __name__ == '__main__':
 
 
     imageModel = VideoProcessor(camQueue, encQueue, resultQueue, config.videoModel).startAsProcess()
-    imageTracker = VideoTracker(encQueue, trackedQueue, trackedResultQueue, resultQueue, config.maxFrameLoss, config.targetFPS).startAsProcess()
+    #imageTracker = VideoTracker(encQueue, trackedQueue, trackedResultQueue, resultQueue, config.maxFrameLoss, config.targetFPS).startAsProcess()
     # #start each video stream as a separate process
     videoStream0 = VideoStream(config.videoSource, config.targetFPS, camQueue, config.videoDebug).startAsProcess()
-    tcp = ClientTCP(config.tcpName, config.tcpHost, config.tcpPort)
+    #tcp = ClientTCP(config.tcpName, config.tcpHost, config.tcpPort)
     # #audio process
-    audioStream0 = AudioStream(config.audioBitRate, audQueue, config.audioSource, config.audioListenType, config.audioListenTime).startAsProcess()
-    audioProcessor = AudioProcessor(config.audioModel, config.audioListenTime, audQueue, tcp, config.audioInferenceType).startAsProcess()
+    #audioStream0 = AudioStream(config.audioBitRate, audQueue, config.audioSource, config.audioListenType, config.audioListenTime).startAsProcess()
+    #audioProcessor = AudioProcessor(config.audioModel, config.audioListenTime, audQueue, tcp, config.audioInferenceType).startAsProcess()
 
     # #encoder and TCP
-    videoEncoder0 = VideoEncoder(trackedQueue, trackedResultQueue, config.tcpSendTime, tcp, config.videoInferenceType).start()
+    #videoEncoder0 = VideoEncoder(trackedQueue, trackedResultQueue, config.tcpSendTime, tcp, config.videoInferenceType).start()

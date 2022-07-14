@@ -1,8 +1,8 @@
 {
     "py/object": "data.configData.ConfigData",
-    "videoSource": "vlc2.mp4",
-    "videoModel": "./yolov5n6.pt",
-    "videoDebug": false,
+    "videoSource": 0,
+    "videoModel": "./atasv3_s6_640.pt",
+    "videoDebug": true,
     "targetFPS": 60,
     "audioSource": 1,
     "audioModel": "yamnet.tflite",
