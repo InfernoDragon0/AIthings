@@ -14,10 +14,7 @@ import datetime
 
 HOST = "0.0.0.0"
 PORT = 8100
-audio_list = []
-microwave_list = []
-image_list = []
-image_counter = 0
+
 def audio_class_names(class_map_csv):
 #   Read the class name definition file and return a list of strings.
   if tf.is_tensor(class_map_csv):
@@ -31,7 +28,7 @@ def audioModeCheck(mode):
     start = 0
     end = 0
 
-    if mode == "human":
+    if mode == "people":
         start = 0
         end = 67
 
@@ -85,20 +82,19 @@ def multi_threaded_client(connection):
                 packetTime_image = datetime.datetime.now()
                 packetTime_image = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
 
-                print(f"Number of faces received: {len(dataPickle.inferredData)} at time {packetTime_image}")
+                print(f"Number of {dataPickle.inferrenceType} received: {len(dataPickle.inferredData)} at time {packetTime_image}")
                 if dataPickle.imageData is not None:
                     decodedImage = simplejpeg.decode_jpeg(dataPickle.imageData, colorspace='BGR')
                     cv2.imshow("server", decodedImage)
                     cv2.waitKey(1)
                 #Check for faces
                 if len(dataPickle.inferredData) >= 1:
-                    print("Target is detected")
-                    print("Number of faces received:" +len(dataPickle.inferredData) +" at time " +str(packetTime_image))
+                    print(str(dataPickle.inferenceType) + "is detected")
+                    print("Number of "+str(dataPickle.inferenceType)+" received:" +len(dataPickle.inferredData) +" at time " +str(packetTime_image))
 
                     flag_image += 1
-                    print("Number of faces received: "+ str(len(dataPickle.inferredData)) + " at time " + str(packetTime_image),file=f)
+                    print("Number of "+ str(dataPickle.inferrenceType) +"received: "+ str(len(dataPickle.inferredData)) + " at time " + str(packetTime_image),file=f)
                     flag_image = 2
-                #Check image
             elif dataPickle.packetType == 'Sensor':
                 packetTime_sensor = datetime.datetime.now()
                 packetTime_sensor = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
