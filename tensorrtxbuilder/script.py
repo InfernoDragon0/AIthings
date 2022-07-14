@@ -10,6 +10,7 @@ PATH_YOLOV5 = "/yolov5/"
 PATH_YOLOV5_BUILD = "/yolov5/build/"
 #used for inferencing with compiled yolo and .engine
 PATH_YOLOV5INF = "/yolov5_inferenceonly/"
+PATH_YOLOV5INF_BUILD = "/yolov5_inferenceonly/build/"
 
 FILE_GENWTS = "gen_wts.py"
 FILE_WTS = "atasv3.wts"
@@ -21,7 +22,8 @@ CMD_CPWTS = ["cp", DIR_CURRENT+PATH_GENFILE+FILE_WTS, DIR_CURRENT+PATH_YOLOV5_BU
 CMD_CMAKE = ["cmake", ".."]
 CMD_MAKE = ["make"]
 CMD_CRENGINE = ["sudo", "-S", "./"+FILE_YOLOV5, "-s", FILE_WTS, FILE_ENGINE, "s6"]
-CMD_CPENGEXE = ["cp", FILE_YOLOV5, FILE_ENGINE, DIR_CURRENT+PATH_YOLOV5INF]
+CMD_CPENG = ["cp", FILE_ENGINE, DIR_CURRENT+PATH_YOLOV5INF]
+CMD_CPYOLO = ["cp", FILE_YOLOV5, DIR_CURRENT+PATH_YOLOV5INF]
 
 USER_PASS = str.encode("amarisjetson\n")
 
@@ -158,14 +160,82 @@ except Exception as e:
     print(e)
 
 
-# COPYING FILES OVER TO /YOLOV5_INFERENCE ONLY FOLDER
+# CREATING BUILD FOLDER IN /YOLOV5_INFERENCEONLY
 try:
-    print("Attempting to copy " + FILE_ENGINE + " and " + FILE_YOLOV5 + " over to /yolov5_inferenceonly")
-    output = subprocess.run(CMD_CPENGEXE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
-    if(output.returncode == 0):
-        print(FILE_ENGINE + " and " + FILE_YOLOV5 + " have been copied over to /yolov5_inferenceonly sucessfully!\n")
+    print("Attempting to create /build folder in /yolov5_inferenceonly folder... please wait...")
+    if(os.path.exists(DIR_CURRENT + PATH_YOLOV5INF_BUILD)):
+        print(PATH_YOLOV5INF_BUILD + " folder already exists, creation stopped\n")
     else:
-        print("copying " + FILE_ENGINE + " and " + FILE_YOLOV5 + " over to /yolov5_inferenceonly error!")
+        output = subprocess.run(CMD_MKBUILDFD, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF)
+        if (output.returncode == 0):
+            print("build folder created successfully!\n")
+        else:
+                print("build folder creation error!")
+                print("printing full output...")
+                print(output)
+                print("exiting...")
+                exit()
+except Exception as e:
+    print(e)
+
+
+# GENERATING MAKEFILES WITH CMAKE FOR CUSTOM yolo5.cpp CODE
+try:
+    print("Attempting to CMAKE required Buildfiles in yolov5_inferenceonly/build folder... please wait...")
+    output = subprocess.run(CMD_CMAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF_BUILD)
+    if(output.returncode == 0):
+        print(output.stdout)
+        print("Buildfiles created successfully!\n")
+    else:
+        print("CMAKE build error!")
+        print("printing full output...")
+        print(output)
+        print("exiting...")
+        exit()
+except Exception as e:
+    print(e)
+
+
+# GENERATING YOLOV5 COMPILED EXE WITH MAKE FOR CUSTOM yolo5.cpp CODE
+try:
+    print("Attempting to Makefile to generate compiled yolo exe in yolov5_inferenceonly/build folder... please wait...")
+    output = subprocess.run(CMD_MAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF_BUILD)
+    if(output.returncode == 0):
+        print(output.stdout)
+        print("Makefile compiled yolov5 exe sucessfully!\n")
+    else:
+        print("Makefile error!")
+        print("printing full output...")
+        print(output)
+        print("exiting...")
+        exit()
+except Exception as e:
+    print(e)
+
+# COPYING .ENGINE FROM /YOLOV5/build TO /YOLOV5_INFERENCE ONLY FOLDER
+try:
+    print("Attempting to copy " + FILE_ENGINE + " over to /yolov5_inferenceonly")
+    output = subprocess.run(CMD_CPENG, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5_BUILD)
+    if(output.returncode == 0):
+        print(FILE_ENGINE + " have been copied over to /yolov5_inferenceonly sucessfully!\n")
+    else:
+        print("copying " + FILE_ENGINE + " over to /yolov5_inferenceonly error!")
+        print("printing full output...")
+        print(output)
+        print("exiting...")
+        exit()
+except Exception as e:
+    print(e)
+
+
+# COPYING yolov5 compiled binary FROM /YOLOV5/build TO /YOLOV5_INFERENCE ONLY FOLDER
+try:
+    print("Attempting to copy " + FILE_YOLOV5 + " over to /yolov5_inferenceonly")
+    output = subprocess.run(CMD_CPENG, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF_BUILD)
+    if(output.returncode == 0):
+        print(FILE_YOLOV5 + " have been copied over to /yolov5_inferenceonly sucessfully!\n")
+    else:
+        print("copying " + FILE_YOLOV5 + " over to /yolov5_inferenceonly error!")
         print("printing full output...")
         print(output)
         print("exiting...")
