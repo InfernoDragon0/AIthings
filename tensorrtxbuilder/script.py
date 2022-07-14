@@ -69,7 +69,7 @@ except Exception as e:
 # CREATING BUILD FOLDER IN YOLOV5_INFERENCEONLY FOLDER 
 try:
     print("Attempting to create /build folder in /yolov5_inferenceonly folder... please wait...")
-    if(os.path.exists(DIR_CURRENT + PATH_YOLOV5INF)):
+    if(os.path.exists(DIR_CURRENT + PATH_YOLOV5INF_BUILD)):
         print(PATH_YOLOV5INF + " folder already exists, creation stopped\n")
     else:
         output = subprocess.run(CMD_MKBUILDFD, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF)
