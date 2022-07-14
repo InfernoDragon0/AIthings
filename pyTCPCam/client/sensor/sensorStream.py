@@ -33,15 +33,18 @@ class SensorStream:
             GPIO.output(self.GPIO_TRIGGER, True)
             time.sleep(0.0001)
             GPIO.output(self.GPIO_TRIGGER, False)
+            print(f"first loop")
 
             while not GPIO.input(self.GPIO_ECHO):
                 pass
 
             StartTime = time.time()
+            print(f"after first loop")
 
             while GPIO.input(self.GPIO_ECHO):
                 pass
-
+            print(f"after second loop")
+            
             StopTime = time.time()
 
             TimeElapsed = StopTime - StartTime
