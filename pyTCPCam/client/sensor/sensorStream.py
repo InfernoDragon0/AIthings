@@ -12,6 +12,7 @@ class SensorStream:
         self.GPIO_ECHO = 24
         self.distance = 0
         self.tcp = tcp
+        self.counter = 0
 
     def startAsProcess(self):
         print("Sensor Stream Process started")
@@ -42,6 +43,9 @@ class SensorStream:
             print(f"after first loop")
 
             while GPIO.input(self.GPIO_ECHO):
+                if self.counter > 10000000:
+                    self.counter = 0
+                    break
                 pass
             print(f"after second loop")
             
