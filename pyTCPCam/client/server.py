@@ -37,7 +37,7 @@ def audioModeCheck(mode):
         end = 132
 
     elif mode == "dog":
-        start = 69
+        start = 68
         end = 76
 
     return start, end
@@ -81,33 +81,32 @@ def multi_threaded_client(connection):
                 face_counter = len(dataPickle.inferredData)
                 packetTime_image = datetime.datetime.now()
                 packetTime_image = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-
-                print(f"Number of {dataPickle.inferrenceType} received: {len(dataPickle.inferredData)} at time {packetTime_image}")
+                #Preview
                 if dataPickle.imageData is not None:
                     decodedImage = simplejpeg.decode_jpeg(dataPickle.imageData, colorspace='BGR')
                     cv2.imshow("server", decodedImage)
                     cv2.waitKey(1)
-                #Check for faces
+                #Check image
                 if len(dataPickle.inferredData) >= 1:
-                    print(str(dataPickle.inferenceType) + "is detected")
-                    print("Number of "+str(dataPickle.inferenceType)+" received:" +len(dataPickle.inferredData) +" at time " +str(packetTime_image))
 
+                    print(f"Number of {dataPickle.inferenceType} received: {face_counter} at time {packetTime_image}")
+                    print("Object Count: " + str(dataPickle.objectCount))
+                    print(str(dataPickle.inferenceType) + " is detected")
+                    print("Number of " + str(dataPickle.inferenceType) + " received: " + str(face_counter) +" at time " + str(packetTime_image),file=f)
+                    print("Object Count: " + str(dataPickle.objectCount) ,file=f)
                     flag_image += 1
-                    print("Number of "+ str(dataPickle.inferrenceType) +"received: "+ str(len(dataPickle.inferredData)) + " at time " + str(packetTime_image),file=f)
-                    flag_image = 2
+                else:
+                    print("Nothing is found")
+            #Sensor check
             elif dataPickle.packetType == 'Sensor':
                 packetTime_sensor = datetime.datetime.now()
                 packetTime_sensor = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-                print(f"Sensor data received: {dataPickle.inferredData} at time {packetTime_sensor}")
-                #Sensor check
-                if dataPickle.inferredData == 1:
-                    print("Sensor data received: "+ dataPickle.inferredData+ " at time "+str(packetTime_sensor))
+                print(f"Sensor data received: {dataPickle.inferredData[0]} at time {packetTime_sensor}")
+                if len(dataPickle.inferredData) > 0:
+                    print("Sensor "+ str(dataPickle.inferenceType)+" data received: "+ str(dataPickle.inferredData[0])+ " at time "+str(packetTime_sensor))
                     flag_sensor += 1
-                if dataPickle.inferredData['name'] == "ultrasonic":
-                    if dataPickle.inferredData['value'] == 1:
-                        print("Sensor data received: "+ str(dataPickle.inferredData['name']) + " at time "+str(packetTime_sensor),file=f)
-                        sensor_value = dataPickle.inferredData
-                        flag_sensor = 1
+                    print("Sensor "+ str(dataPickle.inferenceType) +" data received: "+ str(dataPickle.inferredData[0]) + " at time "+str(packetTime_sensor),file=f)
+                    sensor_value = dataPickle.inferredData
                 
 
             else:
