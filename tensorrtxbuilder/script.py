@@ -103,8 +103,8 @@ except Exception as e:
 
 # GENERATING MAKEFILES WITH CMAKE (of yolov5_inferenceonly)
 try:
-    print("Attempting to CMAKE required Buildfiles in yolov5/build folder... please wait...")
-    output = subprocess.run(CMD_CMAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF)
+    print("Attempting to CMAKE required Buildfiles in yolov5_inferenceonly/build folder... please wait...")
+    output = subprocess.run(CMD_CMAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF_BUILD)
     if(output.returncode == 0):
         print(output.stdout)
         print("Buildfiles created successfully!\n")
@@ -121,7 +121,7 @@ except Exception as e:
 # GENERATING YOLOV5 COMPILED EXE WITH MAKE
 try:
     print("Attempting to Makefile to generate compiled yolo exe in yolov5_inferenceonly/build folder... please wait...")
-    output = subprocess.run(CMD_MAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF)
+    output = subprocess.run(CMD_MAKE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_CURRENT+PATH_YOLOV5INF_BUILD)
     if(output.returncode == 0):
         print(output.stdout)
         print("Makefile compiled yolov5 exe sucessfully!\n")
