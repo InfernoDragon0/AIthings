@@ -36,7 +36,6 @@ class SensorStream:
             GPIO.output(self.GPIO_TRIGGER, True)
             time.sleep(0.0001)
             GPIO.output(self.GPIO_TRIGGER, False)
-            print(f"first loop")
 
             while not GPIO.input(self.GPIO_ECHO):
                 pass
@@ -61,6 +60,7 @@ class SensorStream:
             tcp.sendData(self.sensorInference)
 
             print(f"sensor time: {TimeElapsed}")
+            print(f"sensor distance: {self.distance}")
             time.sleep(0.3)
 
     # Get dummy distance from ultrasonic sensor
