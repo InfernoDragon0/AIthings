@@ -8,8 +8,10 @@ class SensorStream:
 
     # init and read one frame
     def __init__(self, tcp):
-        self.GPIO_TRIGGER = 23
-        self.GPIO_ECHO = 24
+        #self.GPIO_TRIGGER = 23
+        #self.GPIO_ECHO = 24
+        self.GPIO_TRIGGER = 11
+        self.GPIO_ECHO = 8
         self.distance = 0
         self.tcp = tcp
 
