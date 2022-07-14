@@ -5,7 +5,7 @@ import time
 
 #unified to be able to change the sequence of these without any issues
 class VideoTracker():
-    def __init__(self, encQueue, trackedQueue, trackedResultQueue, resultQueue, maxFrameLoss, targetFPS):
+    def __init__(self, encQueue, trackedQueue, trackedResultQueue, resultQueue, maxFrameLoss, targetFPS, countQueue):
         self.completed = False
         self.ready = False
         self.resultQueue = resultQueue
@@ -15,11 +15,12 @@ class VideoTracker():
         self.currentID = 0
         self.maxFrameLoss = maxFrameLoss
         self.fps = 1/targetFPS
+        self.countQueue = countQueue
         
 
     def startAsProcess(self):
         print("Tracking Process started")
-        self.processorProcess = multiprocessing.Process(target=self.process, args=(self.encQueue, self.trackedQueue, self.trackedResultQueue, self.resultQueue, self.maxFrameLoss, self.fps))
+        self.processorProcess = multiprocessing.Process(target=self.process, args=(self.encQueue, self.trackedQueue, self.trackedResultQueue, self.resultQueue, self.maxFrameLoss, self.fps, self.countQueue))
         self.processorProcess.start()
         return self
     
@@ -34,7 +35,7 @@ class VideoTracker():
 
 
     #encode loop to encode the latest frame received
-    def process(self, encQueue, trackedQueue, trackedResultQueue, resultQueue, maxFrameLoss, fps):
+    def process(self, encQueue, trackedQueue, trackedResultQueue, resultQueue, maxFrameLoss, fps, countQueue):
         import cv2
         from scipy.spatial import distance as dist
         import numpy as np
@@ -116,6 +117,9 @@ class VideoTracker():
 
                     if trackedResultQueue.empty():
                         trackedResultQueue.put(rects)
+                    
+                    if countQueue.empty():
+                        countQueue.put(self.currentID)
 
                     #cv2.imshow("tracker", processedImage)
                     #cv2.waitKey(1)

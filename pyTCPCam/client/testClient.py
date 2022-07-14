@@ -22,6 +22,7 @@ if __name__ == '__main__':
     audQueue = multiprocessing.Queue(1)
     trackedQueue = multiprocessing.Queue(1)
     trackedResultQueue = multiprocessing.Queue(1)
+    countQueue = multiprocessing.Queue(1)
     
     #config read
     config = ConfigData()
@@ -40,7 +41,7 @@ if __name__ == '__main__':
     #config write
 
     imageModel = VideoProcessor(camQueue, encQueue, resultQueue, config.videoModel, config.videoInferenceType).startAsProcess()
-    imageTracker = VideoTracker(encQueue, trackedQueue, trackedResultQueue, resultQueue, config.maxFrameLoss, config.targetFPS).startAsProcess()
+    imageTracker = VideoTracker(encQueue, trackedQueue, trackedResultQueue, resultQueue, config.maxFrameLoss, config.targetFPS, countQueue).startAsProcess()
     # #start each video stream as a separate process
     videoStream0 = VideoStream(config.videoSource, config.targetFPS, camQueue, config.videoDebug).startAsProcess()
     tcp = ClientTCP(config.tcpName, config.tcpHost, config.tcpPort)
@@ -52,4 +53,4 @@ if __name__ == '__main__':
     sensorStream = SensorStream(tcp).startAsProcess()
 
     # #encoder and TCP
-    videoEncoder0 = VideoEncoder(trackedQueue, trackedResultQueue, config.tcpSendTime, tcp, config.videoInferenceType).start()
+    videoEncoder0 = VideoEncoder(trackedQueue, trackedResultQueue, config.tcpSendTime, tcp, config.videoInferenceType, countQueue).start()
