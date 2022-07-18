@@ -1,8 +1,8 @@
 {
     "py/object": "data.configData.ConfigData",
-    "videoSource": "/dev/video0",
-    "videoModel": "./yolov5s6.pt",
-    "videoDebug": false,
+    "videoSource": 0,
+    "videoModel": "atasv3_s6_640.pt",
+    "videoDebug": true,
     "targetFPS": 60,
     "audioSource": 11,
     "audioModel": "yamnet.tflite",
@@ -14,6 +14,6 @@
     "tcpName": "Integrated Audio/Video Client",
     "tcpSendTime": 5,
     "audioInferenceType": "dog",
-    "videoInferenceType": "dog",
+    "videoInferenceType": "face",
     "maxFrameLoss": 5
 }
