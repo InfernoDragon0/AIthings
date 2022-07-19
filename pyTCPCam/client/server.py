@@ -112,9 +112,8 @@ def multi_threaded_client(connection):
             else:
                 print(f"New data type found: {dataPickle.packetType}")
             #check flag
-            if flag_audio == 1 and flag_image== 1 or flag_sensor== 1 and flag_audio == 1 or flag_image == 1 and flag_sensor == 1 or flag_audio == 1 and flag_image == 1 and flag_sensor == 1:
             
-                print("Flag Audio "+str(flag_audio) + " Flag image"+ str(flag_image))
+            print("Flag Audio "+str(flag_audio) + " Flag image "+ str(flag_image)+ " Flag sensor "+ str(flag_sensor) )
             if (flag_audio + flag_image + flag_sensor) >= 2:
                 image = 'Not detected'
                 audio ='Not detected '
@@ -125,7 +124,7 @@ def multi_threaded_client(connection):
                 else:
                     messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second)+ "\nNumber of targets at location now: not found \nAudio and Sensor detected targets")
                 packetTime_alert = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-                if flag_image == 2:
+                if flag_image == 1:
                     image = "Number of targets at location now: "+ str(len(dataPickle.inferredData))
                 if flag_audio == 1:
                     audio = "Audio sound "+ audio_soundname + " value of sound " + audio_value
