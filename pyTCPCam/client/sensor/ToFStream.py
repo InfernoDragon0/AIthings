@@ -5,7 +5,7 @@ import VL53L1X
 from data.sensorInference import SensorInference
 
 
-class SensorStream:
+class ToFStream:
 
     # init and read one frame
     def __init__(self, tcp):
