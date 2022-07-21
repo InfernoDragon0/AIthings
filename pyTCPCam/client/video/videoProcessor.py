@@ -4,6 +4,13 @@ import cv2
 
 import subprocess
 import os
+import json
+
+CMD_INF = ["./yolov5", "-i", "atasv3.engine"]
+PROCESS = str.encode("process_img\n")
+#Setting up constants
+DIR_CURRENT = os.path.dirname(os.path.dirname(os.path.abspath(os.getcwd()))) #/amaris/
+DIR_YOLO5INF = os.path.join(DIR_CURRENT, "tensorrtxbuilder", "yolov5_inferenceonly")
 
 #unified to be able to change the sequence of these without any issues
 class VideoProcessor():
@@ -28,7 +35,10 @@ class VideoProcessor():
 
         self.processedFrame = None
         self.result = None
-        self.model = Process(device=0, weights=videoModel, inferenceType=inferenceType)
+        #self.model = Process(device=0, weights=videoModel, inferenceType=inferenceType)
+
+        #Opens a subprocess pipe for inferencing
+        pipe = subprocess.Popen(CMD_INF, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_YOLO5INF, shell=False)
         while True:
             if self.completed:
                 return
@@ -39,44 +49,41 @@ class VideoProcessor():
                 image = camQueue.get()
                 
                 if image is not None:
-                    start = time.perf_counter()
-                    self.result = self.model.inference_json_result(image)
+                    #start = time.perf_counter()
+                    #self.result = self.model.inference_json_result(image)
 
-                    #Setting up constants
-                    DIR_CURRENT = os.path.dirname(os.path.dirname(os.path.abspath(os.getcwd()))) #/amaris/
-                    print(DIR_CURRENT)
-                    #going to tensorrtxbuilder/yolov5_inferenceonly
-                    DIR_YOLO5INF = os.path.join(DIR_CURRENT, "tensorrtxbuilder", "yolov5_inferenceonly")
-                    print(DIR_YOLO5INF)
-
-
-                    CMD_INF = ["yolov5", "-i", "atasv3.engine"]
-                    PROCESS = str.encode("process_img\n")
                     ## save image to folder inferenceonly folder first
                     cv2.imwrite(os.path.join(DIR_YOLO5INF, "temp.jpg"), image)
-                    ## use subprocess to run the .engine to read
-                    pipe = subprocess.Popen(CMD_INF, stdin=subprocess.PIPE, stderr=subprocess.PIPE, cwd=DIR_YOLO5INF, shell=True)
+                    ## Run the process_img into the pipe to read
                     pipe.stdin.write(PROCESS)
-                    pipeout, pipeer = pipe.communicate()
-                    print(pipeout)
-                    print(pipeer)
+                    pipe.stdin.flush()
+                    det_result = pipe.stdout.readline()
+                    det_result = det_result.decode('utf-8')
 
-                    if(len(self.result) > 1): #no need to bother with just 1 item in array
-                        self.result = self.nms(self.result)
+
+                    # Remove the datetime
+                    det_result = (json.loads(det_result.split()[-1]))['results']
+                    self.result = det_result
+                    print(det_result)
+
+                    
+                    #if(len(self.result) > 1): #no need to bother with just 1 item in array
+                        #self.result = self.nms(self.result)
                     #print(self.result)
 
                     #drawing the bounding boxes based on the result on the image
-                    image = self.model.draw_box_xyxy(image, self.result)
+                    image = self.draw_box_xyxy(image, self.result)
                     self.setProcessedFrame(image)
-                    end = time.perf_counter()
+                    #end = time.perf_counter()
                     #print(f"perf counter is {end-start}")
 
                     if encQueue.empty() and resultQueue.empty():
                         encQueue.put(image)
                         resultQueue.put(self.result)
                     
-                    #cv2.imshow("processor", image)
-                    #cv2.waitKey(1)
+                    #uncomment bottom 2 line to show debug preview
+                    cv2.imshow("processor", image)
+                    cv2.waitKey(1)
                     #if (self.fps - (end-start) > 0):
                         #time.sleep(self.fps - (end-start))
             # else:
@@ -139,3 +146,25 @@ class VideoProcessor():
             intersection = 0
 
         return intersection
+
+    def draw_box_xyxy(self, img, result):
+        for i in result:
+            label = str(i["class_id"])
+            RED = (0,0,255)
+            BLUE = (255,0,0)
+            color = BLUE
+
+            box = i["bbox"]
+            left = int(box[0])
+            top = int(box[1])
+            right = int(box[2])
+            bottom = int(box[3])
+
+            cv2.rectangle(img, (left, top), (right, bottom), color, 2)
+            cv2.putText(img, label,
+                        (left + 20, top + 20),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        1,  # font scale
+                        color,
+                        2)  # line type
+        return img

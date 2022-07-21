@@ -2,7 +2,7 @@
     "py/object": "data.configData.ConfigData",
     "videoSource": 0,
     "videoModel": "atasv3_s6_640.pt",
-    "videoDebug": true,
+    "videoDebug": false,
     "targetFPS": 60,
     "audioSource": 11,
     "audioModel": "yamnet.tflite",
