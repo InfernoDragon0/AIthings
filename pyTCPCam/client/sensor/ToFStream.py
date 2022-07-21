@@ -16,7 +16,7 @@ class ToFStream:
 
     def startAsProcess(self):
         print("Sensor Stream Process started")
-        self.tof.open()
+        #self.tof.open()
         self.initBenchmark()
 
         # self.sensorProcess = multiprocessing.Process(target=self.distance)
@@ -26,7 +26,7 @@ class ToFStream:
 
     # Setup
     def initBenchmark(self):
-        #self.tof.open()
+        self.tof.open()
         print("after init tof")
         self.tof.start_ranging(3)
         print("tof before")
