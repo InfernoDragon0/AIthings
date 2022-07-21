@@ -5,7 +5,7 @@ import jsonpickle
 from audio.audioStream import AudioStream
 from audio.audioProcessor import AudioProcessor
 from sensor.ultrasonicStream import UltrasonicStream
-from sensor.ToFStream import ToFStream
+from sensor.vibrationStream import vibrationStream
 from sensor.sensorStream import SensorStream
 from video.videoTracker import VideoTracker
 from data.configData import ConfigData
