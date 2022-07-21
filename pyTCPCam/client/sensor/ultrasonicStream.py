@@ -72,8 +72,8 @@ class UltrasonicStream:
             self.sensorInference = SensorInference("real ultrasonic sensor")
 
             self.getDistance()
-            if (self.distance >= (self.benchmark - (self.benchmark * .05))) and (
-                    self.distance <= (self.benchmark + (self.benchmark * .05))):
+            if (self.distance >= (self.benchmark - (self.benchmark * 0.5))) and (
+                    self.distance <= (self.benchmark + (self.benchmark * 0.5))):
                 self.sensorInference.addData('0')
                 print(f"sensor time: 0")
             else:
