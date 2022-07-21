@@ -19,7 +19,7 @@ class ToFStream:
         self.tof.open()
 
         # self.sensorProcess = multiprocessing.Process(target=self.distance)
-        self.sensorProcess = multiprocessing.Process(target=self.ToF, args=(self.tcp,))
+        self.sensorProcess = multiprocessing.Process(target=self.ToF, args=(self.tcp,self.tof))
         self.sensorProcess.start()
         return self
 
@@ -51,7 +51,7 @@ class ToFStream:
             self.tof.stop_ranging()
 
     # Get distance from ultrasonic sensor
-    def ToF(self, tcp):
+    def ToF(self, tcp, tof):
         print("Start tof")
         while True:
             self.sensorInference = SensorInference("real ToF sensor")
@@ -60,8 +60,8 @@ class ToFStream:
             # 1 = Short Range
             # 2 = Medium Range
             # 3 = Long Range
-            self.tof.start_ranging(3)  # Start ranging
-            self.distance = self.tof.get_distance()
+            tof.start_ranging(3)  # Start ranging
+            self.distance = tof.get_distance()
             print(str(self.distance) + 'mm')
 
             if (self.distance >= (self.benchmark - (self.benchmark * .03))) and (self.distance <= (self.benchmark + (self.benchmark * .03))):
@@ -72,4 +72,4 @@ class ToFStream:
                 print(f"ToF sensor state: 1")
 
             tcp.sendData(self.sensorInference)
-            self.tof.stop_ranging()
+            tof.stop_ranging()
