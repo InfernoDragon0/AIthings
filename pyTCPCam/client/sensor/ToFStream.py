@@ -26,7 +26,7 @@ class ToFStream:
 
     # Setup
     def initBenchmark(self):
-        self.tof.open()
+        #self.tof.open()
         print("after init tof")
         self.tof.start_ranging(3)
         print("tof before")
