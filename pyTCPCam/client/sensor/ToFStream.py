@@ -9,7 +9,7 @@ class ToFStream:
 
     # init and read one frame
     def __init__(self, tcp):
-        self.tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x40)
+        self.tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
         self.distance = 0
         self.benchmark = 0
         self.tcp = tcp
@@ -28,6 +28,7 @@ class ToFStream:
     def initBenchmark(self):
         print("tof before")
         initVal = self.tof.get_distance()
+        print("getdistance")
         cnt = 0
         total = initVal
         print("while before")
