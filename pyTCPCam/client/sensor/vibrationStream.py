@@ -9,7 +9,7 @@ class vibrationStream:
 
     # init and read one frame
     def __init__(self, tcp):
-        self.GPIO_TRIGGER = 2
+        self.GPIO_TRIGGER = 26
 
     def startAsProcess(self):
         print("Sensor Stream Process started")
