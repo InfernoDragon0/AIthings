@@ -27,6 +27,7 @@ class ToFStream:
     # Setup
     def initBenchmark(self):
         tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
+        prnt("after init tof")
         tof.start_ranging(3)
         print("tof before")
         initVal = self.tof.get_distance()
