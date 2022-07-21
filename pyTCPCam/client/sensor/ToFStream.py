@@ -33,6 +33,7 @@ class ToFStream:
                               # 3 = Long Range
 
         distance_in_mm = tof.get_distance()
+        print(f"Distance: {distance_in_mm}")
 
         tof.stop_ranging()
         
