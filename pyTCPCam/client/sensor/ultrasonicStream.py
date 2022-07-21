@@ -36,26 +36,32 @@ class UltrasonicStream:
         cnt = 0
         total = initVal
         print("before while")
+        time.sleep(0.0001)
         while True:
             print("after while")
             print(cnt)
             self.getDistance()
             current = self.distance
             prev = self.distance
+            print("after get distance")
             if (current >= (initVal - (initVal * .05))) and (current <= (initVal + (initVal * .05))):
                 total += current
                 cnt += 1
+                print("+1")
             else:
                 total -= prev
                 cnt -= 1
+                print("-1")
 
             if cnt >= 5:
                 self.benchmark = total / cnt
+                print("after>=5")
                 break
             elif cnt <= -5:
                 initVal = self.distance
                 cnt = 0
                 total = initVal
+                print("reset")
 
             time.sleep(0.0001)
 
