@@ -24,17 +24,22 @@ class ToFStream:
         return self
     
     def ToF(self, tcp, tof):
+        print("1")
         tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
+        print("2")
         tof.open()
+        print("3")
 
         tof.start_ranging(3)  # Start ranging
                               # 0 = Unchanged
                               # 1 = Short Range
                               # 2 = Medium Range
                               # 3 = Long Range
-
+        print("4")
         while True:
+            print("5")
             distance_in_mm = tof.get_distance()
+            print("6")
             print(f"Distance: {distance_in_mm}")
             time.sleep(0.0001)
 
