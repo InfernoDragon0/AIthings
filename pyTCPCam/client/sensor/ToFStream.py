@@ -26,15 +26,19 @@ class ToFStream:
 
     # Setup
     def initBenchmark(self):
+        self.tof.start_ranging(3)
         print("tof before")
         initVal = self.tof.get_distance()
+        self.tof.stop_ranging()
         print("getdistance")
         cnt = 0
         total = initVal
         print("while before")
         while True:
+            tof.start_ranging(3)
             print("while after")
             self.distance = self.tof.get_distance()
+            self.tof.stop_ranging()
             print("get distance after")
             current = self.distance
             prev = self.distance
@@ -53,7 +57,6 @@ class ToFStream:
                 cnt = 0
                 total = initVal
             print("stop after")
-            self.tof.stop_ranging()
 
     # Get distance from ultrasonic sensor
     def ToF(self, tcp, tof):
@@ -65,7 +68,7 @@ class ToFStream:
             # 1 = Short Range
             # 2 = Medium Range
             # 3 = Long Range
-            tof.start_ranging(3)  # Start ranging
+            self.tof.start_ranging(3)  # Start ranging
             self.distance = tof.get_distance()
             print(str(self.distance) + 'mm')
 
