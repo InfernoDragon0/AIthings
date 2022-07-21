@@ -35,8 +35,10 @@ class UltrasonicStream:
         initVal = self.distance
         cnt = 0
         total = initVal
-
+        print("before while")
         while True:
+            print("after while")
+            print(cnt)
             self.getDistance()
             current = self.distance
             prev = self.distance
