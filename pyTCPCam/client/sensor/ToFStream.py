@@ -32,7 +32,7 @@ class SensorStream:
             self.distance = self.tof.get_distance()
             current = self.distance
             prev = self.distance
-            if (current >= (initVal - (initVal * .05))) and (current <= (initVal + (initVal * .05))):
+            if (current >= (initVal - (initVal * .03))) and (current <= (initVal + (initVal * .03))):
                 total += current
                 cnt += 1
             else:
@@ -62,7 +62,7 @@ class SensorStream:
             self.distance = self.tof.get_distance()
             print(str(self.distance) + 'mm')
 
-            if (self.distance >= (self.benchmark - (self.benchmark * .05))) and (self.distance <= (self.benchmark + (self.benchmark * .05))):
+            if (self.distance >= (self.benchmark - (self.benchmark * .03))) and (self.distance <= (self.benchmark + (self.benchmark * .03))):
                 self.sensorInference.addData('0')
                 print(f"ToF sensor state: 0")
             else:
