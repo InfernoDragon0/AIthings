@@ -59,6 +59,7 @@ class SensorStream:
 
     #  Ultrasonic sensor main loop
     def Distance(self, tcp):
+        print("Start sensor")
         while True:
             self.sensorInference = SensorInference("real ultrasonic sensor")
 
