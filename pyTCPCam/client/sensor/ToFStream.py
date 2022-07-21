@@ -30,7 +30,7 @@ class ToFStream:
         tof.open()
         print("3")
 
-        tof.start_ranging(3)  # Start ranging
+        tof.start_ranging(1)  # Start ranging
                               # 0 = Unchanged
                               # 1 = Short Range
                               # 2 = Medium Range
