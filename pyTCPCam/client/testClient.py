@@ -4,6 +4,7 @@ import multiprocessing
 import jsonpickle
 from audio.audioStream import AudioStream
 from audio.audioProcessor import AudioProcessor
+from sensor.ultrasonicStream import UltrasonicStream
 from sensor.ToFStream import ToFStream
 from sensor.sensorStream import SensorStream
 from video.videoTracker import VideoTracker
@@ -52,8 +53,8 @@ if __name__ == '__main__':
 
     # sensor process
     #sensorStream = SensorStream(tcp).startAsProcess()
-    tofStream = ToFStream(tcp).startAsProcess()
-    #ultrasonicStream = SensorStream(tcp).startAsProcess()
+    #tofStream = ToFStream(tcp).startAsProcess()
+    ultrasonicStream = UltrasonicStream(tcp).startAsProcess()
 
     # #encoder and TCP
     #videoEncoder0 = VideoEncoder(trackedQueue, trackedResultQueue, config.tcpSendTime, tcp, config.videoInferenceType, countQueue).start()

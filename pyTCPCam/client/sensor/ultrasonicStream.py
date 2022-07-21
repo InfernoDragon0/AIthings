@@ -5,7 +5,7 @@ import time
 from data.sensorInference import SensorInference
 
 
-class SensorStream:
+class UltrasonicStream:
 
     # init and read one frame
     def __init__(self, tcp):
