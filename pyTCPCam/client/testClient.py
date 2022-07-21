@@ -54,7 +54,7 @@ if __name__ == '__main__':
     # sensor process
     #sensorStream = SensorStream(tcp).startAsProcess()
     vibrationStream = vibrationStream(tcp).startAsProcess()
-    #ultrasonicStream = UltrasonicStream(tcp).startAsProcess()
+    ultrasonicStream = UltrasonicStream(tcp).startAsProcess()
 
     # #encoder and TCP
     #videoEncoder0 = VideoEncoder(trackedQueue, trackedResultQueue, config.tcpSendTime, tcp, config.videoInferenceType, countQueue).start()
