@@ -45,11 +45,12 @@ def audioModeCheck(mode):
 def multi_threaded_client(connection):
     connection.send(str.encode('Server is working:'))
     while True:
-        flag_image = 0
-        flag_audio = 0
-        flag_sensor = 0
+
         data = connection.recv(64000)
         try:
+            flag_image = 0
+            flag_audio = 0
+            flag_sensor = 0
             dataPickle = jsonpickle.decode(data)
             f = open("output.txt","a")
             #global inference data check
@@ -102,7 +103,7 @@ def multi_threaded_client(connection):
                 packetTime_sensor = datetime.datetime.now()
                 packetTime_sensor = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
                 print(f"Sensor data received: {dataPickle.inferredData[0]} at time {packetTime_sensor}")
-                if len(dataPickle.inferredData) > 0:
+                if dataPickle.inferredData[0] != '0':
                     print("Sensor "+ str(dataPickle.inferenceType)+" data received: "+ str(dataPickle.inferredData[0])+ " at time "+str(packetTime_sensor))
                     flag_sensor += 1
                     print("Sensor "+ str(dataPickle.inferenceType) +" data received: "+ str(dataPickle.inferredData[0]) + " at time "+str(packetTime_sensor),file=f)
@@ -112,7 +113,6 @@ def multi_threaded_client(connection):
             else:
                 print(f"New data type found: {dataPickle.packetType}")
             #check flag
-            
             print("Flag Audio "+str(flag_audio) + " Flag image "+ str(flag_image)+ " Flag sensor "+ str(flag_sensor) )
             if (flag_audio + flag_image + flag_sensor) >= 2:
                 image = 'Not detected'
