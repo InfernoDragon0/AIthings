@@ -9,14 +9,13 @@ class ToFStream:
 
     # init and read one frame
     def __init__(self, tcp):
-        self.tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
+        self.tof = None
         self.distance = 0
         self.benchmark = 0
         self.tcp = tcp
 
     def startAsProcess(self):
         print("Sensor Stream Process started")
-        #self.tof.open()
         self.initBenchmark()
 
         # self.sensorProcess = multiprocessing.Process(target=self.distance)
@@ -26,6 +25,7 @@ class ToFStream:
 
     # Setup
     def initBenchmark(self):
+        self.tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
         self.tof.open()
         print("after init tof")
         self.tof.start_ranging(3)
