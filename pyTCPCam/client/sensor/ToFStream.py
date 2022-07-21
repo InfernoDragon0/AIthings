@@ -1,5 +1,6 @@
 import multiprocessing
 import VL53L1X
+import time
 
 from data.sensorInference import SensorInference
 
@@ -32,8 +33,10 @@ class ToFStream:
                               # 2 = Medium Range
                               # 3 = Long Range
 
-        distance_in_mm = tof.get_distance()
-        print(f"Distance: {distance_in_mm}")
+        while True:
+            distance_in_mm = tof.get_distance()
+            print(f"Distance: {distance_in_mm}")
+            time.sleep(0.0001)
 
         tof.stop_ranging()
         
