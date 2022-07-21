@@ -52,7 +52,7 @@ class ToFStream:
 
     # Get distance from ultrasonic sensor
     def ToF(self, tcp):
-        print("Start tof)
+        print("Start tof")
         while True:
             self.sensorInference = SensorInference("real ToF sensor")
 
