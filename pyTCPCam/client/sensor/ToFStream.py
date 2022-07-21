@@ -1,5 +1,4 @@
 import multiprocessing
-import Jetson.GPIO as GPIO
 import VL53L1X
 
 from data.sensorInference import SensorInference
@@ -22,7 +21,7 @@ class ToFStream:
         self.sensorProcess = multiprocessing.Process(target=self.ToF, args=(self.tcp,self.tof))
         self.sensorProcess.start()
         return self
-
+'''
     # Setup
     def initBenchmark(self):
         self.tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
@@ -83,3 +82,17 @@ class ToFStream:
 
             tcp.sendData(self.sensorInference)
             tof.stop_ranging()
+'''
+    def ToF(self, tcp, tof):
+        tof = VL53L1X.VL53L1X(i2c_bus=1, i2c_address=0x29)
+        tof.open()
+
+        tof.start_ranging(3)  # Start ranging
+                              # 0 = Unchanged
+                              # 1 = Short Range
+                              # 2 = Medium Range
+                              # 3 = Long Range
+
+        distance_in_mm = tof.get_distance()
+
+        tof.stop_ranging()
