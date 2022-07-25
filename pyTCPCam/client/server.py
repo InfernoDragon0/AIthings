@@ -62,13 +62,13 @@ def multi_threaded_client(connection):
                 packetTime_audio = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S') 
                 print(f"Audio data received: {dataPickle.inferredData} at time {packetTime_audio}")
                 #Get audio name
-                audio_name = audio_class_names("pyTCPCam\client\yamnet_class_map.csv")
+                audio_name = audio_class_names("yamnet_class_map.csv")
                 #Check audio sound is human and check for value that is great or equal to 10
                 start, end = audioModeCheck(str(dataPickle.inferenceType))
                 for val in range(start,end):
                     for i in range(0,4):
                         if audio_name[val] == dataPickle.inferredData[i]['name']:
-                            if float(dataPickle.inferredData[i]['value']) >= 0.5:       
+                            if float(dataPickle.inferredData[i]['value']) >= 0.3:       
                                 print(str(dataPickle.inferenceType), " sound detected")
                                 print("Audio data received:" + dataPickle.inferredData[i]['name'] +" and the value is "+ dataPickle.inferredData[i]['value'] +" at time " +str(packetTime_audio),file=f)
                                 flag_audio += 1           
@@ -95,9 +95,7 @@ def multi_threaded_client(connection):
                     print(str(dataPickle.inferenceType) + " is detected")
                     print("Number of " + str(dataPickle.inferenceType) + " received: " + str(face_counter) +" at time " + str(packetTime_image),file=f)
                     print("Object Count: " + str(dataPickle.objectCount) ,file=f)
-                    flag_image += 1
-                else:
-                    print("Nothing is found")
+                    flag_image += 2
             #Sensor check
             elif dataPickle.packetType == 'Sensor':
                 packetTime_sensor = datetime.datetime.now()
@@ -107,31 +105,30 @@ def multi_threaded_client(connection):
                     print("Sensor "+ str(dataPickle.inferenceType)+" data received: "+ str(dataPickle.inferredData[0])+ " at time "+str(packetTime_sensor))
                     flag_sensor += 1
                     print("Sensor "+ str(dataPickle.inferenceType) +" data received: "+ str(dataPickle.inferredData[0]) + " at time "+str(packetTime_sensor),file=f)
-                    sensor_value = dataPickle.inferredData
+                    sensor_value = dataPickle.inferredData[0]
                 
 
             else:
                 print(f"New data type found: {dataPickle.packetType}")
             #check flag
-            print("Flag Audio "+str(flag_audio) + " Flag image "+ str(flag_image)+ " Flag sensor "+ str(flag_sensor) )
-            if (flag_audio + flag_image + flag_sensor) >= 2:
+            flag = open("flag.txt","a")
+            print("Flag Audio " + str(flag_audio) + " Flag image " + str(flag_image) + " Flag sensor " + str(flag_sensor))
+            toalflag= flag_audio+flag_sensor+flag_image 
+            if (toalflag) >= 2:
                 image = 'Not detected'
-                audio ='Not detected '
-                sensor ='Not detected'
-                #alert will pop up
-                if flag_image == 1:
-                    messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second)+ "\nNumber of targets at location now: "+ face_counter)
-                else:
-                    messagebox.showerror("Alert", "Date of Alert: %s/%s/%s" % (e.day, e.month, e.year) + "\nTime of Alert: %s:%s:%s" % (e.hour, e.minute, e.second)+ "\nNumber of targets at location now: not found \nAudio and Sensor detected targets")
+                audio = 'Not detected '
+                sensor = 'Not detected'
+                # alert will pop up
                 packetTime_alert = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
-                if flag_image == 1:
-                    image = "Number of targets at location now: "+ str(len(dataPickle.inferredData))
+                if flag_image == 2:
+                    image = "Number of people at location now: " + str(len(dataPickle.inferredData))
                 if flag_audio == 1:
-                    audio = "Audio sound "+ audio_soundname + " value of sound " + audio_value
+                    audio = "Audio sound " + audio_soundname + " value of sound " + audio_value
                 if flag_sensor == 1:
                     sensor = "Sensor " + sensor_value
-                
-                messagebox.showerror("Alert", "Date of Alert and Time: "+packetTime_alert + "\nImage: "+ image+"\nAudio: " + audio +"\nSensor: " +sensor)
+
+                messagebox.showerror("Alert",
+                                     "Date of Alert and Time: " + packetTime_alert + "\nImage: " + image + "\nAudio: " + audio + "\nSensor: " + sensor)
             f.close()
         except Exception as e:
             print(f"Error reading data json {e}")
