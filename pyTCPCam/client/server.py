@@ -57,6 +57,8 @@ def multi_threaded_client(connection):
             if dataPickle.inferredData is None or len(dataPickle.inferredData) == 0: 
                 print(f"{dataPickle.packetType}: No object of interest in image")
                 continue
+                
+            #Audio check
             if dataPickle.packetType == 'Audio':
                 packetTime_audio = datetime.datetime.now() 
                 packetTime_audio = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S') 
@@ -78,7 +80,11 @@ def multi_threaded_client(connection):
                                 flag_audio = 1           
                                 break
                         break
-            elif dataPickle.packetType == 'Image':
+            else:
+              print(f"New data type found: {dataPickle.packetType}")
+              
+            #Image check
+            if dataPickle.packetType == 'Image':
                 face_counter = len(dataPickle.inferredData)
                 packetTime_image = datetime.datetime.now()
                 packetTime_image = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
@@ -89,15 +95,18 @@ def multi_threaded_client(connection):
                     cv2.waitKey(1)
                 #Check image
                 if len(dataPickle.inferredData) >= 1:
-
                     print(f"Number of {dataPickle.inferenceType} received: {face_counter} at time {packetTime_image}")
                     print("Object Count: " + str(dataPickle.objectCount))
                     print(str(dataPickle.inferenceType) + " is detected")
                     print("Number of " + str(dataPickle.inferenceType) + " received: " + str(face_counter) +" at time " + str(packetTime_image),file=f)
                     print("Object Count: " + str(dataPickle.objectCount) ,file=f)
                     flag_image += 2
+            else:
+              print(f"New data type found: {dataPickle.packetType}")
+              
+              
             #Sensor check
-            elif dataPickle.packetType == 'Sensor':
+            if dataPickle.packetType == 'Sensor':
                 packetTime_sensor = datetime.datetime.now()
                 packetTime_sensor = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
                 print(f"Sensor data received: {dataPickle.inferredData[0]} at time {packetTime_sensor}")
@@ -106,10 +115,10 @@ def multi_threaded_client(connection):
                     flag_sensor += 1
                     print("Sensor "+ str(dataPickle.inferenceType) +" data received: "+ str(dataPickle.inferredData[0]) + " at time "+str(packetTime_sensor),file=f)
                     sensor_value = dataPickle.inferredData[0]
-                
-
             else:
                 print(f"New data type found: {dataPickle.packetType}")
+                
+                
             #check flag
             flag = open("flag.txt","a")
             print("Flag Audio " + str(flag_audio) + " Flag image " + str(flag_image) + " Flag sensor " + str(flag_sensor))
