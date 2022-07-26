@@ -1,7 +1,7 @@
 {
     "py/object": "data.configData.ConfigData",
     "videoSource": "/dev/video0",
-    "videoModel": "./yolov5s6.pt",
+    "videoModel": "./atasv3_s6_640.pt",
     "videoDebug": false,
     "targetFPS": 60,
     "audioSource": 11,
@@ -9,11 +9,11 @@
     "audioListenTime": 1,
     "audioListenType": "numpy_tf",
     "audioBitRate": 16000,
-    "tcpHost": "192.168.1.192",
+    "tcpHost": "192.168.162.179",
     "tcpPort": 8100,
     "tcpName": "Integrated Audio/Video Client",
     "tcpSendTime": 5,
-    "audioInferenceType": "dog",
-    "videoInferenceType": "dog",
+    "audioInferenceType": "people",
+    "videoInferenceType": "person",
     "maxFrameLoss": 5
 }

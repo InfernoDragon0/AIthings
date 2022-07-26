@@ -42,14 +42,14 @@ if __name__ == '__main__':
         f.write(newConfig)
     #config write
 
-    #imageModel = VideoProcessor(camQueue, encQueue, resultQueue, config.videoModel, config.videoInferenceType).startAsProcess()
-    #imageTracker = VideoTracker(encQueue, trackedQueue, trackedResultQueue, resultQueue, config.maxFrameLoss, config.targetFPS, countQueue).startAsProcess()
+    imageModel = VideoProcessor(camQueue, encQueue, resultQueue, config.videoModel, config.videoInferenceType).startAsProcess()
+    imageTracker = VideoTracker(encQueue, trackedQueue, trackedResultQueue, resultQueue, config.maxFrameLoss, config.targetFPS, countQueue).startAsProcess()
     # #start each video stream as a separate process
-    #videoStream0 = VideoStream(config.videoSource, config.targetFPS, camQueue, config.videoDebug).startAsProcess()
+    videoStream0 = VideoStream(config.videoSource, config.targetFPS, camQueue, config.videoDebug).startAsProcess()
     tcp = ClientTCP(config.tcpName, config.tcpHost, config.tcpPort)
     # #audio process
-    #audioStream0 = AudioStream(config.audioBitRate, audQueue, config.audioSource, config.audioListenType, config.audioListenTime).startAsProcess()
-    #audioProcessor = AudioProcessor(config.audioModel, config.audioListenTime, audQueue, tcp, config.audioInferenceType).startAsProcess()
+    audioStream0 = AudioStream(config.audioBitRate, audQueue, config.audioSource, config.audioListenType, config.audioListenTime).startAsProcess()
+    audioProcessor = AudioProcessor(config.audioModel, config.audioListenTime, audQueue, tcp, config.audioInferenceType).startAsProcess()
 
     # sensor process
     #sensorStream = SensorStream(tcp).startAsProcess()
@@ -57,4 +57,4 @@ if __name__ == '__main__':
     ultrasonicStream = UltrasonicStream(tcp).startAsProcess()
 
     # #encoder and TCP
-    #videoEncoder0 = VideoEncoder(trackedQueue, trackedResultQueue, config.tcpSendTime, tcp, config.videoInferenceType, countQueue).start()
+    videoEncoder0 = VideoEncoder(trackedQueue, trackedResultQueue, config.tcpSendTime, tcp, config.videoInferenceType, countQueue).start()
