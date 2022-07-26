@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     # sensor process
     #sensorStream = SensorStream(tcp).startAsProcess()
-    vibrationStream = vibrationStream(tcp).startAsProcess()
+    vibrationStream0 = vibrationStream(tcp).startAsProcess()
     ultrasonicStream = UltrasonicStream(tcp).startAsProcess()
 
     # #encoder and TCP
