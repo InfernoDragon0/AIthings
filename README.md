@@ -20,6 +20,20 @@ Running on the Jetson Nano, the preconfigured conda environment will have all th
 ### Check your mic index
 Run ```python micCheck.py``` from client directory to check your mic index
 
+### Folders & Files
+- ```audio``` contains the code required to read from an audio source and run inference
+- ```data``` contains the class files required for transferring data over the network
+- ```video``` contains the code required to read from a video source and run inference
+- ```models``` yolov5 required dependencies
+- ```sensor``` contains the code required to read from different sensor sources
+- ```utils``` yolov5 wrapper dependencies
+- ```yamnet``` yamnet tensorflow required dependencies
+- ```client.py``` deprecated client
+- ```testClient.py``` main client to run the integrated system
+- ```yolo_wrapper.py``` dependency to load models for image inferencing
+- ```yolov5.py``` yolov5 wrapper dependencies
+- ```micCheck.py``` to check your mic index
+
 ### Configuration files
 Located in ```client/config.json```, you may change the config file to fit your use case
 - ```py/object``` should not be changed
@@ -38,3 +52,5 @@ Located in ```client/config.json```, you may change the config file to fit your 
 - ```audioInferenceType/videoInferenceType``` what to infer
 - ```maxFrameLoss``` the amount of frames before dropping an object for the object tracker
 
+### Further documentation
+visit the [Confluence Page](https://sititp-atas-e.atlassian.net/wiki/spaces/SIA/overview?homepageId=98512)
