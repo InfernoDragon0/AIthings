@@ -17,6 +17,9 @@ Running on the Jetson Nano, the preconfigured conda environment will have all th
 - cd to ```client``` directory
 - ```python testClient.py```
 
+### Check your mic index
+Run ```python micCheck.py``` from client directory to check your mic index
+
 ### Configuration files
 Located in ```client/config.json```, you may change the config file to fit your use case
 - ```py/object``` should not be changed
