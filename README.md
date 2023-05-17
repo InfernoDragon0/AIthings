@@ -1,1 +1,1 @@
-# amarisAIthings
+# AIthings
